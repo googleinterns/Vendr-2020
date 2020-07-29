@@ -14,6 +14,7 @@
 
 package com.google.sps.data;
 
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.blobstore.BlobKey;
 
 /** A picture. */
@@ -27,6 +28,16 @@ public final class Picture {
     this.id = id;
     this.blobKey = blobKey;
     this.altText = altText;
+  }
+
+  public Picture(EmbeddedEntity embeddedPic) {
+    if (embeddedPic == null) {
+      return;
+    }
+
+    this.id = embeddedPic.getKey().getId();
+    this.blobKey = embeddedPic.getProperty("blobKey");
+    this.altText = embeddedPic.getProperty("altText");
   }
 
   public long getId() {

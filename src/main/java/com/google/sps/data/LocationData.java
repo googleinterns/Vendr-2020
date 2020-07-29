@@ -14,6 +14,7 @@
 
 package com.google.sps.data;
 
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.GeoPt;
 
 /** A class for the location information of a business. */
@@ -29,6 +30,17 @@ public final class LocationData {
     this.salePoint = salePoint;
     this.geoHash = geoHash;
     this.radius = radius;
+  }
+
+  public LocationData(EmbeddedEntity embeddedLocation) {
+    if (embeddedLocation == null) {
+      return;
+    }
+
+    this.id = embeddedLocation.getKey().getId();
+    this.salePoint = embeddedLocation.getProperty("salePoint");
+    this.geoHash = embeddedLocation.getProperty("geoHash");
+    this.radius = embeddedLocation.getProperty("radius");
   }
 
   public long getId() {

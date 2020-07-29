@@ -14,6 +14,7 @@
 
 package com.google.sps.data;
 
+import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.time.LocalTime;
 
 /** A saleCard. */
@@ -21,21 +22,39 @@ public final class SaleCard {
 
   private final long id;
   private String businessName;
-  private LocationData location;
+  private String description;
   private LocalTime startTime;
   private LocalTime endTime;
-  private String description;
-  private Picture pic;
+  private LocationData location;
+  private Picture picture;
 
-  public SaleCard(long id, String businessName, LocationData location,
-      LocalTime startTime, LocalTime endTime, String description, Picture pic) {
+  public SaleCard(long id, String businessName, String description,
+      LocalTime startTime, LocalTime endTime, LocationData location, Picture picture) {
     this.id = id;
     this.businessName = businessName;
-    this.location = location;
+    this.description = description;
     this.startTime = startTime;
     this.endTime = endTime;
-    this.description = description;
-    this.pic = pic;
+    this.location = location;
+    this.picture = picture;
+  }
+
+  public SaleCard(EmbeddedEntity embeddedSaleCard) {
+    if (embeddedSaleCard == null) {
+      return;
+    }
+
+    this.id = embeddedSaleCard.getKey().getId();
+    this.businessName = embeddedSaleCard.getProperty("businessName");
+    this.description = embeddedSaleCard.getProperty("description");
+    this.startTime = LocalTime.parse(embeddedSaleCard.getProperty("startTime"));
+    this.endTime = LocalTime.parse(embeddedSaleCard.getProperty("endTime"));
+
+    EmbeddedEntity embeddedLocation = (EmbeddedEntity) embeddedSaleCard.getProperty("location");
+    this.location = new Location(embeddedLocation);
+
+    EmbeddedEntity embeddedPicture = (EmbeddedEntity) embeddedSaleCard.getProperty("picture");
+    this.picture = new Picture(embeddedPicture);
   }
 
   public long getId() {
@@ -63,7 +82,7 @@ public final class SaleCard {
   }
 
   public Picture getPic() {
-    return pic;
+    return picture;
   }
 
   public void setBusinessName(String businessName) {
@@ -86,7 +105,7 @@ public final class SaleCard {
     this.description = description;
   }
 
-  public void setPic(Picture pic) {
-    this.pic = pic;
+  public void setPic(Picture picture) {
+    this.picture = picture;
   }
 }
