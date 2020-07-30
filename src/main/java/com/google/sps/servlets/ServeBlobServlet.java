@@ -15,6 +15,7 @@
 package com.google.sps.servlets;
 
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreFailureException;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.sps.data.HttpServletUtils;
@@ -39,9 +40,15 @@ public class ServeBlobServlet extends HttpServlet {
       return;
     }
 
-    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+    try {
+      BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
-    BlobKey blobKey = new BlobKey(blobString);
-    blobstoreService.serve(blobKey, response);
+      BlobKey blobKey = new BlobKey(blobString);
+      blobstoreService.serve(blobKey, response);
+    } catch (BlobstoreFailureException e) {
+      System.out.println("Problems communicating with Blobstore: " + e);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      return;
+    }
   }
 }
