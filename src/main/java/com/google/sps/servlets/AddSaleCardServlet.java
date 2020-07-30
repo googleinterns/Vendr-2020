@@ -14,15 +14,18 @@
 
 package com.google.sps.servlets;
 
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.GeoPt;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.sps.data.HttpServletUtils;
 import java.io.IOException;
 import java.time.LocalTime;
@@ -46,7 +49,7 @@ public class AddSaleCardServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // TODO: Get if vendor is logged in
+    // TODO: Get if vendor is logged in with auth API
     boolean vendorStatus = false;
     
     if (vendorStatus) {
@@ -97,14 +100,48 @@ public class AddSaleCardServlet extends HttpServlet {
       }
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-      Entity picture = new Entity("Picture");
-      picture.setProperty("blob-key", imageBlobKey);
 
+      // TODO: Create vendor key using the Auth ID
+      // Key vendorKey = KeyFactory.createKey("Vendor", (String) user.authID);
+
+      // Generate Key when datastore put
+      Entity saleCard = new Entity("SaleCard"/*, vendorKey*/);
+      datastore.put(saleCard);      
+
+      // TODO: Remove from datastore existing picture and location data
+
+      Entity picture = new Entity("Picture", saleCard.getKey());
+      picture.setProperty("blobKey", imageBlobKey);
+      picture.setProperty("altText", altText);
       datastore.put(picture);
+
+      Entity locationData = new Entity("LocationData", saleCard.getKey());
+      locationData.setProperty("salePoint", vendorLocation);
+      locationData.setProperty("geoHash", geoHash);
+      locationData.setProperty("radius", radius);
+      datastore.put(locationData);
+
+      EmbeddedEntity picInfo = new EmbeddedEntity();
+      picInfo.setPropertiesFrom(picture);
+      EmbeddedEntity locInfo = new EmbeddedEntity();
+      locInfo.setPropertiesFrom(locationData);
+
+      saleCard.setIndexedProperty("picture", picInfo);
+      saleCard.setIndexedProperty("location", locInfo);
+      datastore.put(saleCard);
+
+      EmbeddedEntity saleInfo = new EmbeddedEntity();
+      saleInfo.setPropertiesFrom(saleCard);
+
+      /* TODO: Vendor Entity Put
+        Entity vendor = datastore.get(vendorKey);
+        vendor.setIndexedProperty("saleCard", saleInfo);
+        datastore.put(vendor);
+      */
 
       response.sendRedirect("/");
     } else {
-
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
   }
 
