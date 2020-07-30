@@ -14,6 +14,9 @@
 
 package com.google.sps.data;
 
+import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.appengine.api.datastore.Emtity;
+
 /** A vendor. */
 public final class Vendor {
 
@@ -34,6 +37,19 @@ public final class Vendor {
     this.phoneNumber = phoneNumber;
     this.profilePic = profilePic;
     this.businessInfo = businessInfo;
+  }
+
+  public Vendor(Entity entity) {
+    this.id = entity.getKey().getName();
+    this.firstName = entity.getProperty("firstName");
+    this.lastName = entity.getProperty("lastName");
+    this.email = entity.getProperty("email");
+    this.phoneNumber = entity.getProperty("phoneNumber");
+
+    EmbeddedEntity embeddedPic = (EmbeddedEntity) entity.getProperty("profilePic");
+    this.profilePic = (embeddedPic == null) : null ? new Picture(embeddedPic);
+    EmbeddedEntity embeddedBusiness = (EmbeddedEntity) entity.getProperty("businessInfo");
+    this.businessInfo = (embeddedBusiness == null) : null ? new SaleCard(embeddedBusiness);
   }
 
   public String getId() {
