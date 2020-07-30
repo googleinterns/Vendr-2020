@@ -15,7 +15,7 @@
 package com.google.sps.data;
 
 import com.google.appengine.api.datastore.EmbeddedEntity;
-import com.google.appengine.api.datastore.Emtity;
+import com.google.appengine.api.datastore.Entity;
 
 /** A vendor. */
 public final class Vendor {
@@ -40,11 +40,11 @@ public final class Vendor {
   }
 
   public Vendor(Entity entity) {
-    this.id = entity.getKey().getName();
-    this.firstName = entity.getProperty("firstName");
-    this.lastName = entity.getProperty("lastName");
-    this.email = entity.getProperty("email");
-    this.phoneNumber = entity.getProperty("phoneNumber");
+    this.id = (String) entity.getKey().getName();
+    this.firstName = (String) entity.getProperty("firstName");
+    this.lastName = (String) entity.getProperty("lastName");
+    this.email = (String) entity.getProperty("email");
+    this.phoneNumber = (String) entity.getProperty("phoneNumber");
 
     EmbeddedEntity embeddedPic = (EmbeddedEntity) entity.getProperty("profilePic");
     this.profilePic = (embeddedPic == null) ? null : new Picture(embeddedPic);
