@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 /**
  * Function to load the navbar on the web app 
  */
@@ -28,4 +27,6 @@ const setActiveTab = () => {
 
   const activeTabElement = document.getElementById(`${fileName[0]}_tab`);
   activeTabElement.classList.add('active');
+
+  getLogStatus();
 };
