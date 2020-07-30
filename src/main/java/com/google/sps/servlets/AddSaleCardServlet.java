@@ -36,19 +36,10 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * When the user submits the form, Blobstore processes the file upload and then forwards the request
- * to this servlet. This servlet can then process the request using the file URL we get from
- * Blobstore.
+ * to this servlet.
  */
 @WebServlet("/add-saleCard")
 public class AddSaleCardServlet extends HttpServlet {
-
-  // @Override
-  // public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-  //   BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-
-  //   BlobKey blobKey = new BlobKey(request.getParameter("blob-key"));
-  //   blobstoreService.serve(blobKey, response);
-  // }
 
   private final static float MAX_DISTANCE = 3000f; // 3 kilometers
   private final static float MIN_DISTANCE = 0f;
