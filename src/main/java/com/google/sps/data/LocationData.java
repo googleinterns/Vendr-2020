@@ -34,13 +34,14 @@ public final class LocationData {
 
   public LocationData(EmbeddedEntity embeddedLocation) {
     if (embeddedLocation == null) {
+      this.id = -1;
       return;
     }
 
-    this.id = embeddedLocation.getKey().getId();
-    this.salePoint = embeddedLocation.getProperty("salePoint");
-    this.geoHash = embeddedLocation.getProperty("geoHash");
-    this.radius = embeddedLocation.getProperty("radius");
+    this.id = (long) embeddedLocation.getKey().getId();
+    this.salePoint = (GeoPt) embeddedLocation.getProperty("salePoint");
+    this.geoHash = (String) embeddedLocation.getProperty("geoHash");
+    this.radius = (int) embeddedLocation.getProperty("radius");
   }
 
   public long getId() {

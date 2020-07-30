@@ -32,12 +32,13 @@ public final class Picture {
 
   public Picture(EmbeddedEntity embeddedPic) {
     if (embeddedPic == null) {
+      this.id = -1;
       return;
     }
 
-    this.id = embeddedPic.getKey().getId();
-    this.blobKey = embeddedPic.getProperty("blobKey");
-    this.altText = embeddedPic.getProperty("altText");
+    this.id = (long) embeddedPic.getKey().getId();
+    this.blobKey = (BlobKey) embeddedPic.getProperty("blobKey");
+    this.altText = (String) embeddedPic.getProperty("altText");
   }
 
   public long getId() {

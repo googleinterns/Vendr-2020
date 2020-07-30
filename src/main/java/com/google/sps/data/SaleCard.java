@@ -41,18 +41,19 @@ public final class SaleCard {
 
   public SaleCard(EmbeddedEntity embeddedSaleCard) {
     if (embeddedSaleCard == null) {
+      this.id = -1;
       return;
     }
 
-    this.id = embeddedSaleCard.getKey().getId();
-    this.businessName = embeddedSaleCard.getProperty("businessName");
-    this.description = embeddedSaleCard.getProperty("description");
-    this.startTime = LocalTime.parse(embeddedSaleCard.getProperty("startTime"));
-    this.endTime = LocalTime.parse(embeddedSaleCard.getProperty("endTime"));
-
+    this.id = (long) embeddedSaleCard.getKey().getId();
+    this.businessName = (String) embeddedSaleCard.getProperty("businessName");
+    this.description = (String) embeddedSaleCard.getProperty("description");
+    CharSequence start = (CharSequence) embeddedSaleCard.getProperty("startTime");
+    this.startTime = LocalTime.parse(start);
+    CharSequence end = (CharSequence) embeddedSaleCard.getProperty("endTime");
+    this.endTime = LocalTime.parse(end);
     EmbeddedEntity embeddedLocation = (EmbeddedEntity) embeddedSaleCard.getProperty("location");
-    this.location = new Location(embeddedLocation);
-
+    this.location = new LocationData(embeddedLocation);
     EmbeddedEntity embeddedPicture = (EmbeddedEntity) embeddedSaleCard.getProperty("picture");
     this.picture = new Picture(embeddedPicture);
   }
