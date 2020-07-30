@@ -41,12 +41,12 @@ $(function () {
     let API_KEY = textString;
 
     // Create the script tag, set the appropriate attributes.
-    var script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap`;
-    script.defer = true;
+    const scriptMapTag = document.createElement('script');
+    scriptMapTag.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap`;
+    scriptMapTag.defer = true;
 
     // Append the 'script' element to 'head'
-    document.head.appendChild(script);
+    document.head.appendChild(scriptMapTag);
   });
 });
 
@@ -54,22 +54,22 @@ $(function () {
  * Callback function once the map is retrieved from Maps' API
  */
 window.initMap = function () {
-  var map = new google.maps.Map(
+  const map = new google.maps.Map(
     document.getElementById('map'), { zoom: 15 });
 
   // Get client current location
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (position) {
-      var userPos = {
+      const userPosition = {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       };
       
-      map.setCenter(userPos);
+      map.setCenter(userPosition);
       map.setOptions({styles: MAP_THEME});
       
       // The marker, positioned at client's location
-      var marker = new google.maps.Marker({ position: userPos, map: map });
+      const marker = new google.maps.Marker({ position: userPosition, map: map });
 
       // Declare circle that match user's query parameters
       const userCircle = new google.maps.Circle({
@@ -79,7 +79,7 @@ window.initMap = function () {
         fillColor: "#FF0000",
         fillOpacity: 0.20,
         map,
-        center: userPos,
+        center: userPosition,
         radius: parseInt(document.getElementById('distance').value)
       });
     });
