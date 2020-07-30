@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /** Servlet that looks for nearby vendors */
 @WebServlet("/get-nearby-vendors")
-public class GetNearbyVendors extends HttpServlet {
+public class GetNearbyVendorsServlet extends HttpServlet {
 
   private final static float MAX_DISTANCE = 20000f; // 20 kilometers
   private final static float MIN_DISTANCE = 0f;
