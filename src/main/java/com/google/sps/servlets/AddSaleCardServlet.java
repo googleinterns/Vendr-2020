@@ -108,7 +108,7 @@ public class AddSaleCardServlet extends HttpServlet {
       Entity saleCard = new Entity("SaleCard"/*, vendorKey*/);
       datastore.put(saleCard);      
 
-      // TODO: Remove from datastore existing picture and location data
+      // TODO: Remove from datastore existing saleCard, picture and location data
 
       Entity picture = new Entity("Picture", saleCard.getKey());
       picture.setProperty("blobKey", imageBlobKey);
