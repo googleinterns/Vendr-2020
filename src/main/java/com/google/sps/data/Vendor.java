@@ -47,9 +47,9 @@ public final class Vendor {
     this.phoneNumber = entity.getProperty("phoneNumber");
 
     EmbeddedEntity embeddedPic = (EmbeddedEntity) entity.getProperty("profilePic");
-    this.profilePic = (embeddedPic == null) : null ? new Picture(embeddedPic);
+    this.profilePic = (embeddedPic == null) ? null : new Picture(embeddedPic);
     EmbeddedEntity embeddedBusiness = (EmbeddedEntity) entity.getProperty("businessInfo");
-    this.businessInfo = (embeddedBusiness == null) : null ? new SaleCard(embeddedBusiness);
+    this.businessInfo = (embeddedBusiness == null) ? null : new SaleCard(embeddedBusiness);
   }
 
   public String getId() {

@@ -58,9 +58,9 @@ public final class SaleCard {
     this.endTime = LocalTime.parse(end);
     
     EmbeddedEntity embeddedLocation = (EmbeddedEntity) embeddedSaleCard.getProperty("location");
-    this.location = (embeddedLocation == null) : null ? new LocationData(embeddedLocation);
+    this.location = (embeddedLocation == null) ? null : new LocationData(embeddedLocation);
     EmbeddedEntity embeddedPicture = (EmbeddedEntity) embeddedSaleCard.getProperty("picture");
-    this.picture = (embeddedPicture == null) : null ? new Picture(embeddedPicture);
+    this.picture = (embeddedPicture == null) ? null : new Picture(embeddedPicture);
   }
 
   public long getId() {
