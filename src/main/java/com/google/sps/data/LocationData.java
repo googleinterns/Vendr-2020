@@ -23,9 +23,9 @@ public final class LocationData {
   private final long id;
   private GeoPt salePoint;
   private String geoHash;
-  private int radius;
+  private float radius;
 
-  public LocationData(long id, GeoPt salePoint, String geoHash, int radius) {
+  public LocationData(long id, GeoPt salePoint, String geoHash, float radius) {
     this.id = id;
     this.salePoint = salePoint;
     this.geoHash = geoHash;
@@ -41,7 +41,7 @@ public final class LocationData {
     this.id = (long) embeddedLocation.getKey().getId();
     this.salePoint = (GeoPt) embeddedLocation.getProperty("salePoint");
     this.geoHash = (String) embeddedLocation.getProperty("geoHash");
-    this.radius = (int) embeddedLocation.getProperty("radius");
+    this.radius = (float) embeddedLocation.getProperty("radius");
   }
 
   public long getId() {
@@ -56,7 +56,7 @@ public final class LocationData {
     return geoHash;
   }
 
-  public int getRadius() {
+  public float getRadius() {
     return radius;
   }
 
@@ -68,7 +68,7 @@ public final class LocationData {
     this.geoHash = geoHash;
   }
 
-  public void setRadius(int radius) {
+  public void setRadius(float radius) {
     this.radius = radius;
   }
 }
