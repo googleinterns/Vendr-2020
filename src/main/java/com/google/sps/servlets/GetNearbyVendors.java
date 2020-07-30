@@ -83,7 +83,7 @@ public class GetNearbyVendors extends HttpServlet {
     Iterable<Entity> vendorsRetrieved = fetchVendors(query);
 
     // Create list and filter by distance
-    List<Vendor> nearbyVendors = createVendorsList(vendorsRetrieved, distance);
+    List<Vendor> nearbyVendors = createVendorsList(vendorsRetrieved, clientLocation, distance);
 
     Gson gson = new Gson();
 
@@ -115,14 +115,32 @@ public class GetNearbyVendors extends HttpServlet {
     return datastore.prepare(query).asIterable();
   }
 
-  /** Returns a list with the retrieved vendors and check their are within the requested distance*/
-  private List<Vendor> createVendorsList(Iterable<Entity> vendors, float distanceLimit) {
+  /** Returns a list with the retrieved vendors and check they are within the requested distance*/
+  private List<Vendor> createVendorsList(Iterable<Entity> vendors, GeoPt clientLocation, float distanceLimit) {
     List<Vendor> nearbyVendors = new ArrayList<>();
-    for (Entity vendor : vendors) {
-      // TODO: Add only vendors which abs(vendorLoc - clientLoc) <= distanceLimit - Use Haversine formula
-      nearbyVendors.add(new Vendor(vendor));
+    for (Entity vendorEntity : vendors) {
+      Vendor vendor = new Vendor(vendorEntity);
+      GeoPt vendorLocation = vendor.getBusinessInfo().getLocation().getSalePoint();
+      if (computeHaversine(clientLocation, vendorLocation) <= distanceLimit) {
+        nearbyVendors.add(vendor);
+      }    
     }
 
     return nearbyVendors;
+  }
+
+  /** Computes the distance between two geographical points using Haversine formula */
+  private float computeHaversine(GeoPt pointA, GeoPt pointB) {
+    double latitudeRadiansA = Math.toRadians(pointA.getLatitude());
+    double latitudeRadiansB = Math.toRadians(pointB.getLatitude());
+
+    double latitudeDifference = Math.toRadians(pointB.getLatitude() - pointA.getLatitude());
+    double longitudeDifference = Math.toRadians(pointB.getLongitude() - pointA.getLongitude());
+
+    double a = Math.pow(Math.sin(latitudeDifference / 2), 2) + 
+        Math.cos(latitudeRadiansA) * Math.cos(latitudeRadiansB) * Math.pow(Math.sin(longitudeDifference / 2), 2);
+    double c = 2 * Math.asin(Math.sqrt(a));
+
+    return (float) (GeoPt.EARTH_RADIUS_METERS * c);
   }
 }
