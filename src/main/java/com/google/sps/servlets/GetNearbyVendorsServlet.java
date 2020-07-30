@@ -16,7 +16,6 @@ package com.google.sps.servlets;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.Query;
@@ -97,9 +96,9 @@ public class GetNearbyVendorsServlet extends HttpServlet {
    * if the vendor has or not delivery service 
    */
   private Query buildGeoQuery(String prefixGeoHash, boolean hasDelivery) {
-    Filter lowerBound = new FilterPredicate("saleCard.locationData.geoHash",
+    Filter lowerBound = new FilterPredicate("saleCard.location.geoHash",
         FilterOperator.GREATER_THAN_OR_EQUAL, prefixGeoHash);
-    Filter upperBound = new FilterPredicate("saleCard.locationData.geoHash",
+    Filter upperBound = new FilterPredicate("saleCard.location.geoHash",
         FilterOperator.LESS_THAN, prefixGeoHash + "\ufffd");
     Filter deliveryFilter = new FilterPredicate("saleCard.hasDelivery",
         FilterOperator.EQUAL, hasDelivery);
