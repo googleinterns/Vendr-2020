@@ -14,19 +14,19 @@
 
 const MAP_THEME = [
   {
-    'featureType': 'poi.business',
-    'stylers': [
+    featureType: 'poi.business',
+    stylers: [
       {
-        'visibility': 'off'
+        visibility: 'off'
       }
     ]
   },
   {
-    'featureType': 'poi.park',
-    'elementType': 'labels.text',
-    'stylers': [
+    featureType: 'poi.park',
+    elementType: 'labels.text',
+    stylers: [
       {
-        'visibility': 'off'
+        visibility: 'off'
       }
     ]
   }
@@ -45,7 +45,6 @@ $(function () {
     scriptMapTag.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap`;
     scriptMapTag.defer = true;
 
-    // Append the 'script' element to 'head'
     document.head.appendChild(scriptMapTag);
   });
 });
@@ -59,12 +58,11 @@ window.initMap = function () {
 
   // Get client current location
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function (position) {
+    navigator.geolocation.getCurrentPosition((position) => {
       const userPosition = {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       };
-      
       map.setCenter(userPosition);
       map.setOptions({styles: MAP_THEME});
       
@@ -82,6 +80,10 @@ window.initMap = function () {
         strokeOpacity: 0.8,
         strokeWeight: 2
       });
+    },
+    (error) => {
+      if (error.code == error.PERMISSION_DENIED)
+        alert('Permission denied to access location');
     });
   } else {
     alert('This browser does not support location');
