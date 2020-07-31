@@ -91,7 +91,7 @@ public final class SaleCard {
     return location;
   }
 
-  public Picture getPic() {
+  public Picture getPicture() {
     return picture;
   }
 
@@ -119,7 +119,7 @@ public final class SaleCard {
     this.location = location;
   }
 
-  public void setPic(Picture picture) {
+  public void setPicture(Picture picture) {
     this.picture = picture;
   }
 }
