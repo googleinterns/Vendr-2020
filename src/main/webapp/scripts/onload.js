@@ -10,4 +10,5 @@
 
 window.addEventListener('load', () => {
   // getLogStatus();
+  // loadSection('home');
 });
