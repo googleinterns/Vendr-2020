@@ -1,32 +1,32 @@
 // Copyright 2019 Google LLC
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
+// Licensed under the Apache License, Version 2.0 (the 'License');
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
 //     https://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
+// distributed under the License is distributed on an 'AS IS' BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
 const MAP_THEME = [
   {
-    "featureType": "poi.business",
-    "stylers": [
+    'featureType': 'poi.business',
+    'stylers': [
       {
-        "visibility": "off"
+        'visibility': 'off'
       }
     ]
   },
   {
-    "featureType": "poi.park",
-    "elementType": "labels.text",
-    "stylers": [
+    'featureType': 'poi.park',
+    'elementType': 'labels.text',
+    'stylers': [
       {
-        "visibility": "off"
+        'visibility': 'off'
       }
     ]
   }
@@ -38,7 +38,7 @@ const MAP_THEME = [
  */
 $(function () {
   jQuery.get('../../../../API_KEY.txt', function (textString) {
-    let API_KEY = textString;
+    const API_KEY = textString;
 
     // Create the script tag, set the appropriate attributes.
     const scriptMapTag = document.createElement('script');
@@ -73,17 +73,17 @@ window.initMap = function () {
 
       // Declare circle that match user's query parameters
       const userCircle = new google.maps.Circle({
-        strokeColor: "#FF0000",
-        strokeOpacity: 0.8,
-        strokeWeight: 2,
-        fillColor: "#FF0000",
+        center: userPosition,
+        fillColor: '#FF0000',
         fillOpacity: 0.20,
         map,
-        center: userPosition,
-        radius: parseInt(document.getElementById('distance').value)
+        radius: parseInt(document.getElementById('distance').value),
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2
       });
     });
   } else {
-    alert("This browser does not support location");
+    alert('This browser does not support location');
   }
 };
