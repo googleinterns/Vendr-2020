@@ -17,7 +17,7 @@
  */
 
 $(() => {
-  $('#navbar_container').load('common/navbar.html',setActiveTab);
+  $('#navbar_container').load('common/navbar.html', setActiveTab);
 });
 
 const setActiveTab = () => {

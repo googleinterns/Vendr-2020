@@ -16,6 +16,6 @@
 /**
  * Function to load the search vendors around bar
  */
-$(function() {
+$(() => {
   $('#searchBarVendors-placeholder').load('common/searchBarVendors.html'); 
 });
