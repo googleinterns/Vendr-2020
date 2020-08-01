@@ -8,10 +8,12 @@
  * File to handle Google's Auth API requests
  */
 
+const PHONE_NUMBER_LENGTH = 10;
+
 function getLogStatus() {
   fetch('/log-status').then(response => response.json()).then((logStatus) => {
     if(!logStatus.isRegistered && logStatus.isLogged) {
-      handleRegistration();
+      redirectToRegistrationForm();
     }
 
     setLogURLInNavBar(logStatus);
@@ -26,9 +28,43 @@ function setLogURLInNavBar(logStatus) {
   logButton.href = logStatus.url;
 }
 
-function handleRegistration() {
+function redirectToRegistrationForm() {
  window.location.replace('./registration.html');
-  //  fetch('/nickname').then(response => response.json()).then((logStatus) => {
-  //   setLogURLInNavBar(logStatus);
-  // });
+}
+
+function validateRegistrationFormInputs() {
+  const firstName = document.getElementById('first_name').value;
+  const lastName = document.getElementById('last_name').value;
+  const phoneNumber = document.getElementById('phone_number').value;
+
+  if(!isValid(firstName) || !isValid(lastName) || !firstName || !lastName) {
+    alert('Names can\'t be empty or have special characters');
+    return;
+  }
+
+  if(phoneNumber.length > PHONE_NUMBER_LENGTH || !phoneNumber) {
+    alert(`Phone Number can\'t be empty or have more than ${PHONE_NUMBER_LENGTH} numbers`);
+    return;
+  }
+
+  handleRegistration(firstName, lastName, phoneNumber);
+}
+
+function isValid(name) {
+   //Regex for Valid Characters i.e. Alphabets, Numbers and Space.
+    const validCharacters = /^[A-Za-z0-9 ]+$/;
+    return validCharacters.test(name);
+}
+
+function handleRegistration(firstName, lastName, phoneNumber) {
+  fetch(`/new-vendor?first_name=${firstName}&last_name=${lastName}&phone_number=${phoneNumber}`, {method: 'POST'})
+  .then(response => {
+    if(response.redirected) {
+      window.location.replace('./home.html');
+      return;
+    }
+    response.text().then((error) => {
+      alert(error);
+    });
+  });
 }
