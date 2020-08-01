@@ -11,6 +11,11 @@
 package com.google.sps.servlets;
 
 import com.google.gson.Gson;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
 import com.google.sps.servlets.authstatus.AuthStatus;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -34,22 +39,43 @@ public class AuthServlet extends HttpServlet {
     AuthStatus authStatus = new AuthStatus();
 
     if (userService.isUserLoggedIn()) {
-      String userEmail = userService.getCurrentUser().getEmail();
+      // If user has not set a nickname, redirect to nickname page
+      String nickname = getUserNickname(userService.getCurrentUser().getUserId());
+      boolean isRegistered = true;
+
+      if (nickname == null) {
+        isRegistered = false;
+      }
+
       // Redirect to the portfolio after log out
       String logoutUrl = userService.createLogoutURL(REDIRECT_URL);
 
       authStatus.setUrl(logoutUrl);
       authStatus.setLoggedInStatus(true);
-
-      response.getWriter().println(new Gson().toJson(authStatus));
+      authStatus.setRegistrationStatus(isRegistered);
     } else {
       // Redirect to the portfolio after log in
       String loginUrl = userService.createLoginURL(REDIRECT_URL);
 
       authStatus.setUrl(loginUrl);
       authStatus.setLoggedInStatus(false);
-
-      response.getWriter().println(new Gson().toJson(authStatus));
+      authStatus.setRegistrationStatus(false);
     }
+
+    response.getWriter().println(new Gson().toJson(authStatus));
+  }
+
+  public String getUserNickname(String id) throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query =
+        new Query("Vendor")
+            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
+    PreparedQuery vendors = datastore.prepare(query);
+    Entity vendor = vendors.asSingleEntity();
+    if (vendor == null) {
+      return null;
+    }
+    String nickname = (String) vendor.getProperty("nickname");
+    return nickname;
   }
 }

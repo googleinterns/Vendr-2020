@@ -20,18 +20,21 @@ package com.google.sps.servlets.authstatus;
 public class AuthStatus {
   private String url;
   private boolean isLogged;
+  private boolean isRegistered;
   
 
   /** Constructor() */
   public AuthStatus() {
     this.url = "";
     this.isLogged = false;
+    this.isRegistered = false;
   }
   
   /** Constructor(String, Boolean) */
-  public AuthStatus(String url, boolean isLogged) {
+  public AuthStatus(String url, boolean isLogged, boolean isRegistered) {
     this.url = url;
     this.isLogged = isLogged;
+    this.isRegistered = isRegistered;
   }
 
   public String getUrl() {
@@ -42,11 +45,19 @@ public class AuthStatus {
     return this.isLogged;
   }
 
+  public boolean getRegistrationStatus() {
+    return this.isRegistered;
+  }
+
   public void setUrl(String url) {
     this.url = url;
   }
 
   public void setLoggedInStatus(boolean isLogged) {
     this.isLogged = isLogged;
+  }
+
+  public void setRegistrationStatus(boolean isRegistered) {
+    this.isRegistered = isRegistered;
   }
 }

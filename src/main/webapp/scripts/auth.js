@@ -10,6 +10,10 @@
 
 function getLogStatus() {
   fetch('/log-status').then(response => response.json()).then((logStatus) => {
+    if(!logStatus.isRegistered && logStatus.isLogged) {
+      handleRegistration();
+    }
+
     setLogURLInNavBar(logStatus);
   });
 }
@@ -20,4 +24,11 @@ function setLogURLInNavBar(logStatus) {
 
   logButton.innerText = (logStatus.isLogged) ? 'Log Out' : 'Log In';
   logButton.href = logStatus.url;
+}
+
+function handleRegistration() {
+ window.location.replace('./registration.html');
+  //  fetch('/nickname').then(response => response.json()).then((logStatus) => {
+  //   setLogURLInNavBar(logStatus);
+  // });
 }
