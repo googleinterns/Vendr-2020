@@ -34,52 +34,48 @@ public class NewVendor extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    UserService userService = UserServiceFactory.getUserService();
+    final UserService userService = UserServiceFactory.getUserService();
+    
     if (!userService.isUserLoggedIn()) {
-      System.out.println("User not logged in");
-      response.sendRedirect("/");
+      response.setContentType("text/html");
+      response.getWriter().println("Error: You're not logged in");
       return;
     }
-    Vendor newVendor = getVendorData(request, userService);
-  
-    // DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    // Entity entity = new Entity("Vendor", id);
-    // entity.setProperty("id", id);
-    // entity.setProperty("nickname", nickname);
-    // // The put() function automatically inserts new data or updates existing data based on ID
-    // datastore.put(entity);
 
+    final Vendor newVendor = getVendorData(request, userService);
+    toDatastore(newVendor);
+  
     response.sendRedirect("/");
   }
 
   private Vendor getVendorData(HttpServletRequest request, UserService userService) throws IOException {
-    String firstName = request.getParameter("first_name");
-    String lastName = request.getParameter("last_name");
-    String phoneNumber = request.getParameter("phone_number");
-    String email = userService.getCurrentUser().getEmail();
-    String id = userService.getCurrentUser().getUserId();
+    final String firstName = request.getParameter("first_name");
+    final String lastName = request.getParameter("last_name");
+    final String phoneNumber = request.getParameter("phone_number");
+    final String email = userService.getCurrentUser().getEmail();
+    final String id = userService.getCurrentUser().getUserId();
 
     return new Vendor(id, firstName, lastName, email, phoneNumber, null, null);
   }
 
-  /**
-   * Returns the nickname of the user with id, or empty String if the user has not set a nickname.
-   */
-  private String getUserNickname(String id) {
-    System.out.println("Calling DataStore");
+  private Entity createVendor(Vendor newVendor) throws IOException {
+    Entity vendorEntity = new Entity("Vendor", newVendor.getId());
+
+    vendorEntity.setProperty("id", newVendor.getId());
+    vendorEntity.setProperty("firstName", newVendor.getFirstName());
+    vendorEntity.setProperty("lastName", newVendor.getLastName());
+    vendorEntity.setProperty("email", newVendor.getEmail());
+    vendorEntity.setProperty("phoneNumber", newVendor.getPhoneNumber());
+    vendorEntity.setProperty("profilePic", newVendor.getProfilePic());
+    vendorEntity.setProperty("businessInfo", newVendor.getBusinessInfo());
+
+    return vendorEntity;
+  }
+
+  private void toDatastore(Vendor newVendor) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    System.out.println("Getting Query");
-    Query query =
-        new Query("Vendor")
-            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
-    System.out.println("Preparing Query");
-    PreparedQuery results = datastore.prepare(query);
-    Entity entity = results.asSingleEntity();
-    if (entity == null) {
-      System.out.println("Is null");
-      return "";
-    }
-    String nickname = (String) entity.getProperty("nickname");
-    return nickname;
+    Entity vendor = createVendor(newVendor);
+
+    datastore.put(vendor); 
   }
 }

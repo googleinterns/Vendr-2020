@@ -40,7 +40,7 @@ public class AuthServlet extends HttpServlet {
 
     if (userService.isUserLoggedIn()) {
       // If user has not set a nickname, redirect to nickname page
-      String nickname = getUserNickname(userService.getCurrentUser().getUserId());
+      String nickname = getUserPhoneNumber(userService.getCurrentUser().getUserId());
       boolean isRegistered = true;
 
       if (nickname == null) {
@@ -65,17 +65,19 @@ public class AuthServlet extends HttpServlet {
     response.getWriter().println(new Gson().toJson(authStatus));
   }
 
-  public String getUserNickname(String id) throws IOException {
+  public String getUserPhoneNumber(String id) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Query query =
         new Query("Vendor")
             .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
     PreparedQuery vendors = datastore.prepare(query);
     Entity vendor = vendors.asSingleEntity();
+
     if (vendor == null) {
       return null;
     }
-    String nickname = (String) vendor.getProperty("nickname");
-    return nickname;
+    
+    String phoneNumber = (String) vendor.getProperty("phoneNumber");
+    return phoneNumber;
   }
 }
