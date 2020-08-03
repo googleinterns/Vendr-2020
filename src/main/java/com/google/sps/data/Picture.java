@@ -19,7 +19,6 @@ import com.google.appengine.api.blobstore.BlobKey;
 
 /** A picture. */
 public final class Picture {
-
   private final long id;
   private BlobKey blobKey;
   private String altText;

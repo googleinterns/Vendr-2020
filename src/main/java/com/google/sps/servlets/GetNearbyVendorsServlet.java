@@ -44,7 +44,6 @@ public class GetNearbyVendorsServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {    
-    // -- The way we get these values might change. This is just an idea ---------------
     String prefixGeoHash = HttpServletUtils.getParameter(request, "prefixGeoHash", "");
     boolean hasDelivery = Boolean.parseBoolean(HttpServletUtils.getParameter(request, "hasDelivery", "false"));
     float latitude = 0f;
@@ -66,7 +65,6 @@ public class GetNearbyVendorsServlet extends HttpServlet {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    // ---------------------------------------------------------------------------------
     
     // Check values exist and are in the range
     if (prefixGeoHash.isEmpty() || distance > COMMONS.MAX_DISTANCE_CLIENT || distance < COMMONS.MIN_DISTANCE) {
@@ -76,13 +74,9 @@ public class GetNearbyVendorsServlet extends HttpServlet {
     }
 
     Query query = buildGeoQuery(prefixGeoHash, hasDelivery);
-    
     Iterable<Entity> vendorsRetrieved = fetchVendors(query);
-
     List<Vendor> nearbyVendors = createVendorsList(vendorsRetrieved, clientLocation, distance);
-
     Gson gson = new Gson();
-
     response.setContentType("application/json;");
     response.setCharacterEncoding("UTF-8");
     response.getWriter().println(gson.toJson(nearbyVendors));
@@ -116,8 +110,8 @@ public class GetNearbyVendorsServlet extends HttpServlet {
     List<Vendor> nearbyVendors = new ArrayList<>();
     for (Entity vendorEntity : vendors) {
       Vendor vendor = new Vendor(vendorEntity);
-      GeoPt vendorLocation = vendor.getBusinessInfo().getLocation().getSalePoint();
-      if (computeHaversine(clientLocation, vendorLocation) <= distanceLimit) {
+      GeoPt vendorLocation = vendor.getSaleCard().getLocation().getSalePoint();
+      if (computeDistance(clientLocation, vendorLocation) <= distanceLimit) {
         nearbyVendors.add(vendor);
       }    
     }
@@ -126,7 +120,7 @@ public class GetNearbyVendorsServlet extends HttpServlet {
   }
 
   /** Computes the distance between two geographical points using Haversine formula */
-  private float computeHaversine(GeoPt pointA, GeoPt pointB) {
+  private float computeDistance(GeoPt pointA, GeoPt pointB) {
     double latitudeRadiansA = Math.toRadians(pointA.getLatitude());
     double latitudeRadiansB = Math.toRadians(pointB.getLatitude());
 

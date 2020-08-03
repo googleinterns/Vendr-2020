@@ -19,7 +19,6 @@ import com.google.appengine.api.datastore.GeoPt;
 
 /** A class for the location information of a business. */
 public final class LocationData {
-
   private final long id;
   private GeoPt salePoint;
   private String geoHash;
@@ -52,7 +51,7 @@ public final class LocationData {
     return salePoint;
   }
 
-  public String geoHash() {
+  public String getGeoHash() {
     return geoHash;
   }
 

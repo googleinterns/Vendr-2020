@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletRequest;
 
 /** Servlets Utility Class. */
 public final class HttpServletUtils {
-  
   private HttpServletUtils() {
     throw new java.lang.UnsupportedOperationException("Utility class cannot be instantiated");
   }
@@ -28,7 +27,6 @@ public final class HttpServletUtils {
    * was not specified by the client
    */
   public static String getParameter(HttpServletRequest request, String name, String defaultValue) {
-    // Null check
     if (request == null) {
       return defaultValue;
     }

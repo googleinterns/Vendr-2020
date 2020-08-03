@@ -17,9 +17,8 @@ package com.google.sps.data;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.time.LocalTime;
 
-/** A saleCard. */
+/** A saleCard containing the information of a business (e.g. description, opening hours, location) */
 public final class SaleCard {
-
   private final long id;
   private String businessName;
   private String description;
