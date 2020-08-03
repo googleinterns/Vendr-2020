@@ -22,7 +22,6 @@ public class AuthStatus {
   private boolean isLogged;
   private boolean isRegistered;
   
-
   /** Constructor() */
   public AuthStatus() {
     this.url = "";
@@ -30,7 +29,7 @@ public class AuthStatus {
     this.isRegistered = false;
   }
   
-  /** Constructor(String, Boolean) */
+  /** Constructor(String, Boolean, Boolean) */
   public AuthStatus(String url, boolean isLogged, boolean isRegistered) {
     this.url = url;
     this.isLogged = isLogged;

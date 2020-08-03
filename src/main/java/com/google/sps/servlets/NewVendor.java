@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/** Servlet to register a new vendor in Datastore */
 @WebServlet("/new-vendor")
 public class NewVendor extends HttpServlet {
 
@@ -48,6 +49,7 @@ public class NewVendor extends HttpServlet {
     response.sendRedirect("/");
   }
 
+  // Retrieve Vendors form inputs
   private Vendor getVendorData(HttpServletRequest request, UserService userService) throws IOException {
     final String firstName = request.getParameter("first_name");
     final String lastName = request.getParameter("last_name");
@@ -58,10 +60,9 @@ public class NewVendor extends HttpServlet {
     return new Vendor(id, firstName, lastName, email, phoneNumber, null, null);
   }
 
-  private Entity createVendor(Vendor newVendor) throws IOException {
+  private Entity createVendorEntity(Vendor newVendor) throws IOException {
     Entity vendorEntity = new Entity("Vendor", newVendor.getId());
 
-    vendorEntity.setProperty("id", newVendor.getId());
     vendorEntity.setProperty("firstName", newVendor.getFirstName());
     vendorEntity.setProperty("lastName", newVendor.getLastName());
     vendorEntity.setProperty("email", newVendor.getEmail());
@@ -72,9 +73,10 @@ public class NewVendor extends HttpServlet {
     return vendorEntity;
   }
 
+  // Adds a new vendor entity in Datastore
   private void toDatastore(Vendor newVendor) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity vendor = createVendor(newVendor);
+    Entity vendor = createVendorEntity(newVendor);
 
     datastore.put(vendor); 
   }

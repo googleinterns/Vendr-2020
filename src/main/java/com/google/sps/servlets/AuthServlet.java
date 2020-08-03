@@ -14,6 +14,9 @@ import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.sps.servlets.authstatus.AuthStatus;
@@ -39,22 +42,22 @@ public class AuthServlet extends HttpServlet {
     AuthStatus authStatus = new AuthStatus();
 
     if (userService.isUserLoggedIn()) {
-      // If user has not set a nickname, redirect to nickname page
-      String nickname = getUserPhoneNumber(userService.getCurrentUser().getUserId());
+      // Look for a vendor's unique attribute to prove if has already registered
+      String phoneNumber = getUserPhoneNumber(userService.getCurrentUser().getUserId());
       boolean isRegistered = true;
 
-      if (nickname == null) {
+      if (phoneNumber == null) {
         isRegistered = false;
       }
 
-      // Redirect to the portfolio after log out
+      // Redirect to the same view tab after log out
       String logoutUrl = userService.createLogoutURL(REDIRECT_URL);
 
       authStatus.setUrl(logoutUrl);
       authStatus.setLoggedInStatus(true);
       authStatus.setRegistrationStatus(isRegistered);
     } else {
-      // Redirect to the portfolio after log in
+      // Redirect to the same view tab after log in
       String loginUrl = userService.createLoginURL(REDIRECT_URL);
 
       authStatus.setUrl(loginUrl);
@@ -67,17 +70,15 @@ public class AuthServlet extends HttpServlet {
 
   public String getUserPhoneNumber(String id) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Query query =
-        new Query("Vendor")
-            .setFilter(new Query.FilterPredicate("id", Query.FilterOperator.EQUAL, id));
-    PreparedQuery vendors = datastore.prepare(query);
-    Entity vendor = vendors.asSingleEntity();
+    Key vendorKey = KeyFactory.createKey("Vendor", id);
+    
+    try {
+      Entity vendor = datastore.get(vendorKey);
 
-    if (vendor == null) {
+      String phoneNumber = (String) vendor.getProperty("phoneNumber");
+      return phoneNumber;
+    } catch (EntityNotFoundException e) {
       return null;
     }
-    
-    String phoneNumber = (String) vendor.getProperty("phoneNumber");
-    return phoneNumber;
   }
 }
