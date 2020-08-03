@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.servlets.authstatus;
+package com.google.sps.data;
 
 /**
 * Class object define the Authentication status of a user

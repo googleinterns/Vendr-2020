@@ -19,9 +19,9 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
-import com.google.sps.servlets.authstatus.AuthStatus;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.sps.data.AuthStatus;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -42,7 +42,7 @@ public class AuthServlet extends HttpServlet {
     AuthStatus authStatus = new AuthStatus();
 
     if (userService.isUserLoggedIn()) {
-      // Look for a vendor's unique attribute to prove if has already registered
+      // Look for a vendor's unique attribute to prove if it has already registered
       String phoneNumber = getUserPhoneNumber(userService.getCurrentUser().getUserId());
       boolean isRegistered = true;
 
