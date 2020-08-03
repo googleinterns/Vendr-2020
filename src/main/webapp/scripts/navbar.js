@@ -14,8 +14,18 @@
 
 
 /**
- * Function to load the search vendors around bar
+ * Function to load the navbar on the web app 
  */
+
 $(() => {
-  $('#searchBarVendors-placeholder').load('common/searchBarVendors.html'); 
+  $('#navbar_container').load('common/navbar.html', setActiveTab);
 });
+
+const setActiveTab = () => {
+  const windowPath = window.location.pathname;
+  const loadedFile = windowPath.split('/').pop();
+  const fileName = loadedFile.split('.');
+
+  const activeTabElement = document.getElementById(`${fileName[0]}_tab`);
+  activeTabElement.classList.add('active');
+};
