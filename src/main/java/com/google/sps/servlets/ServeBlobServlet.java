@@ -36,6 +36,7 @@ public class ServeBlobServlet extends HttpServlet {
     String blobString = HttpServletUtils.getParameter(request, "blobKey", "");
     
     if (blobString.isEmpty()) {
+      System.out.println("BlobKey provided is empty");
       response.sendError(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }

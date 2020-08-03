@@ -95,6 +95,7 @@ public class AddSaleCardServlet extends HttpServlet {
       // Check values are not empty or outside range
       if (businessName.isEmpty() || description.isEmpty() || geoHash.isEmpty() || altText.isEmpty() || 
           imageBlobKey == null || radius < MIN_DISTANCE || radius > MAX_DISTANCE ) {
+        System.out.println("The values do not exist and/or are outside the range.");
         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
@@ -141,6 +142,7 @@ public class AddSaleCardServlet extends HttpServlet {
 
       response.sendRedirect("/");
     } else {
+      System.out.println("User is not logged in.");
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
   }

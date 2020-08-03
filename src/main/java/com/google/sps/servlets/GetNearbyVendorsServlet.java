@@ -71,17 +71,15 @@ public class GetNearbyVendorsServlet extends HttpServlet {
     
     // Check values exist and are in the range
     if (prefixGeoHash.isEmpty() || distance > MAX_DISTANCE || distance < MIN_DISTANCE) {
+      System.out.println("The values do not exist and/or are outside the range.");
       response.sendError(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
-    // Generate query
     Query query = buildGeoQuery(prefixGeoHash, hasDelivery);
     
-    // Fetch results
     Iterable<Entity> vendorsRetrieved = fetchVendors(query);
 
-    // Create list and filter by distance
     List<Vendor> nearbyVendors = createVendorsList(vendorsRetrieved, clientLocation, distance);
 
     Gson gson = new Gson();
