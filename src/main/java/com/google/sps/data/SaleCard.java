@@ -42,8 +42,7 @@ public final class SaleCard {
 
   public SaleCard(EmbeddedEntity embeddedSaleCard) {
     if (embeddedSaleCard == null) {
-      this.id = -1;
-      return;
+      throw new IllegalArgumentException("SaleCard cannot be initialized with null EmbeddedEntity");
     }
 
     this.id = (long) embeddedSaleCard.getKey().getId();

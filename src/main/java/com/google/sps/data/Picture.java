@@ -31,8 +31,7 @@ public final class Picture {
 
   public Picture(EmbeddedEntity embeddedPic) {
     if (embeddedPic == null) {
-      this.id = -1;
-      return;
+      throw new IllegalArgumentException("Picture cannot be initialized with null EmbeddedEntity");
     }
 
     this.id = (long) embeddedPic.getKey().getId();
