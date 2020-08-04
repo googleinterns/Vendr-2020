@@ -89,9 +89,7 @@ public class NewVendor extends HttpServlet {
   // Adds a new vendor entity in Datastore
   private void toDatastore(Vendor newVendor) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity vendor = createVendorEntity(newVendor);
-
-    datastore.put(vendor); 
+    datastore.put(createVendorEntity(newVendor)); 
   }
 
   // Checks if any of the input values is empty

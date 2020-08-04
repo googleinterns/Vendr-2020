@@ -64,7 +64,7 @@ function validateRegistrationFormInputs() {
 }
 
 // Checks if input is valid
-/** @param {String, boolean} @return {boolean} */
+/** @param {vendorInput:String, isNameInput:boolean} @return {boolean} */
 function notValidInput(vendorInput, isNameInput) {
   // Regex for Valid Characters i.e. Alphabets, Numbers and Space
   const validCharacters = /^[A-Za-z0-9 ]+$/;
@@ -78,9 +78,17 @@ function notValidInput(vendorInput, isNameInput) {
 }
 
 // Fetch vendor data to add it to datastore
-/** @param {String, String, String} @return {void} */
+/** 
+* @param {firstName:String, lastName:String, phoneNumber:String} 
+* @return {void} 
+*/
 function handleRegistration(firstName, lastName, phoneNumber) {
-  fetch(`/new-vendor?first_name=${firstName}&last_name=${lastName}&phone_number=${phoneNumber}`, {method: 'POST'})
+  const vendorsParams = new URLSearchParams();
+  vendorsParams.append('first_name', firstName);
+  vendorsParams.append('last_name', lastName);
+  vendorsParams.append('phone_number', phoneNumber);
+
+  fetch('/new-vendor', {method: 'POST', body: vendorsParams})
   .then(response => {
     // If the registration is complete then redirect to home
     if(response.redirected) {
