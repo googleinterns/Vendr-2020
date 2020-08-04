@@ -165,8 +165,13 @@ public class AddSaleCardServlet extends HttpServlet {
       return null;
     }
 
-    // TODO: Check the uploaded file is an image file
-
-    return blobKey;
+    // Validate the file is an image file (.png, .jpg, .jpeg, .jfif, .pjpeg, .pjp)
+    String blobMimeType = blobInfo.getContentType();
+    if (blobMimeType.equals("image/png") || blobMimeType.equals("image/jpeg")) {
+      return blobKey;
+    } else {
+      blobstoreService.delete(blobKey);
+      return null;
+    }
   }
 }
