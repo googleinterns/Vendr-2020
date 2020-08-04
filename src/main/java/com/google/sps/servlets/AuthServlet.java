@@ -10,7 +10,6 @@
 
 package com.google.sps.servlets;
 
-import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -21,6 +20,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gson.Gson;
 import com.google.sps.data.AuthStatus;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -43,12 +43,7 @@ public class AuthServlet extends HttpServlet {
 
     if (userService.isUserLoggedIn()) {
       // Look for a vendor's unique attribute to prove if it has already registered
-      String phoneNumber = getUserPhoneNumber(userService.getCurrentUser().getUserId());
-      boolean isRegistered = true;
-
-      if (phoneNumber == null) {
-        isRegistered = false;
-      }
+      boolean isRegistered = isUserRegistered(userService.getCurrentUser().getUserId());
 
       // Redirect to the same view tab after log out
       String logoutUrl = userService.createLogoutURL(REDIRECT_URL);
@@ -68,17 +63,17 @@ public class AuthServlet extends HttpServlet {
     response.getWriter().println(new Gson().toJson(authStatus));
   }
 
-  public String getUserPhoneNumber(String id) throws IOException {
+  public boolean isUserRegistered(String id) throws IOException {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Key vendorKey = KeyFactory.createKey("Vendor", id);
     
     try {
       Entity vendor = datastore.get(vendorKey);
-
       String phoneNumber = (String) vendor.getProperty("phoneNumber");
-      return phoneNumber;
+      
+      return (phoneNumber == null || phoneNumber.isEmpty()) ? false : true;
     } catch (EntityNotFoundException e) {
-      return null;
+      return false;
     }
   }
 }

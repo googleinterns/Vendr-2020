@@ -68,7 +68,7 @@ public class NewVendor extends HttpServlet {
     vendorEntity.setProperty("email", newVendor.getEmail());
     vendorEntity.setProperty("phoneNumber", newVendor.getPhoneNumber());
     vendorEntity.setProperty("profilePic", newVendor.getProfilePic());
-    vendorEntity.setProperty("businessInfo", newVendor.getBusinessInfo());
+    vendorEntity.setProperty("saleCard", newVendor.getSaleCard());
 
     return vendorEntity;
   }

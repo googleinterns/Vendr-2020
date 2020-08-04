@@ -40,11 +40,11 @@ public class AuthStatus {
     return this.url;
   }
 
-  public boolean getVerificationStatus() {
+  public boolean isLogged() {
     return this.isLogged;
   }
 
-  public boolean getRegistrationStatus() {
+  public boolean isRegistered() {
     return this.isRegistered;
   }
 
