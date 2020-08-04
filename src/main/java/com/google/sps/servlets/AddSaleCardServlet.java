@@ -26,6 +26,8 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.COMMONS;
 import com.google.sps.data.HttpServletUtils;
 import java.io.IOException;
@@ -47,10 +49,9 @@ public class AddSaleCardServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // TODO: Get if vendor is logged in with auth API
-    boolean vendorLoggedIn = false;
+    UserService userService = UserServiceFactory.getUserService();
     
-    if (vendorLoggedIn) {
+    if (userService.isUserLoggedIn()) {
       String businessName = HttpServletUtils.getParameter(request, "businessName", "");
       boolean hasDelivery = Boolean.parseBoolean(HttpServletUtils.getParameter(request, "hasDelivery", "false"));
       String startTime = HttpServletUtils.getParameter(request, "startTime", "");
