@@ -17,6 +17,9 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
@@ -36,16 +39,26 @@ public class NewVendor extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     final UserService userService = UserServiceFactory.getUserService();
-    
+    response.setContentType("text/html");
+
     if (!userService.isUserLoggedIn()) {
-      response.setContentType("text/html");
       response.getWriter().println("Error: You're not logged in");
       return;
     }
 
+    if (isUserRegistered(userService.getCurrentUser().getUserId())) {
+      response.getWriter().println("You're already registered!");
+      return;
+    }
+
     final Vendor newVendor = getVendorData(request, userService);
+
+    if (!isValidInput(newVendor)) {
+      response.getWriter().println("Error: You can't send null or empty inputs");
+      return;
+    }
+
     toDatastore(newVendor);
-  
     response.sendRedirect("/");
   }
 
@@ -79,5 +92,32 @@ public class NewVendor extends HttpServlet {
     Entity vendor = createVendorEntity(newVendor);
 
     datastore.put(vendor); 
+  }
+
+  // Checks if any of the input values is empty
+  private boolean isValidInput(Vendor newVendor) throws IOException {
+    final String firstName = newVendor.getFirstName();
+    final String lastName =  newVendor.getLastName();
+    final String phoneNumber = newVendor.getPhoneNumber();
+
+    return !(
+      (firstName == null || firstName.isEmpty()) ||
+      (lastName == null || lastName.isEmpty()) ||
+      (phoneNumber == null || phoneNumber.isEmpty())
+    );
+  }
+
+  public boolean isUserRegistered(String id) throws IOException {
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Key vendorKey = KeyFactory.createKey("Vendor", id);
+    
+    try {
+      Entity vendor = datastore.get(vendorKey);
+      String phoneNumber = (String) vendor.getProperty("phoneNumber");
+      
+      return (phoneNumber == null || phoneNumber.isEmpty()) ? false : true;
+    } catch (EntityNotFoundException e) {
+      return false;
+    }
   }
 }
