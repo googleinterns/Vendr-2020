@@ -55,8 +55,8 @@ function validateRegistrationFormInputs() {
     return;
   }
 
-  if(!phoneNumber || phoneNumber.length > PHONE_NUMBER_LENGTH || notValidInput(phoneNumber, false)) {
-    alert(`Phone Number can\'t be empty, have spaces or have more than ${PHONE_NUMBER_LENGTH} numbers`);
+  if(!phoneNumber || phoneNumber.length !== PHONE_NUMBER_LENGTH || notValidInput(phoneNumber, false)) {
+    alert(`Phone Number can't be empty, have spaces or have more than ${PHONE_NUMBER_LENGTH} numbers`);
     return;
   }
 
