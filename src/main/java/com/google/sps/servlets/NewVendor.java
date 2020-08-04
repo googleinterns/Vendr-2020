@@ -49,7 +49,7 @@ public class NewVendor extends HttpServlet {
     response.sendRedirect("/");
   }
 
-  // Retrieve Vendors form inputs
+  // Retrieve Vendors data from input form
   private Vendor getVendorData(HttpServletRequest request, UserService userService) throws IOException {
     final String firstName = request.getParameter("first_name");
     final String lastName = request.getParameter("last_name");
