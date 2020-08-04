@@ -26,6 +26,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.sps.COMMONS;
 import com.google.sps.data.HttpServletUtils;
 import java.io.IOException;
 import java.time.LocalTime;
@@ -44,17 +45,12 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/add-saleCard")
 public class AddSaleCardServlet extends HttpServlet {
 
-  private final static float MAX_DISTANCE = 3000f; // 3 kilometers
-  private final static float MIN_DISTANCE = 0f;
-
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // TODO: Get if vendor is logged in with auth API
-    boolean vendorStatus = false;
+    boolean vendorLoggedIn = false;
     
-    if (vendorStatus) {
-      // -- The way we get these values might change. This is just an idea ---------------
-      // Get parameters
+    if (vendorLoggedIn) {
       String businessName = HttpServletUtils.getParameter(request, "businessName", "");
       boolean hasDelivery = Boolean.parseBoolean(HttpServletUtils.getParameter(request, "hasDelivery", "false"));
       String startTime = HttpServletUtils.getParameter(request, "startTime", "");
@@ -66,11 +62,12 @@ public class AddSaleCardServlet extends HttpServlet {
       float longitude = 0f;
       GeoPt vendorLocation = new GeoPt(0f, 0f);
       
-      // Check values are valid format
+      // Check values are valid format 
       try {
         LocalTime start = LocalTime.parse(startTime);
         LocalTime end = LocalTime.parse(endTime);
         radius = Float.parseFloat(HttpServletUtils.getParameter(request, "radius", "1000"));
+        // If not provided, we set them to 360 to throw an error when trying to use them to create a GeoPt
         latitude = Float.parseFloat(HttpServletUtils.getParameter(request, "lat", "360"));
         longitude = Float.parseFloat(HttpServletUtils.getParameter(request, "long", "360"));
         vendorLocation = new GeoPt(latitude, longitude);
@@ -94,7 +91,8 @@ public class AddSaleCardServlet extends HttpServlet {
 
       // Check values are not empty or outside range
       if (businessName.isEmpty() || description.isEmpty() || geoHash.isEmpty() || altText.isEmpty() || 
-          imageBlobKey == null || radius < MIN_DISTANCE || radius > MAX_DISTANCE ) {
+          imageBlobKey == null || radius < COMMONS.MIN_DISTANCE || radius > COMMONS.MAX_DISTANCE_VENDOR) {
+        System.out.println("The values do not exist and/or are outside the range.");
         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         return;
       }
@@ -141,6 +139,7 @@ public class AddSaleCardServlet extends HttpServlet {
 
       response.sendRedirect("/");
     } else {
+      System.out.println("User is not logged in.");
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
   }

@@ -17,9 +17,8 @@ package com.google.sps.data;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import java.time.LocalTime;
 
-/** A saleCard. */
+/** A saleCard containing the information of a business (e.g. description, opening hours, location) */
 public final class SaleCard {
-
   private final long id;
   private String businessName;
   private String description;
@@ -43,8 +42,7 @@ public final class SaleCard {
 
   public SaleCard(EmbeddedEntity embeddedSaleCard) {
     if (embeddedSaleCard == null) {
-      this.id = -1;
-      return;
+      throw new IllegalArgumentException("SaleCard cannot be initialized with null EmbeddedEntity");
     }
 
     this.id = (long) embeddedSaleCard.getKey().getId();

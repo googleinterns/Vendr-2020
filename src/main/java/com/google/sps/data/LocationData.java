@@ -19,7 +19,6 @@ import com.google.appengine.api.datastore.GeoPt;
 
 /** A class for the location information of a business. */
 public final class LocationData {
-
   private final long id;
   private GeoPt salePoint;
   private String geoHash;
@@ -34,8 +33,7 @@ public final class LocationData {
 
   public LocationData(EmbeddedEntity embeddedLocation) {
     if (embeddedLocation == null) {
-      this.id = -1;
-      return;
+      throw new IllegalArgumentException("LocationData cannot be initialized with null EmbeddedEntity");
     }
 
     this.id = (long) embeddedLocation.getKey().getId();
@@ -52,7 +50,7 @@ public final class LocationData {
     return salePoint;
   }
 
-  public String geoHash() {
+  public String getGeoHash() {
     return geoHash;
   }
 

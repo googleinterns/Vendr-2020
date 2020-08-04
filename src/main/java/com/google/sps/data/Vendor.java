@@ -26,17 +26,17 @@ public final class Vendor {
   private String email;
   private String phoneNumber;
   private Picture profilePic;
-  private SaleCard businessInfo;
+  private SaleCard saleCard;
 
   public Vendor(String id, String firstName, String lastName, String email, String phoneNumber,
-      Picture profilePic, SaleCard businessInfo) {
+      Picture profilePic, SaleCard saleCard) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.phoneNumber = phoneNumber;
     this.profilePic = profilePic;
-    this.businessInfo = businessInfo;
+    this.saleCard = saleCard;
   }
 
   public Vendor(Entity entity) {
@@ -48,8 +48,8 @@ public final class Vendor {
 
     EmbeddedEntity embeddedPic = (EmbeddedEntity) entity.getProperty("profilePic");
     this.profilePic = (embeddedPic == null) ? null : new Picture(embeddedPic);
-    EmbeddedEntity embeddedBusiness = (EmbeddedEntity) entity.getProperty("businessInfo");
-    this.businessInfo = (embeddedBusiness == null) ? null : new SaleCard(embeddedBusiness);
+    EmbeddedEntity embeddedBusiness = (EmbeddedEntity) entity.getProperty("saleCard");
+    this.saleCard = (embeddedBusiness == null) ? null : new SaleCard(embeddedBusiness);
   }
 
   public String getId() {
@@ -76,8 +76,8 @@ public final class Vendor {
     return profilePic;
   }
 
-  public SaleCard getBusinessInfo() {
-    return businessInfo;
+  public SaleCard getSaleCard() {
+    return saleCard;
   }
 
   public void setFirstName(String firstName) {
@@ -100,7 +100,7 @@ public final class Vendor {
     this.profilePic = profilePic;
   }
 
-  public void setBusinessInfo(SaleCard businessInfo) {
-    this.businessInfo = businessInfo;
+  public void setSaleCard(SaleCard saleCard) {
+    this.saleCard = saleCard;
   }
 }
