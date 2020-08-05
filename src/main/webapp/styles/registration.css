@@ -1,0 +1,8 @@
+body {
+  height: 100vh;
+}
+
+#registration_form_container {
+  border: 1px solid #bdbdbd;
+  border-radius: 8px;
+}
