@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Vendr</title>
+  <link rel="stylesheet" href="../styles/style.css">
+  <!-- Dependencies -->
+  <link rel="stylesheet" href="../styles/bootstrap.min.css">
+  <link rel="stylesheet" href="../font-awesome-4.7.0/css/font-awesome.min.css">
+  <script src="../scripts/jquery-3.5.1.min.js"></script>
+  <script src="../scripts/popper.min.js"></script>
+  <script src="../scripts/bootstrap.bundle.min.js"></script>
+  <script src="../scripts/script.js"></script>
+  <script src="../scripts/navbar.js"></script>
+  <!--Mock vendor object -->
+  <script src="mockSingleVendor.js"></script>
+  <script src="../scripts/editCard.js"></script>
+</head>
+
+<body>
+  <div id="navbar_container"></div>
+  <div id="card-placeholder" class="container mb-5">
+    <div class="row justify-content-md-center mt-3">
+      <div class="col-12">
+        <div class="card border-primary">
+          <h5 class="card-header">Edit card #ID</h5>
+          <div class="card-body">
+            <div id="card-form">
+              <div class="row">
+                <div class="col">
+                  <label for="business-name">Business Name:</label>
+                  <input type="text" class="form-control" id="business-name" aria-describedby="Business Name"
+                    placeholder="Business Name">
+                </div>
+              </div>
+              <div class="row mt-4">
+                <div class="col">
+                  <label for="business-description">Business description:</label>
+                  <textarea class="form-control" id="business-description" rows="3"
+                    placeholder="Your business description"></textarea>
+                </div>
+              </div>
+              <hr>
+              <div class="row mt-4">
+                <div class="col-lg-3">
+                  <h5>Current business photo</h5>
+                  <img id="business-picture" src="images/placeholderImage.png" class="card-img-top mt-2"
+                    alt="images/placeholderImage.png">
+                  <label class="mt-2" for="business-photo"><b>Select a new business photo</b></label>
+                  <input type="file" class="form-control-file" id="business-photo">
+                </div>
+                <div class="col">
+                  <p>Business Working Hours</p>
+                  <div class="row">
+                    <div class="col">
+                      <p>From</p>
+                      <input type="time" class="form-control" id="business-startTime"
+                        aria-describedby="Business opened from" placeholder="From">
+                    </div>
+                    <div class="col">
+                      <p>To</p>
+                      <input type="time" class="form-control" id="business-endTime"
+                        aria-describedby="Business opened to" placeholder="To">
+                    </div>
+                  </div>
+                  <div class="row mt-4">
+                    <div class="col-auto mt-3">
+                      <input class="form-control" type="checkbox" value="" id="delivery">
+                      <label for="delivery"><b>Delivery Service</b></label>
+                    </div>
+                    <div class="col">
+                      <p>Delivery service distance in meters</p>
+                      <input type="number" class="form-control" id="business-distanceOfDelivery"
+                        aria-describedby="Business delivery distance" placeholder="Distance" value="1000">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <label class="mt-2" for="photo-description">Photo description</label>
+              <textarea class="form-control" id="photo-description" rows="3"
+                placeholder="Your business photo description"></textarea>
+              <hr>
+              <div class="row mt-4">
+                <div class="col">
+                  <h5>Current business location</h5>
+                  <div id="edit-card-map"></div>
+                  <input type="hidden" id="business-lat" name="business-lat">
+                  <input type="hidden" id="business-lng" name="business-lng">
+                  <a id="update-location-btn" onclick="updateLocation()" class="btn btn-info mt-1">Set current location
+                    to the
+                    business</a>
+                </div>
+              </div>
+              <hr>
+              <div class="row mt-4">
+                <div class="col">
+                  <a id="update-business-btn" onclick="updateBusiness()" class="btn btn-warning btn-lg btn-block">Update
+                    business
+                    information</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- Error Message Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalCenterTitle"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalLongTitle">An error has occurred</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="error-message">
+        Error message.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</html>
