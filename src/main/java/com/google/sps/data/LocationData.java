@@ -39,7 +39,7 @@ public final class LocationData {
     this.id = (long) embeddedLocation.getKey().getId();
     this.salePoint = (GeoPt) embeddedLocation.getProperty("salePoint");
     this.geoHash = (String) embeddedLocation.getProperty("geoHash");
-    this.radius = (float) embeddedLocation.getProperty("radius");
+    this.radius = ((Double) embeddedLocation.getProperty("radius")).floatValue();
   }
 
   public long getId() {
