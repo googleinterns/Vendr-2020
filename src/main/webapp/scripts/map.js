@@ -42,7 +42,7 @@ $(function () {
 
     // Create the script tag, set the appropriate attributes.
     const scriptMapTag = document.createElement('script');
-    scriptMapTag.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=initMap`;
+    scriptMapTag.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}`;
     scriptMapTag.defer = true;
 
     document.head.appendChild(scriptMapTag);
@@ -50,9 +50,10 @@ $(function () {
 });
 
 /**
- * Callback function once the map is retrieved from Maps' API
+ * Function that queries salecards from servlet.
+ * TODO: implement fetch from servlet
  */
-window.initMap = function () {
+querySalecards = () => {
   const map = new google.maps.Map(
     document.getElementById('map'), { zoom: 15 });
 
@@ -64,10 +65,17 @@ window.initMap = function () {
         lng: position.coords.longitude
       };
       map.setCenter(userPosition);
-      map.setOptions({styles: MAP_THEME});
-      
+      map.setOptions({ styles: MAP_THEME });
+
       // The marker, positioned at client's location
-      const marker = new google.maps.Marker({ position: userPosition, map: map });
+      const marker = new google.maps.Marker({
+        icon: {
+          url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+        },
+        map: map,
+        position: userPosition,
+        title: 'Your position'
+      });
 
       // Declare circle that match user's query parameters
       const userCircle = new google.maps.Circle({
@@ -80,12 +88,79 @@ window.initMap = function () {
         strokeOpacity: 0.8,
         strokeWeight: 2
       });
+      // Once cards are retrieved...
+      // Add vendor's markers
+      addVendorsToMap(map);
     },
-    (error) => {
-      if (error.code == error.PERMISSION_DENIED)
-        alert('Permission denied to access location');
-    });
+      (error) => {
+        if (error.code == error.PERMISSION_DENIED)
+          alert('Permission denied to access location');
+      });
   } else {
     alert('This browser does not support location');
   }
+};
+
+/**
+ * Function that adds vendor marks to the map
+ */
+const addVendorsToMap = (map) => {
+  const salecardTemplate = document.getElementById('salecard-template');
+  const salecardsContainer = document.getElementById('salecards-container');
+
+  //Clean previously retrieved cards
+  salecardsContainer.innerHTML = '';
+
+  //Display number of vendor found
+  displayNumberOfVendors(vendors);
+
+  Object.keys(vendors).forEach(vendorNumber => {
+    let vendor = vendors[vendorNumber];
+    let salecard = vendor.saleCard;
+
+    createModal(vendor, salecard, salecardTemplate, salecardsContainer);
+
+    var marker = new google.maps.Marker({
+      map: map,
+      position: {
+        lat: salecard.location.salepoint.lat,
+        lng: salecard.location.salepoint.lng
+      },
+      title: salecard.businessName
+    });
+
+    // Toggles salecard's modal when vendor's marker is clicked
+    marker.addListener('click', () => {
+      $(`#modal${vendor.id}`).modal('toggle');
+    })
+  });
+};
+
+/**
+ * Function that creates a modal given a salecard
+ */
+const createModal = (vendor, salecard, salecardTemplate, salecardsContainer) => {
+  let salecardCloned = salecardTemplate.content.cloneNode(true);
+
+  salecardCloned.getElementById('business-title').innerHTML = salecard.businessName;
+  salecardCloned.getElementById('business-name').innerHTML = salecard.businessName;
+  salecardCloned.getElementById('business-description').innerHTML = salecard.description;
+  salecardCloned.getElementById('vendor-name').innerHTML = `${vendor.firstName} ${vendor.lastName}`;
+  salecardCloned.getElementById('vendor-phone').innerHTML = vendor.phoneNumber;
+  salecardCloned.getElementById('vendor-distance').innerHTML = `${salecard.location.distance}m`;
+  salecardCloned.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${salecard.id}`);
+  salecardCloned.getElementById('myModal').id = `modal${vendor.id}`;
+
+  salecardsContainer.appendChild(salecardCloned);
+};
+
+/**
+ * Function that creates h3 element to display the number of vendors
+ */
+const displayNumberOfVendors = (vendors) => {
+  const numberOfVendorsElement = document.createElement('h3');
+  numberOfVendorsElement.innerHTML = `${vendors.length} vendors found.`;
+  const containerElement = document.getElementById('numberOfVendors');
+  containerElement.innerHTML = '';
+  containerElement.appendChild(numberOfVendorsElement);
 };

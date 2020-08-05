@@ -1,31 +1,71 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Vendr</title>
-    <link rel="stylesheet" href="../styles/style.css">
 
-    <!-- Dependencies -->
-    <link rel="stylesheet" href="../styles/bootstrap.min.css">
-    <link rel="stylesheet" href="../font-awesome-4.7.0/css/font-awesome.min.css">
-    <script src="../scripts/jquery-3.5.1.min.js"></script>
-    <script src="../scripts/popper.min.js"></script>
-    <script src="../scripts/bootstrap.bundle.min.js"></script>
-    <script src="../scripts/script.js"></script>
-    <script src="../scripts/navbar.js"></script>
-    <script src="../scripts/map.js"></script>
-  </head>
-  <body>
-    <div id="maps_container">
-      <div id="maps_wrapper">
-        <div id="navbar_container"></div>
-        <br>
-        <div id="searchBarVendors-placeholder" class="container"></div>
-        <br>
-        <div id="map"></div>
-        <br>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Vendr</title>
+  <link rel="stylesheet" href="../styles/style.css">
+  <!-- Dependencies -->
+  <link rel="stylesheet" href="../styles/bootstrap.min.css">
+  <link rel="stylesheet" href="../font-awesome-4.7.0/css/font-awesome.min.css">
+  <script src="../scripts/jquery-3.5.1.min.js"></script>
+  <script src="../scripts/popper.min.js"></script>
+  <script src="../scripts/bootstrap.bundle.min.js"></script>
+  <script src="../scripts/script.js"></script>
+  <script src="../scripts/navbar.js"></script>
+  <!--Mock vendor object -->
+  <script src="mockVendors.js"></script>
+  <script src="../scripts/map.js"></script>
+</head>
+<body>
+  <div id="navbar_container"></div>
+  <div id="searchBarVendors-placeholder" class="container mt-3"></div>
+  <div id="numberOfVendors" class="container mt-3"></div>
+  <div id="map" class="container mb-3"></div>
+  <div id="salecards-container"></div>
+</body>
+
+<!-- Template Section -->
+<template id="salecard-template">
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="Salecard modal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="business-title">Business Name</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="vendorCard" class="card">
+            <img id="business-picture" src="images/placeholderImage.png" class="card-img-top mt-2"
+              alt="images/placeholderImage.png">
+            <div class="card-body">
+              <h5 id="business-name" class="card-title">Card title</h5>
+              <p id="business-description" class="card-text">Some quick example text to build on the card title and make
+                up the bulk of the card's content.</p>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><i class="fa fa-user text-primary mr-2" aria-hidden="true"></i><span
+                  id="vendor-name"></span></li>
+              <li class="list-group-item"><i class="fa fa-phone-square text-success mr-2" aria-hidden="true"></i><span
+                  id="vendor-phone"></span></li>
+              <li class="list-group-item"><i class="fa fa-map-marker text-danger mr-2" aria-hidden="true"></i><span
+                  id="vendor-distance"></span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="col-sm-8 mx-auto">
+            <a id="vendor-salecard-btn" href="#" class="btn btn-primary col-12">More info</a>
+          </div>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
-  </body>
+  </div>
+</template>
+
 </html>
