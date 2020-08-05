@@ -120,7 +120,7 @@ const addVendorsToMap = (map) => {
 
     createModal(vendor, salecard, salecardTemplate, salecardsContainer);
 
-    var marker = new google.maps.Marker({
+    let marker = new google.maps.Marker({
       map: map,
       position: {
         lat: salecard.location.salepoint.lat,
