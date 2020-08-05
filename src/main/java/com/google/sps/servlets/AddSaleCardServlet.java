@@ -23,6 +23,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.GeoPt;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -30,6 +31,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.COMMONS;
 import com.google.sps.data.HttpServletUtils;
+import com.google.sps.data.Vendor;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
@@ -86,9 +88,14 @@ public class AddSaleCardServlet extends HttpServlet {
         return;
       }
 
-      // Get the BlobKey of the image that the user uploaded to Blobstore
+      // Get values to add/update salecard's picture
+      String currentBlobKey = HttpServletUtils.getParameter(request, "blobKey", "");
       BlobKey imageBlobKey = getUploadedFileBlobKey(request, "imageFile");
       String altText = HttpServletUtils.getParameter(request, "altText", "");
+      // If nothing was uploaded and there is a current picture, keep current
+      if (!currentBlobKey.isEmpty() && imageBlobKey == null) {
+        imageBlobKey = new BlobKey(currentBlobKey);
+      }
 
       // Check values are not empty or outside range
       if (businessName.isEmpty() || description.isEmpty() || geoHash.isEmpty() || altText.isEmpty() || 
@@ -100,44 +107,75 @@ public class AddSaleCardServlet extends HttpServlet {
 
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-      // TODO: Create vendor key using the Auth ID
-      // Key vendorKey = KeyFactory.createKey("Vendor", (String) user.authID);
+      Key vendorKey = KeyFactory.createKey("Vendor", userService.getCurrentUser().getUserId());
+      Entity vendorEntity;
+      try {
+        vendorEntity = datastore.get(vendorKey);
+      } catch (EntityNotFoundException e) {
+        System.out.println(e);
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        return;
+      }
+      Vendor vendorObject = new Vendor(vendorEntity);
 
-      // Generate Key when datastore put
-      Entity saleCard = new Entity("SaleCard"/*, vendorKey*/);
-      datastore.put(saleCard);      
+      Entity saleCard;
+      Entity picture;
+      Entity locationData;
+      if (vendorObject.getSaleCard() == null) {
+        // New Entities - (Generate Key when datastore put)
+        saleCard = new Entity("SaleCard", vendorKey);
+        datastore.put(saleCard); 
 
-      // TODO: Remove from datastore existing saleCard, picture and location data
+        picture = new Entity("Picture", saleCard.getKey());
+        locationData = new Entity("LocationData", saleCard.getKey());
+      } else {
+        // Use existing Entities
+        saleCard = new Entity("SaleCard",
+            vendorObject.getSaleCard().getId(), vendorKey);
+        picture = new Entity("Picture",
+            vendorObject.getSaleCard().getPicture().getId(), saleCard.getKey());
+        locationData = new Entity("LocationData",
+            vendorObject.getSaleCard().getLocation().getId(), saleCard.getKey());
+      }
 
-      Entity picture = new Entity("Picture", saleCard.getKey());
+      // If not the same, delete previous blob from blobstore
+      if (vendorObject.getSaleCard() != null && 
+          imageBlobKey.compareTo(vendorObject.getSaleCard().getPicture().getBlobKey()) != 0) {
+        BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+        blobstoreService.delete(vendorObject.getSaleCard().getPicture().getBlobKey());
+      }
       picture.setProperty("blobKey", imageBlobKey);
       picture.setProperty("altText", altText);
       datastore.put(picture);
 
-      Entity locationData = new Entity("LocationData", saleCard.getKey());
       locationData.setProperty("salePoint", vendorLocation);
       locationData.setProperty("geoHash", geoHash);
       locationData.setProperty("radius", radius);
       datastore.put(locationData);
 
       EmbeddedEntity picInfo = new EmbeddedEntity();
+      picInfo.setKey(picture.getKey());
       picInfo.setPropertiesFrom(picture);
       EmbeddedEntity locInfo = new EmbeddedEntity();
+      locInfo.setKey(locationData.getKey());
       locInfo.setPropertiesFrom(locationData);
 
+      saleCard.setProperty("businessName", businessName);
+      saleCard.setProperty("description", description);
+      saleCard.setProperty("hasDelivery", hasDelivery);
+      saleCard.setProperty("startTime", startTime);
+      saleCard.setProperty("endTime", endTime);
       saleCard.setIndexedProperty("picture", picInfo);
       saleCard.setIndexedProperty("location", locInfo);
       datastore.put(saleCard);
 
       EmbeddedEntity saleInfo = new EmbeddedEntity();
+      saleInfo.setKey(saleCard.getKey());
       saleInfo.setPropertiesFrom(saleCard);
 
-      /* TODO: Vendor Entity Put
-        Entity vendor = datastore.get(vendorKey);
-        vendor.setIndexedProperty("saleCard", saleInfo);
-        datastore.put(vendor);
-      */
-
+      vendorEntity.setIndexedProperty("saleCard", saleInfo);
+      datastore.put(vendorEntity);
+      
       response.sendRedirect("/");
     } else {
       System.out.println("User is not logged in.");
