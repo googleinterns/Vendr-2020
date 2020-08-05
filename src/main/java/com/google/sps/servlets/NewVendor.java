@@ -27,6 +27,8 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.data.Vendor;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet to register a new vendor in Datastore */
 @WebServlet("/new-vendor")
 public class NewVendor extends HttpServlet {
-
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     final UserService userService = UserServiceFactory.getUserService();
@@ -54,7 +55,7 @@ public class NewVendor extends HttpServlet {
     final Vendor newVendor = getVendorData(request, userService);
 
     if (!isValidInput(newVendor)) {
-      response.getWriter().println("Error: You can't send null or empty inputs");
+      response.getWriter().println("Error: Inputs can't be empty or have special characters");
       return;
     }
 
@@ -92,17 +93,46 @@ public class NewVendor extends HttpServlet {
     datastore.put(createVendorEntity(newVendor)); 
   }
 
+  // Check if the vendors names contain special characters
+  private boolean hasSpecialCharacters(String vendorName) throws IOException{
+    Pattern validCharacters = Pattern.compile("[a-zA-Z0-9]*");
+    Matcher validInputChecker = validCharacters.matcher(vendorName);
+
+    if (!validInputChecker.matches()) {
+      return true;
+    }
+    return false;
+  }
+
+  // Check if the vendors phone number contain special characters or letters
+  private boolean hasLettersOrSpecialCharacters(
+    String phoneNumber) throws IOException {
+      Pattern validCharacters = Pattern.compile("[0-9]*");
+      Matcher validInputChecker = validCharacters.matcher(phoneNumber);
+
+      if (!validInputChecker.matches()) {
+        return true;
+      }
+      return false;
+  }
+
   // Checks if any of the input values is empty
   private boolean isValidInput(Vendor newVendor) throws IOException {
     final String firstName = newVendor.getFirstName();
     final String lastName =  newVendor.getLastName();
     final String phoneNumber = newVendor.getPhoneNumber();
 
-    return !(
-      (firstName == null || firstName.isEmpty()) ||
-      (lastName == null || lastName.isEmpty()) ||
-      (phoneNumber == null || phoneNumber.isEmpty())
-    );
+    final boolean notValidFirstName = 
+      (firstName == null || firstName.isEmpty() || hasSpecialCharacters(firstName));
+    final boolean notValidLastName = 
+      (lastName == null || lastName.isEmpty() || hasSpecialCharacters(lastName));
+    final boolean notValidPhoneNumber = 
+      (phoneNumber == null || phoneNumber.isEmpty() || hasLettersOrSpecialCharacters(phoneNumber));
+
+    if (notValidFirstName || notValidLastName || notValidPhoneNumber) {
+      return false;
+    }
+    return true;
   }
 
   public boolean isUserRegistered(String id) throws IOException {
