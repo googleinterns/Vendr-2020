@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /**
- * File to handle Google's Auth API requests
- */
+* File to handle Google's Auth API requests
+*/
 
 const PHONE_NUMBER_LENGTH = 10;
 
@@ -50,12 +50,12 @@ function validateRegistrationFormInputs() {
   const lastName = document.getElementById('last_name').value;
   const phoneNumber = document.getElementById('phone_number').value;
 
-  if(!firstName || !lastName || notValidInput(firstName, true) || notValidInput(lastName, true)) {
+  if (!firstName || !lastName || notValidInput(firstName, true) || notValidInput(lastName, true)) {
     alert('Names can\'t be empty or have special characters');
     return;
   }
 
-  if(!phoneNumber || phoneNumber.length !== PHONE_NUMBER_LENGTH || notValidInput(phoneNumber, false)) {
+  if (!phoneNumber || phoneNumber.length !== PHONE_NUMBER_LENGTH || notValidInput(phoneNumber, false)) {
     alert(`Phone Number can't be empty, have spaces or have more than ${PHONE_NUMBER_LENGTH} numbers`);
     return;
   }
