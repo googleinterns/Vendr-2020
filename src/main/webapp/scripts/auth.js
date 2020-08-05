@@ -34,7 +34,7 @@ function redirectToRegistrationForm() {
 }
 
 // Sets URL from Auth API in the navbar log button
-/** @param {{url:String, isLogged:boolean, isRegistered:boolean}} */
+/** @param {{url:string, isLogged:boolean, isRegistered:boolean}} logStatus */
 function setLogURLInNavBar(logStatus) {
   const logButton = document.getElementById('log_button');
   const logForm = document.getElementById('log_submit_form');
@@ -44,18 +44,17 @@ function setLogURLInNavBar(logStatus) {
 }
 
 // Valids that the user inputs are in the right format
-/** @return {void} */
 function validateRegistrationFormInputs() {
   const firstName = document.getElementById('first_name').value;
   const lastName = document.getElementById('last_name').value;
   const phoneNumber = document.getElementById('phone_number').value;
 
-  if (!firstName || !lastName || notValidInput(firstName, true) || notValidInput(lastName, true)) {
+  if (!firstName || !lastName || !isValidInput(firstName, true) || !isValidInput(lastName, true)) {
     alert('Names can\'t be empty or have special characters');
     return;
   }
 
-  if (!phoneNumber || phoneNumber.length !== PHONE_NUMBER_LENGTH || notValidInput(phoneNumber, false)) {
+  if (!phoneNumber || phoneNumber.length !== PHONE_NUMBER_LENGTH || !isValidInput(phoneNumber, false)) {
     alert(`Phone Number can't be empty, have spaces or have more than ${PHONE_NUMBER_LENGTH} numbers`);
     return;
   }
@@ -64,8 +63,12 @@ function validateRegistrationFormInputs() {
 }
 
 // Checks if input is valid
-/** @param {vendorInput:String, isNameInput:boolean} @return {boolean} */
-function notValidInput(vendorInput, isNameInput) {
+/** 
+* @param {string} vendorInput
+* @param {boolean} isNameInput
+* @return {boolean}
+*/
+function isValidInput(vendorInput, isNameInput) {
   // Regex for Valid Characters i.e. Alphabets, Numbers and Space
   const validCharacters = /^[A-Za-z0-9 ]+$/;
   // Regex for Valid Numbers
@@ -74,12 +77,14 @@ function notValidInput(vendorInput, isNameInput) {
   const regexCheck = (isNameInput) ? validCharacters : validNumbers;
 
   // Returns true if the input is clean of special characters
-  return !regexCheck.test(vendorInput);
+  return regexCheck.test(vendorInput);
 }
 
 // Fetch vendor data to add it to datastore
 /** 
-* @param {firstName:String, lastName:String, phoneNumber:String} 
+* @param {string} firstName
+* @param {string} lastName
+* @param {string} phoneNumber
 * @return {void} 
 */
 function handleRegistration(firstName, lastName, phoneNumber) {

@@ -75,7 +75,7 @@ public class NewVendor extends HttpServlet {
   }
 
   private Entity createVendorEntity(Vendor newVendor) throws IOException {
-    Entity vendorEntity = new Entity("Vendor", newVendor.getId());
+    final Entity vendorEntity = new Entity("Vendor", newVendor.getId());
 
     vendorEntity.setProperty("firstName", newVendor.getFirstName());
     vendorEntity.setProperty("lastName", newVendor.getLastName());
@@ -89,14 +89,14 @@ public class NewVendor extends HttpServlet {
 
   // Adds a new vendor entity in Datastore
   private void toDatastore(Vendor newVendor) throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(createVendorEntity(newVendor)); 
   }
 
   // Check if the vendors names contain special characters
   private boolean hasSpecialCharacters(String vendorName) throws IOException{
-    Pattern validCharacters = Pattern.compile("[a-zA-Z0-9]*");
-    Matcher validInputChecker = validCharacters.matcher(vendorName);
+    final Pattern validCharacters = Pattern.compile("[a-zA-Z0-9]*");
+    final Matcher validInputChecker = validCharacters.matcher(vendorName);
 
     if (!validInputChecker.matches()) {
       return true;
@@ -107,8 +107,8 @@ public class NewVendor extends HttpServlet {
   // Check if the vendors phone number contain special characters or letters
   private boolean hasLettersOrSpecialCharacters(
     String phoneNumber) throws IOException {
-      Pattern validCharacters = Pattern.compile("[0-9]*");
-      Matcher validInputChecker = validCharacters.matcher(phoneNumber);
+      final Pattern validCharacters = Pattern.compile("[0-9]*");
+      final Matcher validInputChecker = validCharacters.matcher(phoneNumber);
 
       if (!validInputChecker.matches()) {
         return true;
@@ -136,12 +136,12 @@ public class NewVendor extends HttpServlet {
   }
 
   public boolean isUserRegistered(String id) throws IOException {
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Key vendorKey = KeyFactory.createKey("Vendor", id);
+    final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    final Key vendorKey = KeyFactory.createKey("Vendor", id);
     
     try {
-      Entity vendor = datastore.get(vendorKey);
-      String phoneNumber = (String) vendor.getProperty("phoneNumber");
+      final Entity vendor = datastore.get(vendorKey);
+      final String phoneNumber = (String) vendor.getProperty("phoneNumber");
       
       return (phoneNumber == null || phoneNumber.isEmpty()) ? false : true;
     } catch (EntityNotFoundException e) {
