@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 /**
  * Function to load the navbar on the web app 
  */
 
 $(() => {
-  $('#navbar_container').load('common/navbar.html', setActiveTab);
+  // After the navbar finishes loading, set the active tab
+  $('#navbar_container').load('common/navbar.html', setActiveTab); 
 });
 
 const setActiveTab = () => {
@@ -28,4 +28,6 @@ const setActiveTab = () => {
 
   const activeTabElement = document.getElementById(`${fileName[0]}_tab`);
   activeTabElement.classList.add('active');
+
+  getLogStatus();
 };

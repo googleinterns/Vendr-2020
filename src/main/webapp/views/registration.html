@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Vendr</title>
+    <link rel="stylesheet" href="../styles/style.css">  
+    <link rel="stylesheet" href="../styles/registration.css">   
+    
+    <!-- Dependencies -->
+    <link rel="stylesheet" href="../styles/bootstrap.min.css">
+    <link rel="stylesheet" href="../font-awesome-4.7.0/css/font-awesome.min.css">
+    <script src="../scripts/jquery-3.5.1.min.js"></script>
+    <script src="../scripts/popper.min.js"></script>
+    <script src="../scripts/bootstrap.bundle.min.js"></script>
+
+    <script src="../scripts/auth.js"></script>
+    <script src="../scripts/navbar.js"></script>
+  </head>
+  <body>
+    <div id="registration_container" class="h-100 container">
+      <div id="registration_wrapper" class="h-100 row align-items-center">
+        <div id="registration_form_container" class="col align-self-center">
+          <div class="row">
+            <div id="registration_form_wrapper" class="col-xl-5 col-lg-6 col-md-8 col-sm-10 mx-auto text-center form p-4">
+              <form action="/new-vendor" method="POST">
+                <div class="form-group">
+                  <h1>User Registration Form</h1>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col-md-6">
+                    <label for="first_name">First Name</label>
+                    <input type="text" class="form-control" name="first_name" id="first_name" placeholder="First Name" required>
+                  </div>
+                  <div class="form-group col-md-6">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Last Name" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="phone_number">Phone Number: </label>
+                  <input type="tel" name="phone_number" id="phone_number" class="form-control" placeholder="8112345678" required>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="validateRegistrationFormInputs()">Sign in</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
