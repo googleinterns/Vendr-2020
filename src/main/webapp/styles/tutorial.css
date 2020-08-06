@@ -6,3 +6,21 @@ body {
 .carousel-control-prev-icon {
   filter: invert(1);
 }
+
+.carousel-indicators li {
+  background-color: #831 !important;
+  
+}
+
+.carousel-indicators .active {
+  background-color: #444;
+}
+
+#carousel_tutorial {
+  border: 1px solid darkgrey;
+  border-radius: 8px;
+}
+
+.home_header {
+  font-family: Arial, Helvetica, sans-serif;
+}
