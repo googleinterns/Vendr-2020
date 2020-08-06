@@ -63,7 +63,7 @@ public final class GeoHashTest {
   }
 
   @Test
-  public void getHasheshToQuery() {
+  public void getHashesToQuery() {
     double lat = 25.650413;
     double lng = -100.289855;
     int distance = 1000;
