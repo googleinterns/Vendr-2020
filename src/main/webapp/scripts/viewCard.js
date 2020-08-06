@@ -60,19 +60,21 @@ const querySalecard = () => {
   const salecardContainer = document.getElementById('salecard-container');
 
   //Clean previously retrieved cards
-  salecardContainer.innerHTML = '';
+  salecardContainer.textContent = '';
 
   let salecardCloned = salecardTemplate.content.cloneNode(true);
 
-  salecardCloned.getElementById('salecard-id').innerHTML = salecard.id;
-  salecardCloned.getElementById('business-name').innerHTML = salecard.businessName;
-  salecardCloned.getElementById('business-description').innerHTML = salecard.description;
-  salecardCloned.getElementById('openedFrom').innerHTML = salecard.startTime;
-  salecardCloned.getElementById('openedTo').innerHTML = salecard.endTime;
-  salecardCloned.getElementById('deliveryDistance').innerHTML = salecard.location.radius;
-  salecardCloned.getElementById('vendor-name').innerHTML = `${vendor.firstName} ${vendor.lastName}`;
-  salecardCloned.getElementById('vendor-phone').innerHTML = vendor.phoneNumber;
-  salecardCloned.getElementById('vendor-distance').innerHTML = `${salecard.location.distance}m`;
+  salecardCloned.getElementById('salecard-id').textContent = salecard.id;
+  salecardCloned.getElementById('business-name').textContent = salecard.businessName;
+  salecardCloned.getElementById('business-description').textContent = salecard.description;
+  salecardCloned.getElementById('openedFrom').textContent = 
+    `${salecard.startTime.hour}:${salecard.startTime.minute}:${salecard.startTime.second}`;
+  salecardCloned.getElementById('openedTo').textContent = 
+    `${salecard.endTime.hour}:${salecard.endTime.minute}:${salecard.endTime.second}`;
+  salecardCloned.getElementById('deliveryDistance').textContent = salecard.location.radius;
+  salecardCloned.getElementById('vendor-name').textContent = `${vendor.firstName} ${vendor.lastName}`;
+  salecardCloned.getElementById('vendor-phone').textContent = vendor.phoneNumber;
+  salecardCloned.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient}m`;
 
   salecardContainer.appendChild(salecardCloned);
 
@@ -89,8 +91,8 @@ drawMap = () => {
 
   // Insert vendor location
   const vendorLocation = {
-    lat: vendor.saleCard.location.salepoint.lat,
-    lng: vendor.saleCard.location.salepoint.lng
+    lat: vendor.saleCard.location.salePoint.latitude,
+    lng: vendor.saleCard.location.salePoint.longitude
   };
 
   map.setCenter(vendorLocation);
@@ -106,12 +108,12 @@ drawMap = () => {
   // Declare circle with radius of the delivery service of the vendor
   const vendorCircle = new google.maps.Circle({
     center: vendorLocation,
-    fillColor: '#FF0000',
+    fillColor: '#F00',
     fillOpacity: 0.20,
     map,
     radius: vendor.saleCard.hasDelivery
       ? vendor.saleCard.location.radius : 0,
-    strokeColor: '#FF0000',
+    strokeColor: '#F00',
     strokeOpacity: 0.8,
     strokeWeight: 2
   });

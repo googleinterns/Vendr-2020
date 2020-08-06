@@ -63,9 +63,9 @@ const querySalecard = () => {
   document.getElementById('business-endTime').value = salecard.endTime;
   document.getElementById('delivery').checked = salecard.hasDelivery;
   document.getElementById('business-distanceOfDelivery').value = salecard.location.radius;
-  document.getElementById('photo-description').value = salecard.picture.alt;
-  document.getElementById('business-lat').value = salecard.location.salepoint.lat;
-  document.getElementById('business-lng').value = salecard.location.salepoint.lng;
+  document.getElementById('photo-description').value = salecard.picture.altText;
+  document.getElementById('business-lat').value = salecard.location.salePoint.latitude;
+  document.getElementById('business-lng').value = salecard.location.salePoint.longitude;
   
   // After the card is inserted on the body we can init the map
   initMap();
@@ -97,12 +97,12 @@ drawMap = () => {
   // Declare circle with radius of the delivery service of the vendor
   const vendorCircle = new google.maps.Circle({
     center: vendorLocation,
-    fillColor: '#FF0000',
+    fillColor: '#F00',
     fillOpacity: 0.20,
     map,
     radius: vendor.saleCard.hasDelivery
       ? vendor.saleCard.location.radius : 0,
-    strokeColor: '#FF0000',
+    strokeColor: '#F00',
     strokeOpacity: 0.8,
     strokeWeight: 2
   });
@@ -135,18 +135,18 @@ const updateLocation = () => {
  */
 const updateBusiness = () => {
   const postParams = {
-    name: document.getElementById('business-name').value,
+    businessName: document.getElementById('business-name').value,
     description: document.getElementById('business-description').value,
     startTime: document.getElementById('business-startTime').value,
     endTime: document.getElementById('business-endTime').value,
-    delivery: document.getElementById('delivery').value,
-    distanceOfDelivery: 
+    hasDelivery: document.getElementById('delivery').value,
+    radius: 
       document.getElementById('business-distanceOfDelivery').value,
-    photoDescription: document.getElementById('photo-description').value,
+      altText: document.getElementById('photo-description').value,
     lat: document.getElementById('business-lat').value,
-    lng: document.getElementById('business-lng').value
+    long: document.getElementById('business-lng').value
   };
-  fetch('/update-card', {method: 'POST', body: postParams})
+  fetch('/add-saleCard', {method: 'POST', body: postParams})
   .then(response => {
     if (response.redirected) {
       window.location.href = response.url;
