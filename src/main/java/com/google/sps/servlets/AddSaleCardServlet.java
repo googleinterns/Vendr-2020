@@ -163,7 +163,7 @@ public class AddSaleCardServlet extends HttpServlet {
       saleCard.setProperty("hasDelivery", hasDelivery);
       saleCard.setProperty("startTime", startTime);
       saleCard.setProperty("endTime", endTime);
-      saleCard.setIndexedProperty("picture", picInfo);
+      saleCard.setProperty("picture", picInfo);
       saleCard.setIndexedProperty("location", locInfo);
       datastore.put(saleCard);
 
@@ -177,7 +177,7 @@ public class AddSaleCardServlet extends HttpServlet {
       response.sendRedirect("/");
     } else {
       System.out.println("User is not logged in.");
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User is not logged in.");
     }
   }
 
