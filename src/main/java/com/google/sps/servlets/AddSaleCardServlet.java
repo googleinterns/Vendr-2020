@@ -118,18 +118,16 @@ public class AddSaleCardServlet extends HttpServlet {
       }
       Vendor vendorObject = new Vendor(vendorEntity);
 
-      Entity saleCard;
-      Entity picture;
-      Entity locationData;
+      Entity saleCard, picture, locationData;
+      // If the vendor doesn't have a saleCard, create completely new Entities (datastore.put(...) to generate Key)
+      // Else, use the already existing Entities
       if (vendorObject.getSaleCard() == null) {
-        // New Entities - (Generate Key when datastore put)
         saleCard = new Entity("SaleCard", vendorKey);
         datastore.put(saleCard); 
 
         picture = new Entity("Picture", saleCard.getKey());
         locationData = new Entity("LocationData", saleCard.getKey());
       } else {
-        // Use existing Entities
         saleCard = new Entity("SaleCard",
             vendorObject.getSaleCard().getId(), vendorKey);
         picture = new Entity("Picture",
