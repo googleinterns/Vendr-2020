@@ -14,6 +14,17 @@
 
 package com.google.sps.data;
 
+import com.google.appengine.api.blobstore.BlobInfo;
+import com.google.appengine.api.blobstore.BlobInfoFactory;
+import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.EmbeddedEntity;
+import com.google.appengine.api.datastore.Entity;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /** Servlets Utility Class. */
@@ -36,5 +47,36 @@ public final class HttpServletUtils {
       return defaultValue;
     }
     return value;
+  }
+
+  /** Returns a BlobKey for the uploaded file, or null if the user didn't upload a file. */
+  public static BlobKey getUploadedFileBlobKey(HttpServletRequest request, String formInput) {
+    BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+    Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
+    List<BlobKey> blobKeys = blobs.get(formInput);
+
+    // User submitted form without selecting a file (dev server)
+    if (blobKeys == null || blobKeys.isEmpty()) {
+      return null;
+    }
+
+    // Our form only contains a single file input, so get the first index.
+    BlobKey blobKey = blobKeys.get(0);
+
+    // User submitted form without selecting a file (live server)
+    BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
+    if (blobInfo == null || blobInfo.getSize() == 0) {
+      blobstoreService.delete(blobKey);
+      return null;
+    }
+
+    // Validate the file is an image file (.png, .jpg, .jpeg, .jfif, .pjpeg, .pjp)
+    String blobMimeType = blobInfo.getContentType();
+    if (blobMimeType.equals("image/png") || blobMimeType.equals("image/jpeg")) {
+      return blobKey;
+    } else {
+      blobstoreService.delete(blobKey);
+      return null;
+    }
   }
 }
