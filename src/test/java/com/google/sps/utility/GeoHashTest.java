@@ -14,13 +14,9 @@
 
 package com.google.sps.utility;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -32,7 +28,7 @@ public final class GeoHashTest {
   @Test
   public void determinePrecisionNormal() {
     int distance = 1000;
-    int expected = 7; // Precision of the geoHash for 1000m
+    int expected = 6; // Precision of the geoHash for 1000m
     int actual = geoHash.determinePrecision(distance);
 
     Assert.assertEquals(expected, actual);
@@ -57,22 +53,23 @@ public final class GeoHashTest {
   }
 
   @Test
-  public void encodeClient() {
+  public void encode() {
     double lat = 25.650413;
     double lng = -100.289855;
-    int distance = 1000;
-    String expected = "9u89vve";
-    String actual = geoHash.encodeClient(lat, lng, distance);
+    String expected = "9u89vve0m";
+    String actual = geoHash.encodeVendor(lat, lng);
 
     Assert.assertEquals(expected, actual);
   }
 
   @Test
-  public void encodeVendor() {
+  public void getHasheshToQuery() {
     double lat = 25.650413;
     double lng = -100.289855;
-    String expected = "9u89vve0m";
-    String actual = geoHash.encodeVendor(lat, lng);
+    int distance = 1000;
+    List<String> expected = Arrays.asList("9u89vy", "9u89yn", "9u89yj", "9u89yh",
+            "9u89vu", "9u89vs", "9u89vt", "9u89vw", "9u89vv");
+    List<String> actual = geoHash.getHashesToQuery(lat, lng, distance);
 
     Assert.assertEquals(expected, actual);
   }
