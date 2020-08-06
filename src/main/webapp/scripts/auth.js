@@ -19,10 +19,14 @@
 const PHONE_NUMBER_LENGTH = 10;
 
 // Call to Auth servlet to get user log information
-function getLogStatus() {
+function getLogStatus(fileName) {
   fetch('/log-status').then(response => response.json()).then((logStatus) => {
     if(!logStatus.isRegistered && logStatus.isLogged) {
       redirectToRegistrationForm();
+    }
+    
+    if (fileName === 'home') {
+      handleTutorialContent(logStatus.isLogged);
     }
 
     setLogURLInNavBar(logStatus);

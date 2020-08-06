@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Vendr</title>
-    <link rel="stylesheet" href="../styles/style.css">   
+    <link rel="stylesheet" href="../styles/style.css"> 
+    <link rel="stylesheet" href="../styles/tutorial.css">    
     
     <!-- Dependencies -->
     <link rel="stylesheet" href="../styles/bootstrap.min.css">
@@ -13,14 +14,38 @@
     <script src="../scripts/popper.min.js"></script>
     <script src="../scripts/bootstrap.bundle.min.js"></script>
 
+    <script src="../scripts/tutorial.js"></script>
     <script src="../scripts/auth.js"></script>
     <script src="../scripts/navbar.js"></script>
     <script src="../scripts/onload.js"></script>
   </head>
   <body>
-    <div id="home_container">
-      <div id="home_wrapper">
+    <div id="home_container" class="h-100">
+      <div id="home_wrapper" class="h-100">
         <div id="navbar_container"></div>
+        <br><br>
+        <div id="tutorial_container" class="container h-100">
+          <div class="row">
+            <div class="col">
+              <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                  <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                  <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                </ol>
+                <div id="tutorial_content" class="carousel-inner container"></div>
+                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>
