@@ -111,7 +111,9 @@ public class GetNearbyVendorsServlet extends HttpServlet {
     for (Entity vendorEntity : vendors) {
       Vendor vendor = new Vendor(vendorEntity);
       GeoPt vendorLocation = vendor.getSaleCard().getLocation().getSalePoint();
-      if (computeDistance(clientLocation, vendorLocation) <= distanceLimit) {
+      float distanceClientVendor = computeDistance(clientLocation, vendorLocation);
+      if (distanceClientVendor <= distanceLimit) {
+        vendor.getSaleCard().setDistanceFromClient(distanceClientVendor);
         nearbyVendors.add(vendor);
       }    
     }
