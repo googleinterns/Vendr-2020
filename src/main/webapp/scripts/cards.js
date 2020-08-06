@@ -22,17 +22,17 @@ querySalecards = () => {
     const salecardsContainer = document.getElementById('salecards-container');
 
     //Clean previously retrieved cards
-    salecardsContainer.innerHTML = '';
+    salecardsContainer.textContent = '';
 
     Object.keys(vendors).forEach(vendorNumber => {
         let vendor = vendors[vendorNumber];
         let salecard = vendor.saleCard;
         let salecardCloned = salecardTemplate.content.cloneNode(true);
-        salecardCloned.getElementById('business-name').innerHTML = salecard.businessName;
-        salecardCloned.getElementById('business-description').innerHTML = salecard.description;
-        salecardCloned.getElementById('vendor-name').innerHTML = `${vendor.firstName} ${vendor.lastName}`;
-        salecardCloned.getElementById('vendor-phone').innerHTML = vendor.phoneNumber;
-        salecardCloned.getElementById('vendor-distance').innerHTML = `${salecard.location.distance}m`;
+        salecardCloned.getElementById('business-name').textContent = salecard.businessName;
+        salecardCloned.getElementById('business-description').textContent = salecard.description;
+        salecardCloned.getElementById('vendor-name').textContent = `${vendor.firstName} ${vendor.lastName}`;
+        salecardCloned.getElementById('vendor-phone').textContent = vendor.phoneNumber;
+        salecardCloned.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient}m`;
         salecardCloned.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${salecard.id}`);
 
         salecardsContainer.appendChild(salecardCloned);
@@ -40,15 +40,4 @@ querySalecards = () => {
 
     //Display number of vendor found
     displayNumberOfVendors(vendors);
-};
-
-/**
-* Function that creates h3 element to display the number of vendors
-*/
-const displayNumberOfVendors = (vendors) => {
-    const numberOfVendorsElement = document.createElement('h3');
-    numberOfVendorsElement.innerHTML = `${vendors.length} vendors found.`;
-    const containerElement = document.getElementById('numberOfVendors');
-    containerElement.innerHTML = '';
-    containerElement.appendChild(numberOfVendorsElement);
 };
