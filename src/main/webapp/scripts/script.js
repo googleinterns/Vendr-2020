@@ -19,3 +19,16 @@
 $(() => {
   $('#searchBarVendors-placeholder').load('common/searchBarVendors.html'); 
 });
+
+/**
+ * Function that creates h3 element to display the number of vendors
+ */
+const displayNumberOfVendors = (vendors) => {
+  const numberOfVendorsElement = document.createElement('h3');
+  numberOfVendorsElement.textContent = (vendors.length === 1) 
+    ? '1 vendor found.'
+    : `${vendors.length} vendors found.`;
+  const containerElement = document.getElementById('numberOfVendors');
+  containerElement.textContent = '';
+  containerElement.appendChild(numberOfVendorsElement);
+};
