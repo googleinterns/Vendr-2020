@@ -19,6 +19,7 @@ body {
 #carousel_tutorial {
   border: 1px solid darkgrey;
   border-radius: 8px;
+  height: 500px;
 }
 
 .home_header {
