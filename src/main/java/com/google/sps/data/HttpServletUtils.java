@@ -25,6 +25,8 @@ import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 /** Servlets Utility Class. */
@@ -78,5 +80,21 @@ public final class HttpServletUtils {
       blobstoreService.delete(blobKey);
       return null;
     }
+  }
+
+  /** Return true if the string contains only Unicode letters and at least one, otherwise false  */
+  public static boolean hasOnlyLetters(String string) {
+    Pattern validCharacters = Pattern.compile("\\p{L}+");
+    Matcher validInputChecker = validCharacters.matcher(string);
+
+    return validInputChecker.matches();
+  }
+
+  /** Return true if the string contains only numbers, otherwise false  */
+  public static boolean hasOnlyNumbers(String string) {
+    Pattern validCharacters = Pattern.compile("[0-9]+");
+    Matcher validInputChecker = validCharacters.matcher(string);
+
+    return validInputChecker.matches();
   }
 }
