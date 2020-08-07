@@ -15,16 +15,16 @@ const vendor = {
         description: 'We sell sweet tacos',
         hasDelivery: true,
         startTime: {
-            hour: 07,
-            minute: 30,
-            second: 0,
-            nano: 0
+            hour: '07',
+            minute: '30',
+            second: '00',
+            nano: '00'
         },
         endTime: {
-            hour: 17,
-            minute: 30,
-            second: 0,
-            nano: 0
+            hour: '17',
+            minute: '30',
+            second: '00',
+            nano: '00'
         },
         location: {
             id: 1,

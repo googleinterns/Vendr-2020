@@ -16,16 +16,16 @@ const vendors = [
       description: 'We sell sweet tacos',
       hasDelivery: true,
       startTime: {
-        hour: 07,
-        minute: 30,
-        second: 0,
-        nano: 0
+        hour: '07',
+        minute: '30',
+        second: '00',
+        nano: '00'
       },
       endTime: {
-        hour: 17,
-        minute: 30,
-        second: 0,
-        nano: 0
+        hour: '17',
+        minute: '30',
+        second: '00',
+        nano: '00'
       },
       location: {
         id: 1,
@@ -59,16 +59,16 @@ const vendors = [
       description: 'The popcorn with most chili in the world',
       hasDelivery: true,
       startTime: {
-        hour: 08,
-        minute: 30,
-        second: 0,
-        nano: 0
+        hour: '08',
+        minute: '30',
+        second: '00',
+        nano: '00'
       },
       endTime: {
-        hour: 18,
-        minute: 30,
-        second: 0,
-        nano: 0
+        hour: '18',
+        minute: '30',
+        second: '00',
+        nano: '00'
       },
       location: {
         id: 1,
@@ -102,16 +102,16 @@ const vendors = [
       description: 'The most delicious ice cream is here',
       hasDelivery: true,
       startTime: {
-        hour: 09,
-        minute: 30,
-        second: 0,
-        nano: 0
+        hour: '09',
+        minute: '30',
+        second: '00',
+        nano: '00'
       },
       endTime: {
-        hour: 19,
-        minute: 30,
-        second: 0,
-        nano: 0
+        hour: '19',
+        minute: '30',
+        second: '00',
+        nano: '00'
       },
       location: {
         id: 1,

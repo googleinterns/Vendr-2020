@@ -59,8 +59,10 @@ const querySalecard = () => {
 
   document.getElementById('business-name').value = salecard.businessName;
   document.getElementById('business-description').value = salecard.description;
-  document.getElementById('business-startTime').value = salecard.startTime;
-  document.getElementById('business-endTime').value = salecard.endTime;
+  document.getElementById('business-startTime').value = 
+    `${salecard.startTime.hour}:${salecard.startTime.minute}:${salecard.startTime.second}`;
+  document.getElementById('business-endTime').value = 
+    `${salecard.endTime.hour}:${salecard.endTime.minute}:${salecard.endTime.second}`;
   document.getElementById('delivery').checked = salecard.hasDelivery;
   document.getElementById('business-distanceOfDelivery').value = salecard.location.radius;
   document.getElementById('photo-description').value = salecard.picture.altText;
@@ -101,7 +103,8 @@ drawMap = () => {
     fillOpacity: 0.20,
     map,
     radius: vendor.saleCard.hasDelivery
-      ? vendor.saleCard.location.radius : 0,
+      ? parseInt(document.getElementById('business-distanceOfDelivery').value)
+      : 0,
     strokeColor: '#F00',
     strokeOpacity: 0.8,
     strokeWeight: 2
