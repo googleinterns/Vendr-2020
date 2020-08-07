@@ -59,11 +59,16 @@ public class UpdateVendorServlet extends HttpServlet {
         imageBlobKey = new BlobKey(currentBlobKey);
       }
 
-      // Check values are not empty or outside range
-      if (firstName.isEmpty() || lastName.isEmpty() || phoneNumber.isEmpty() || altText.isEmpty() || 
-          imageBlobKey == null) {
-        System.out.println("The values do not exist and/or are outside the range.");
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+      // Check values are not empty and valid
+      if (!HttpServletUtils.hasOnlyLetters(firstName) || !HttpServletUtils.hasOnlyLetters(lastName) || 
+          !HttpServletUtils.hasOnlyNumbers(phoneNumber) || altText.isEmpty() || imageBlobKey == null) {
+        // Delete from blobstore if the uploaded file was a new one
+        if (imageBlobKey != null && !currentBlobKey.equals(imageBlobKey.toString())) {
+          BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+          blobstoreService.delete(imageBlobKey);
+        }
+        System.out.println("The values do not exist and/or the format is incorrect.");
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Inputs do not exist and/or the format is incorrect.");
         return;
       }
 
@@ -75,7 +80,7 @@ public class UpdateVendorServlet extends HttpServlet {
         vendorEntity = datastore.get(vendorKey);
       } catch (EntityNotFoundException e) {
         System.out.println(e);
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vendor Account does not exist");
         return;
       }
       Vendor vendorObject = new Vendor(vendorEntity);
@@ -113,7 +118,7 @@ public class UpdateVendorServlet extends HttpServlet {
       response.sendRedirect("/");
     } else {
       System.out.println("User is not logged in.");
-      response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User is not logged in.");
     }
   }
 }
