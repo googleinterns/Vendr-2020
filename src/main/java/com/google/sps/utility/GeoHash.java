@@ -27,9 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class GeoHash {
-
   /**
    * Encodes latitude and longitude to geoHash given determined distance to set the
    * precision of the hash and creates a list of geohashed neighbour cells in order
@@ -41,9 +39,9 @@ public class GeoHash {
    */
   public static List<String> getHashesToQuery(double lat, double lng, int distance) {
     String geohash = encode(lat, lng, distance);
-    List<String> hashesToQuery = neighbourCells(geohash);
+    List<String> hashesToQuery = getNeighbourCells(geohash);
 
-    // Append center geohash cell (current)
+    // Append center geohash cell (current).
     hashesToQuery.add(geohash);
 
     return hashesToQuery;
@@ -71,14 +69,24 @@ public class GeoHash {
   private static String encode(double lat, double lng, int distance) {
     String geoHash = "";
     int precision = determinePrecision(distance);
-    int index = 0; // index into BASE32 map.
-    int bit = 0; // each char holds 5 bits.
+    int index = 0; // Index into BASE32 map.
+    int bit = 0; // Each char holds 5 bits.
     boolean evenBit = true;
     double latMin = -90, latMax = 90;
     double lngMin = -180, lngMax = 180;
 
+    /**
+     * Calculates the geohash by appending characters to the final string.
+     * evenBit helps to identify if we are analyzing West-East or North-South
+     * (latitude or longitude). By bisecting (binary search) both lines we
+     * aproximate the hash to a desired little square (the size of that square is
+     * determined by the precision). Index helps us to determine in what position
+     * of the BASE32 Map we are standing.
+     * See more at: https://en.wikipedia.org/wiki/Geohash.
+     */
     while (geoHash.length() < precision) {
       if (evenBit) {
+        // Bisects W-E
         double lngMid = (lngMin + lngMax) / 2;
         if (lng >= lngMid) {
           index = index * 2 + 1;
@@ -88,6 +96,7 @@ public class GeoHash {
           lngMax = lngMid;
         }
       } else {
+        // Bisects N-S
         double latMid = (latMin + latMax) / 2;
         if (lat >= latMid) {
           index = index * 2 + 1;
@@ -100,7 +109,7 @@ public class GeoHash {
 
       evenBit = !evenBit;
 
-      // 5 bits gives us a character: append it and start over
+      // 5 bits gives us a character: append it and start over.
       if (++bit == 5) {
         geoHash += COMMONS.BASE32.charAt(index);
         bit = 0;
@@ -113,8 +122,8 @@ public class GeoHash {
 
   /**
    * Calculates the precision of the geohash given distance in Meters
-   * @param distance {int} Distance to determine precision
-   * @return {String} precision - The number of letters of the geohash
+   * @param {int} distance Distance to determine precision
+   * @return {String} precision The number of letters of the geohash
    */
   public static int determinePrecision(int distance) {
     int precision = 0;
@@ -129,8 +138,8 @@ public class GeoHash {
 
   /**
    * Determines adjacent cell in given direction,
-   * @param geohash - Cell to which adjacent cell is required,
-   * @param direction - Direction from geohash (N/S/E/W).
+   * @param {string} geohash - Cell to which adjacent cell is required,
+   * @param {char} direction - Direction from geohash (N/S/E/W).
    * @return {String} GeoHash of adjacent cell,
    */
   private static String adjacentCell(String geohash, char direction) {
@@ -156,19 +165,19 @@ public class GeoHash {
     border.put('e', Arrays.asList("bcfguvyz","prxz"));
     border.put('w', Arrays.asList("0145hjnp","028b"));
 
-    // Last character of hash
+    // Last character of hash.
     char lastChar = geohash.charAt(geohash.length() - 1);
-    // Hash without last character
+    // Hash without last character.
     String parent = geohash.substring(0, geohash.length() - 1);
 
     int type = geohash.length() % 2;
 
-    // Check for edge-cases which don't share common prefix
+    // Check for edge-cases which don't share common prefix.
     if (border.get(direction).get(type).indexOf(lastChar) != -1 && !parent.equals("")) {
       parent = adjacentCell(parent, direction);
     }
 
-    // append letter for direction to parent
+    // Append letter for direction to parent.
     return parent +
             COMMONS.BASE32.charAt(neighbour
                     .get(direction)
@@ -181,7 +190,7 @@ public class GeoHash {
    * @param geohash {String} Geohash neighbours are required of.
    * @return List of neighbours from a geohashed cell.
    */
-  public static List<String> neighbourCells(String geohash) {
+  public static List<String> getNeighbourCells(String geohash) {
     List<String> neighbours = new ArrayList<>();
 
     for (String direction : COMMONS.GEOHASH_DIRECTIONS) {
