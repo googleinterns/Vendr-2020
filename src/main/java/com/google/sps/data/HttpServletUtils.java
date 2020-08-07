@@ -23,6 +23,10 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
+import com.google.appengine.api.datastore.GeoPt;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -96,5 +100,34 @@ public final class HttpServletUtils {
     Matcher validInputChecker = validCharacters.matcher(string);
 
     return validInputChecker.matches();
+  }
+
+  /** Return a vendor Entity if it exists in datastore, otherwise a null */
+  public static Entity getVendorEntity(String vendorId) {
+    Key vendorKey = KeyFactory.createKey("Vendor", vendorId);
+    Entity vendorEntity;
+    try {
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+      vendorEntity = datastore.get(vendorKey);
+      return vendorEntity;
+    } catch (EntityNotFoundException e) {
+      System.out.println(e);
+      return null;
+    }
+  }
+
+  /** Computes the distance between two geographical points using Haversine formula */
+  public static float computeGeoDistance(GeoPt pointA, GeoPt pointB) {
+    double latitudeRadiansA = Math.toRadians(pointA.getLatitude());
+    double latitudeRadiansB = Math.toRadians(pointB.getLatitude());
+
+    double latitudeDifference = Math.toRadians(pointB.getLatitude() - pointA.getLatitude());
+    double longitudeDifference = Math.toRadians(pointB.getLongitude() - pointA.getLongitude());
+
+    double a = Math.pow(Math.sin(latitudeDifference / 2), 2) + 
+        Math.cos(latitudeRadiansA) * Math.cos(latitudeRadiansB) * Math.pow(Math.sin(longitudeDifference / 2), 2);
+    double c = 2 * Math.asin(Math.sqrt(a));
+
+    return (float) (GeoPt.EARTH_RADIUS_METERS * c);
   }
 }
