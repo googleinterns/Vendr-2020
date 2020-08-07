@@ -72,14 +72,11 @@ public class UpdateVendorServlet extends HttpServlet {
         return;
       }
 
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-      Key vendorKey = KeyFactory.createKey("Vendor", userService.getCurrentUser().getUserId());
-      Entity vendorEntity;
-      try {
-        vendorEntity = datastore.get(vendorKey);
-      } catch (EntityNotFoundException e) {
-        System.out.println(e);
+      String vendorId = userService.getCurrentUser().getUserId();
+      Key vendorKey = KeyFactory.createKey("Vendor", vendorId);
+      Entity vendorEntity = HttpServletUtils.getVendorEntity(vendorId);
+      if (vendorEntity == null) {
+        System.out.println("Vendor Account does not exist");
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vendor Account does not exist");
         return;
       }
@@ -94,6 +91,8 @@ public class UpdateVendorServlet extends HttpServlet {
         picture = new Entity("Picture",
             vendorObject.getProfilePic().getId(), vendorKey);
       }
+
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
       // If not the same, delete previous blob from blobstore
       if (vendorObject.getProfilePic() != null && 
