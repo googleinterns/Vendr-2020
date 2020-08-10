@@ -48,8 +48,7 @@ const updateLocation = () => {
       drawMap();
     },
       (error) => {
-        if (error.code == error.PERMISSION_DENIED)
-          alert('Permission denied to access location');
+        alert(error.message);
       });
   } else {
     alert('This browser does not support location');
