@@ -30,7 +30,7 @@ function getLogStatus(fileName) {
       handleTutorialContent(logStatus.isLogged);
     }
 
-    setLogURLInNavBar(logStatus);
+    handleLogForm(logStatus);
   });
 }
 
@@ -38,14 +38,19 @@ function redirectToRegistrationForm() {
   window.location.replace('./registration.html');
 }
 
-// Sets URL from Auth API in the navbar log button
+// Sets the dropdown menu or URL link
 /** @param {{url:string, isLogged:boolean, isRegistered:boolean}} logStatus */
-function setLogURLInNavBar(logStatus) {
-  const logButton = document.getElementById('log_button');
-  const logForm = document.getElementById('log_submit_form');
+function handleLogForm(logStatus) {
+  if (logStatus.isLogged) {
+    setDropdownMenuInDOM(logStatus.url);
+  } else {
+    setLogURL(logStatus.url);
+  }
+}
 
-  logButton.innerText = (logStatus.isLogged) ? 'Log Out' : 'Log In';
-  logButton.href = logStatus.url;
+function setLogURL(logURL) {
+  const logButton = document.getElementById('log-button');
+  logButton.href = logURL;
 }
 
 // Valids that the user inputs are in the right format
