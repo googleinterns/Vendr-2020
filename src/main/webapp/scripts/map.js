@@ -57,7 +57,7 @@ querySalecards = () => {
   const map = new google.maps.Map(
     document.getElementById('map'), { zoom: 15 });
 
-  // Get client current location
+  // Get client current location.
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition((position) => {
       const userPosition = {
@@ -67,7 +67,7 @@ querySalecards = () => {
       map.setCenter(userPosition);
       map.setOptions({ styles: MAP_THEME });
 
-      // The marker, positioned at client's location
+      // The marker, positioned at client's location.
       const marker = new google.maps.Marker({
         icon: {
           url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
@@ -77,7 +77,7 @@ querySalecards = () => {
         title: 'Your position'
       });
 
-      // Declare circle that match user's query parameters
+      // Declare circle that match user's query parameters.
       const userCircle = new google.maps.Circle({
         center: userPosition,
         fillColor: '#FF0000',
@@ -88,8 +88,7 @@ querySalecards = () => {
         strokeOpacity: 0.8,
         strokeWeight: 2
       });
-      // Once cards are retrieved...
-      // Add vendor's markers
+      // Add vendor's markers.
       addVendorsToMap(map);
     },
       (error) => {
@@ -103,15 +102,16 @@ querySalecards = () => {
 
 /**
  * Function that adds vendor marks to the map
+ * @param {Object} map
  */
 const addVendorsToMap = (map) => {
   const salecardTemplate = document.getElementById('salecard-template');
   const salecardsContainer = document.getElementById('salecards-container');
 
-  //Clean previously retrieved cards
+  // Clean previously retrieved cards.
   salecardsContainer.textContent = '';
 
-  //Display number of vendor found
+  // Display number of vendor found.
   displayNumberOfVendors(vendors);
 
   Object.keys(vendors).forEach(vendorNumber => {
@@ -129,7 +129,7 @@ const addVendorsToMap = (map) => {
       title: salecard.businessName
     });
 
-    // Toggles salecard's modal when vendor's marker is clicked
+    // Toggles salecard's modal when vendor's marker is clicked.
     marker.addListener('click', () => {
       $(`#modal${vendor.id}`).modal('toggle');
     })
@@ -138,6 +138,10 @@ const addVendorsToMap = (map) => {
 
 /**
  * Function that creates a modal given a salecard
+ * @param {Object} vendor
+ * @param {Object} salecard
+ * @param {Element} salecardTemplate
+ * @param {Element} salecardsContainer
  */
 const createModal = (vendor, salecard, salecardTemplate, salecardsContainer) => {
   let salecardCloned = salecardTemplate.content.cloneNode(true);
