@@ -39,7 +39,7 @@ const MAP_THEME = [
    * At the beginning, retrieves the API_KEY from an external file
    */
   const initMap = () => {
-    jQuery.get('../../../../API_KEY.txt', function (textString) {
+    jQuery.get('../API_KEY.txt', function (textString) {
       const API_KEY = textString;
   
       // Create the script tag, set the appropriate attributes.
