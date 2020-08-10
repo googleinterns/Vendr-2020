@@ -54,7 +54,7 @@ const MAP_THEME = [
   /**
    * Callback function once the map is retrieved from Maps' API
    */
-  function drawMap() => {
+  function drawMap() {
     const map = new google.maps.Map(
       document.getElementById('card-map'), { zoom: 15 });
   
