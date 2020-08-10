@@ -16,6 +16,7 @@
  * Function to set the tutorial in home.html
  */
 
+/** @param {vendorIsLogged:boolean} */
 function handleTutorialContent(vendorIsLogged) {
  (vendorIsLogged) ? setTutorialInDOM('vendor') : setTutorialInDOM('customer');
 }
