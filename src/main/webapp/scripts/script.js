@@ -22,6 +22,7 @@ $(() => {
 
 /**
  * Function that creates h3 element to display the number of vendors
+ * @param {Object} vendors
  */
 const displayNumberOfVendors = (vendors) => {
   const numberOfVendorsElement = document.createElement('h3');

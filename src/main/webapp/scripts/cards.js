@@ -17,11 +17,10 @@
  * TODO: Add fetch from servelt & retrieve picture from blobstore
  */
 querySalecards = () => {
-    // Once cards are retrieved...
     const salecardTemplate = document.getElementById('salecard-template');
     const salecardsContainer = document.getElementById('salecards-container');
 
-    //Clean previously retrieved cards
+    // Clean previously retrieved cards.
     salecardsContainer.textContent = '';
 
     Object.keys(vendors).forEach(vendorNumber => {
@@ -38,6 +37,6 @@ querySalecards = () => {
         salecardsContainer.appendChild(salecardCloned);
     });
 
-    //Display number of vendor found
+    // Display number of vendor found.
     displayNumberOfVendors(vendors);
 };
