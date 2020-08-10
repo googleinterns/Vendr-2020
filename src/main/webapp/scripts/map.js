@@ -12,26 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const MAP_THEME = [
-  {
-    featureType: 'poi.business',
-    stylers: [
-      {
-        visibility: 'off'
-      }
-    ]
-  },
-  {
-    featureType: 'poi.park',
-    elementType: 'labels.text',
-    stylers: [
-      {
-        visibility: 'off'
-      }
-    ]
-  }
-];
-
 /**
  * Map declaration and initial setup
  * At the beginning, retrieves the API_KEY from an external file
@@ -54,6 +34,7 @@ $(function () {
  * TODO: implement fetch from servlet
  */
 querySalecards = () => {
+
   const map = new google.maps.Map(
     document.getElementById('map'), { zoom: 15 });
 
@@ -92,8 +73,7 @@ querySalecards = () => {
       addVendorsToMap(map);
     },
       (error) => {
-        if (error.code == error.PERMISSION_DENIED)
-          alert('Permission denied to access location');
+        alert(error.message);
       });
   } else {
     alert('This browser does not support location');
