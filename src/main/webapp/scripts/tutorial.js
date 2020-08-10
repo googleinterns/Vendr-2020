@@ -14,13 +14,13 @@
 
 /**
  * Function to set the tutorial in home.html
+ * @param {boolean} vendorIsLogged
  */
-
-/** @param {vendorIsLogged:boolean} */
 function handleTutorialContent(vendorIsLogged) {
  (vendorIsLogged) ? setTutorialInDOM('vendor') : setTutorialInDOM('customer');
 }
 
+/** @param {string} tutorialFile */
 function setTutorialInDOM(tutorialFile) {
   $('#tutorial-content').load(`tutorials/${tutorialFile}.html`);
 }
