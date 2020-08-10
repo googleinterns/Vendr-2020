@@ -27,6 +27,7 @@ public final class SaleCard {
   private LocalTime endTime;
   private LocationData location;
   private Picture picture;
+  private float distanceFromClient;
 
   public SaleCard(long id, String businessName, String description, boolean hasDelivery,
       LocalTime startTime, LocalTime endTime, LocationData location, Picture picture) {
@@ -38,6 +39,7 @@ public final class SaleCard {
     this.endTime = endTime;
     this.location = location;
     this.picture = picture;
+    this.distanceFromClient = 0;
   }
 
   public SaleCard(EmbeddedEntity embeddedSaleCard) {
@@ -59,6 +61,7 @@ public final class SaleCard {
     this.location = (embeddedLocation == null) ? null : new LocationData(embeddedLocation);
     EmbeddedEntity embeddedPicture = (EmbeddedEntity) embeddedSaleCard.getProperty("picture");
     this.picture = (embeddedPicture == null) ? null : new Picture(embeddedPicture);
+    this.distanceFromClient = 0;
   }
 
   public long getId() {
@@ -93,6 +96,10 @@ public final class SaleCard {
     return picture;
   }
 
+  public float getDistanceFromClient() {
+    return distanceFromClient;
+  }
+
   public void setBusinessName(String businessName) {
     this.businessName = businessName;
   }
@@ -119,5 +126,9 @@ public final class SaleCard {
 
   public void setPicture(Picture picture) {
     this.picture = picture;
+  }
+
+  public void setDistanceFromClient(float distanceFromClient) {
+    this.distanceFromClient = distanceFromClient;
   }
 }
