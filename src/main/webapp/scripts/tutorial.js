@@ -22,5 +22,5 @@ function handleTutorialContent(vendorIsLogged) {
 }
 
 function setTutorialInDOM(tutorialFile) {
-  $('#tutorial_content').load(`tutorials/${tutorialFile}.html`);
+  $('#tutorial-content').load(`tutorials/${tutorialFile}.html`);
 }
