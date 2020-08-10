@@ -13,13 +13,15 @@
 // limitations under the License.
 
 /**
-* Fuction to set drop down menu in the navbar
+* Fuction to set drop down menu in the webapp
 * @param {string} logOutURL 
 */
 function setDropdownMenuInDOM(logOutURL) {
   const logFormTag = '#log_submit_form';
 
+  // Deletes the log button from the navbar
   $(logFormTag).empty();
+  //Inserts bootstrap dropdown menu navbar
   $(logFormTag).load('common/dropdown.html', () => {
     setLogURL(logOutURL);
   });
