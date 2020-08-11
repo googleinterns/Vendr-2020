@@ -13,21 +13,14 @@
 // limitations under the License.
 
 /**
- * Function to load the navbar on the web app 
+ * Function to set the tutorial in home.html
+ * @param {boolean} vendorIsLogged
  */
+function handleTutorialContent(vendorIsLogged) {
+ (vendorIsLogged) ? setTutorialInDOM('vendor') : setTutorialInDOM('customer');
+}
 
-$(() => {
-  // After the navbar finishes loading, set the active tab
-  $('#navbar_container').load('common/navbar.html', setActiveTab); 
-});
-
-const setActiveTab = () => {
-  const windowPath = window.location.pathname;
-  const loadedFile = windowPath.split('/').pop();
-  const fileName = loadedFile.split('.');
-
-  const activeTabElement = document.getElementById(`${fileName[0]}_tab`);
-  activeTabElement.classList.add('active');
-
-  getLogStatus(fileName[0]);
-};
+/** @param {string} tutorialFile */
+function setTutorialInDOM(tutorialFile) {
+  $('#tutorial-content').load(`tutorials/${tutorialFile}.html`);
+}
