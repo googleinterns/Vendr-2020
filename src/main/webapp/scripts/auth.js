@@ -23,7 +23,7 @@ const PHONE_NUMBER_LENGTH = 10;
 function getLogStatus(fileName) {
   fetch('/log-status').then(response => response.json()).then((logStatus) => {
     if (!logStatus.isRegistered && logStatus.isLogged) {
-      redirectToRegistrationForm();
+      showRegistrationForm();
     }
     
     if (fileName === 'home') {
@@ -34,8 +34,10 @@ function getLogStatus(fileName) {
   });
 }
 
-function redirectToRegistrationForm() {
-  window.location.replace('./registration.html');
+function showRegistrationForm() {
+  $('#registration-modal').load('common/registration.html', () => {
+    $('#exampleModalCenter').modal('show');
+  });
 }
 
 // Sets the dropdown menu or URL link
@@ -105,9 +107,10 @@ function handleRegistration(firstName, lastName, phoneNumber) {
 
   fetch('/new-vendor', {method: 'POST', body: vendorsParams})
   .then(response => {
-    // If the registration is complete then redirect to home
+    // If the registration is complete then hide the modal
     if(response.redirected) {
-      window.location.replace('./home.html');
+      alert('Successful Registration');
+      $('#exampleModalCenter').modal('hide');
       return;
     }
 

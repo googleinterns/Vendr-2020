@@ -1,0 +1,35 @@
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">User Registration Form</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body row">   
+        <div id="registration_form_wrapper" class="col-auto text-center form p-4">
+          <form action="/new-vendor" method="POST">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="first_name">First Name</label>
+                <input type="text" class="form-control" name="first_name" id="first_name" placeholder="First Name" required>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="last_name">Last Name</label>
+                <input type="text" class="form-control" name="last_name" id="last_name" placeholder="Last Name" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="phone_number">Phone Number: </label>
+              <input type="tel" name="phone_number" id="phone_number" class="form-control" placeholder="8112345678" required>
+            </div>
+            <div class="align-items-center justify-content-center modal-footer">
+              <button type="button" class="btn btn-primary" onclick="validateRegistrationFormInputs()">Sign in</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
