@@ -1,0 +1,26 @@
+body {
+  height: 100vh;
+}
+
+.carousel-control-next-icon,
+.carousel-control-prev-icon {
+  filter: invert(1);
+}
+
+.carousel-indicators li {
+  background-color: #831 !important;
+}
+
+.carousel-indicators .active {
+  background-color: #444;
+}
+
+#carousel-tutorial {
+  border: 1px solid darkgrey;
+  border-radius: 8px;
+  height: 500px;
+}
+
+.home-header {
+  font-family: Arial, Helvetica, sans-serif;
+}

@@ -4,7 +4,13 @@
 #map {
   height: 600px;
   margin: auto;
+  width: 75%;
  }
+
+.tutorial-placeholders {
+  font-size: 5vw;
+  text-align: center;
+}
 
  #card-map {
   height: 600px;

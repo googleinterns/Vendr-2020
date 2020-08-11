@@ -17,12 +17,18 @@
 */
 
 const PHONE_NUMBER_LENGTH = 10;
+const TUTORIAL_FILENAME = 'home';
 
 // Call to Auth servlet to get user log information
-function getLogStatus() {
+/** @param {string} fileName */
+function getLogStatus(fileName) {
   fetch('/log-status').then(response => response.json()).then((logStatus) => {
-    if(!logStatus.isRegistered && logStatus.isLogged) {
+    if (!logStatus.isRegistered && logStatus.isLogged) {
       redirectToRegistrationForm();
+    }
+    
+    if (fileName === TUTORIAL_FILENAME) {
+      handleTutorialContent(logStatus.isLogged);
     }
 
     setLogURLInNavBar(logStatus);
