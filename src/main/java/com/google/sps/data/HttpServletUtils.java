@@ -40,8 +40,12 @@ public final class HttpServletUtils {
   }
 
   /**
-   * Return the request parameter or the default value if the parameter
-   * was not specified by the client
+   * Returns the request parameter or the default value if the parameter
+   * was not specified by the client.
+   * @param request a client request with parameter names and values for HTTP servlets
+   * @param name a request parameter
+   * @param defaultValue a default value for the request parameter
+   * @return a String representing the value of the request parameter
    */
   public static String getParameter(HttpServletRequest request, String name, String defaultValue) {
     if (request == null) {
@@ -55,7 +59,13 @@ public final class HttpServletUtils {
     return value;
   }
 
-  /** Returns a BlobKey for the uploaded file, or null if the user didn't upload a file. */
+  /** 
+   * Returns a BlobKey for the uploaded file, or null if the user didn't upload a file or 
+   * it is not a image file. 
+   * @param request a client request with parameter names and values for HTTP servlets
+   * @param formInput the name of the input element in which the file was uploaded
+   * @return a BlobKey representing the uploaded file, or null if not a valid file
+   */
   public static BlobKey getUploadedFileBlobKey(HttpServletRequest request, String formInput) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
@@ -86,7 +96,11 @@ public final class HttpServletUtils {
     }
   }
 
-  /** Return true if the string contains only Unicode letters and at least one, otherwise false  */
+  /** 
+   * Return true if the string contains only Unicode letters and at least one, otherwise false.
+   * @param string a String to check
+   * @return a boolean indicating if the string contains only Unicode letters and at least one
+   */
   public static boolean hasOnlyLetters(String string) {
     Pattern validCharacters = Pattern.compile("\\p{L}+");
     Matcher validInputChecker = validCharacters.matcher(string);
@@ -94,7 +108,11 @@ public final class HttpServletUtils {
     return validInputChecker.matches();
   }
 
-  /** Return true if the string contains only numbers, otherwise false  */
+  /** 
+   * Returns true if the string contains only numbers and at least one, otherwise false.
+   * @param string a String to check
+   * @return a boolean indicating if the string contains only numbers and at least one
+   */
   public static boolean hasOnlyNumbers(String string) {
     Pattern validCharacters = Pattern.compile("[0-9]+");
     Matcher validInputChecker = validCharacters.matcher(string);
@@ -102,7 +120,11 @@ public final class HttpServletUtils {
     return validInputChecker.matches();
   }
 
-  /** Return a vendor Entity if it exists in datastore, otherwise a null */
+  /** 
+   * Returns a vendor Entity if it exists in datastore, otherwise a null.
+   * @param vendorId a String specifying the id of a vendor
+   * @return a Entity found in datastore with the specified id, or null if not found
+   */
   public static Entity getVendorEntity(String vendorId) {
     Key vendorKey = KeyFactory.createKey("Vendor", vendorId);
     Entity vendorEntity;
@@ -116,7 +138,12 @@ public final class HttpServletUtils {
     }
   }
 
-  /** Computes the distance between two geographical points using Haversine formula */
+  /** 
+   * Computes the distance between two geographical points using Haversine formula.
+   * @param pointA a geographical point {latitude, longitude} representing A
+   * @param pointB a geographical point {latitude, longitude} representing B
+   * @return a float representing the distance between A and B
+   */
   public static float computeGeoDistance(GeoPt pointA, GeoPt pointB) {
     double latitudeRadiansA = Math.toRadians(pointA.getLatitude());
     double latitudeRadiansB = Math.toRadians(pointB.getLatitude());
