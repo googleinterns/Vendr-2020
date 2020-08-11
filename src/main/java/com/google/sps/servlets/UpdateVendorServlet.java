@@ -44,79 +44,76 @@ public class UpdateVendorServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     
-    if (userService.isUserLoggedIn()) {
-      String firstName = HttpServletUtils.getParameter(request, "firstName", "");
-      String lastName = HttpServletUtils.getParameter(request, "lastName", "");
-      String phoneNumber = HttpServletUtils.getParameter(request, "phoneNumber", "");
-      
-      // Get values to add/update vendor's profile picture
-      String currentBlobKey = HttpServletUtils.getParameter(request, "blobKey", "");
-      BlobKey imageBlobKey = HttpServletUtils.getUploadedFileBlobKey(request, "imageFile");
-      String altText = HttpServletUtils.getParameter(request, "altText", "");
-      // If nothing was uploaded and there is a current picture, keep current
-      if (!currentBlobKey.isEmpty() && imageBlobKey == null) {
-        imageBlobKey = new BlobKey(currentBlobKey);
-      }
-
-      // Check values are not empty and valid
-      if (!HttpServletUtils.hasOnlyLetters(firstName) || !HttpServletUtils.hasOnlyLetters(lastName) || 
-          !HttpServletUtils.hasOnlyNumbers(phoneNumber) || altText.isEmpty() || imageBlobKey == null) {
-        // Delete from blobstore if the uploaded file was a new one
-        if (imageBlobKey != null && !currentBlobKey.equals(imageBlobKey.toString())) {
-          BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-          blobstoreService.delete(imageBlobKey);
-        }
-        System.out.println("The values do not exist and/or the format is incorrect.");
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Inputs do not exist and/or the format is incorrect.");
-        return;
-      }
-
-      String vendorId = userService.getCurrentUser().getUserId();
-      Key vendorKey = KeyFactory.createKey("Vendor", vendorId);
-      Entity vendorEntity = HttpServletUtils.getVendorEntity(vendorId);
-      if (vendorEntity == null) {
-        System.out.println("Vendor Account does not exist");
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vendor Account does not exist");
-        return;
-      }
-      Vendor vendorObject = new Vendor(vendorEntity);
-
-      Entity picture;
-      // If the vendor doesn't have a picture, create completely new entity
-      // Else, use the already existing entity
-      if (vendorObject.getProfilePic() == null) {
-        picture = new Entity("Picture", vendorKey);
-      } else {
-        picture = new Entity("Picture",
-            vendorObject.getProfilePic().getId(), vendorKey);
-      }
-
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-      // If not the same, delete previous blob from blobstore
-      if (vendorObject.getProfilePic() != null && 
-          imageBlobKey.compareTo(vendorObject.getProfilePic().getBlobKey()) != 0) {
-        BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-        blobstoreService.delete(vendorObject.getProfilePic().getBlobKey());
-      }
-      picture.setProperty("blobKey", imageBlobKey);
-      picture.setProperty("altText", altText);
-      datastore.put(picture);
-
-      EmbeddedEntity picInfo = new EmbeddedEntity();
-      picInfo.setKey(picture.getKey());
-      picInfo.setPropertiesFrom(picture);
-
-      vendorEntity.setProperty("firstName", firstName);
-      vendorEntity.setProperty("lastName", lastName);
-      vendorEntity.setProperty("phoneNumber", phoneNumber);
-      vendorEntity.setProperty("profilePic", picInfo);
-      datastore.put(vendorEntity);
-      
-      response.sendRedirect("/");
-    } else {
+    if (!userService.isUserLoggedIn()) {
       System.out.println("User is not logged in.");
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User is not logged in.");
+      return;
     }
+
+    String firstName = HttpServletUtils.getParameter(request, "firstName", "");
+    String lastName = HttpServletUtils.getParameter(request, "lastName", "");
+    String phoneNumber = HttpServletUtils.getParameter(request, "phoneNumber", "");
+      
+    // Get values to add/update vendor's profile picture
+    String currentBlobKey = HttpServletUtils.getParameter(request, "blobKey", "");
+    BlobKey imageBlobKey = HttpServletUtils.getUploadedFileBlobKey(request, "imageFile");
+    String altText = HttpServletUtils.getParameter(request, "altText", "");
+    // If nothing was uploaded and there is a current picture, keep current
+    if (!currentBlobKey.isEmpty() && imageBlobKey == null) {
+      imageBlobKey = new BlobKey(currentBlobKey);
+    }
+
+    // Check values are not empty and valid
+    if (!HttpServletUtils.hasOnlyLetters(firstName) || !HttpServletUtils.hasOnlyLetters(lastName) || 
+        !HttpServletUtils.hasOnlyNumbers(phoneNumber) || altText.isEmpty() || imageBlobKey == null) {
+      // Delete from blobstore if the uploaded file was a new one
+      if (imageBlobKey != null && !currentBlobKey.equals(imageBlobKey.toString())) {
+        BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+        blobstoreService.delete(imageBlobKey);
+      }
+      System.out.println("The values do not exist and/or the format is incorrect.");
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Inputs do not exist and/or the format is incorrect.");
+      return;
+    }
+
+    String vendorId = userService.getCurrentUser().getUserId();
+    Key vendorKey = KeyFactory.createKey("Vendor", vendorId);
+    Entity vendorEntity = HttpServletUtils.getVendorEntity(vendorId);
+    if (vendorEntity == null) {
+      System.out.println("Vendor Account does not exist");
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vendor Account does not exist");
+      return;
+    }
+    Vendor vendorObject = new Vendor(vendorEntity);
+
+    // If the vendor doesn't have a picture, create completely new entity
+    // Else, use the already existing entity
+    Entity picture = (vendorObject.getProfilePic() == null)
+        ? new Entity("Picture", vendorKey)
+        : new Entity("Picture", vendorObject.getProfilePic().getId(), vendorKey);
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    // If not the same, delete previous blob from blobstore
+    if (vendorObject.getProfilePic() != null && 
+        imageBlobKey.compareTo(vendorObject.getProfilePic().getBlobKey()) != 0) {
+      BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+      blobstoreService.delete(vendorObject.getProfilePic().getBlobKey());
+    }
+    picture.setProperty("blobKey", imageBlobKey);
+    picture.setProperty("altText", altText);
+    datastore.put(picture);
+
+    EmbeddedEntity picInfo = new EmbeddedEntity();
+    picInfo.setKey(picture.getKey());
+    picInfo.setPropertiesFrom(picture);
+
+    vendorEntity.setProperty("firstName", firstName);
+    vendorEntity.setProperty("lastName", lastName);
+    vendorEntity.setProperty("phoneNumber", phoneNumber);
+    vendorEntity.setProperty("profilePic", picInfo);
+    datastore.put(vendorEntity);
+      
+    response.sendRedirect("/");
   }
 }

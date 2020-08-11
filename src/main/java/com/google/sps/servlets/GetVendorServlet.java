@@ -85,21 +85,22 @@ public class GetVendorServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
     
-    if (userService.isUserLoggedIn()) {
-      Entity vendorEntity = HttpServletUtils.getVendorEntity(userService.getCurrentUser().getUserId());
-      if (vendorEntity == null) {
-        System.out.println("Vendor Account does not exist");
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vendor Account does not exist");
-        return;
-      }
-
-      Vendor vendorObject = new Vendor(vendorEntity);
-      response.setContentType("application/json;");
-      response.setCharacterEncoding("UTF-8");
-      response.getWriter().println(new Gson().toJson(vendorObject));
-    } else {
+    if (!userService.isUserLoggedIn()) {
       System.out.println("User is not logged in.");
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User is not logged in.");
+      return;
     }
+
+    Entity vendorEntity = HttpServletUtils.getVendorEntity(userService.getCurrentUser().getUserId());
+    if (vendorEntity == null) {
+      System.out.println("Vendor Account does not exist");
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vendor Account does not exist");
+      return;
+    }
+
+    Vendor vendorObject = new Vendor(vendorEntity);
+    response.setContentType("application/json;");
+    response.setCharacterEncoding("UTF-8");
+    response.getWriter().println(new Gson().toJson(vendorObject));
   }
 }
