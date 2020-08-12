@@ -65,7 +65,7 @@ public class UpdateVendorServlet extends HttpServlet {
 
     // Check values are not empty and valid
     if (!HttpServletUtils.hasOnlyLetters(firstName) || !HttpServletUtils.hasOnlyLetters(lastName) || 
-        !HttpServletUtils.hasOnlyNumbers(phoneNumber) || altText.isEmpty() || imageBlobKey == null) {
+        !HttpServletUtils.hasOnlyNumbers(phoneNumber)) {
       // Delete from blobstore if the uploaded file was a new one
       if (imageBlobKey != null && !currentBlobKey.equals(imageBlobKey.toString())) {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
@@ -95,23 +95,31 @@ public class UpdateVendorServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     // If not the same, delete previous blob from blobstore
-    if (vendorObject.getProfilePic() != null && 
+    if (vendorObject.getProfilePic() != null && imageBlobKey != null &&
         imageBlobKey.compareTo(vendorObject.getProfilePic().getBlobKey()) != 0) {
       BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
       blobstoreService.delete(vendorObject.getProfilePic().getBlobKey());
     }
-    picture.setProperty("blobKey", imageBlobKey);
-    picture.setProperty("altText", altText);
-    datastore.put(picture);
 
-    EmbeddedEntity picInfo = new EmbeddedEntity();
-    picInfo.setKey(picture.getKey());
-    picInfo.setPropertiesFrom(picture);
+    // If there is a picture with alt text, set properties; Else if only picture, delete from blobstore 
+    if (imageBlobKey != null && !altText.isEmpty()) {
+      picture.setProperty("blobKey", imageBlobKey);
+      picture.setProperty("altText", altText);
+      datastore.put(picture);
+
+      EmbeddedEntity picInfo = new EmbeddedEntity();
+      picInfo.setKey(picture.getKey());
+      picInfo.setPropertiesFrom(picture);
+
+      vendorEntity.setProperty("profilePic", picInfo);
+    } else if (imageBlobKey != null) {
+      BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+      blobstoreService.delete(imageBlobKey);
+    }
 
     vendorEntity.setProperty("firstName", firstName);
     vendorEntity.setProperty("lastName", lastName);
     vendorEntity.setProperty("phoneNumber", phoneNumber);
-    vendorEntity.setProperty("profilePic", picInfo);
     datastore.put(vendorEntity);
       
     response.sendRedirect("/");
