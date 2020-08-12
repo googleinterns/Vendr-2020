@@ -24,7 +24,7 @@ const TUTORIAL_FILENAME = 'home';
 function getLogStatus(fileName) {
   fetch('/log-status').then(response => response.json()).then((logStatus) => {
     if (!logStatus.isRegistered && logStatus.isLogged) {
-      showRegistrationForm();
+      showRegistrationForm(logStatus.isRegistered);
     }
     
     if (fileName === TUTORIAL_FILENAME) {
@@ -35,10 +35,57 @@ function getLogStatus(fileName) {
   });
 }
 
-function showRegistrationForm() {
+function showRegistrationForm(isRegistered) {
   $('#registration-modal').load('common/registration.html', () => {
+    if (isRegistered) {
+      getUserInformation();
+    }
+    setUploadedImaged();
     $('#exampleModalCenter').modal('show');
   });
+}
+
+function getUserInformation() {
+  fetch('/get-vendor', {method: 'POST'}).then(
+    response => {
+      if (response.status === 401) {
+        response.text().then((error) => {
+          $('#log-button').trigger('click');
+          alert(error);
+          return;
+        });
+      } else if (response.status === 200) {
+        response.json()
+        .then((vendorInformation) => {
+          setVendorInformationInModal(vendorInformation);
+        });
+      }
+    }
+  );
+}
+
+function setUploadedImaged() {
+  $("#imageFile").change(function () {
+    if (this.files && this.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        $('#business-picture').attr('src', e.target.result);
+      }
+      reader.readAsDataURL(this.files[0]);
+    } else {
+      $('#business-picture').attr('src', 'images/placeholderImage.png');
+    }
+  });
+}
+
+function setVendorInformationInModal(vendorInformation) {
+  const firstName = document.getElementById('first_name');
+  const lastName = document.getElementById('last_name');
+  const phoneNumber = document.getElementById('phone_number');
+
+  firstName.value = vendorInformation.firstName;
+  lastName.value = vendorInformation.lastName;
+  phoneNumber.value = vendorInformation.phoneNumber;
 }
 
 // Sets the dropdown menu or URL link
@@ -100,13 +147,15 @@ function isValidInput(vendorInput, isNameInput) {
 * @param {string} phoneNumber
 * @return {void} 
 */
-function handleRegistration(firstName, lastName, phoneNumber) {
-  const vendorsParams = new URLSearchParams();
-  vendorsParams.append('first_name', firstName);
-  vendorsParams.append('last_name', lastName);
-  vendorsParams.append('phone_number', phoneNumber);
+async function handleRegistration(firstName, lastName, phoneNumber) {
+  const blobURL = await getBlobstoreURL();
+  const vendorsParams = new FormData();
+  
+  vendorsParams.append('firstName', firstName);
+  vendorsParams.append('lastName', lastName);
+  vendorsParams.append('phoneNumber', phoneNumber);
 
-  fetch('/new-vendor', {method: 'POST', body: vendorsParams})
+  await fetch(blobURL, {method: 'POST', body: vendorsParams})
   .then(response => {
     // If the registration is complete then hide the modal
     if(response.redirected) {
@@ -120,4 +169,15 @@ function handleRegistration(firstName, lastName, phoneNumber) {
       alert(error);
     });
   });
+}
+
+async function getBlobstoreURL() {
+  let blobURL;
+  await fetch('/blobstore-upload-url?formHandler=/update-vendor')
+    .then((response) => {
+      return response.text();
+    }).then((formUrl) => {
+      blobURL = formUrl;
+    });
+  return blobURL;
 }

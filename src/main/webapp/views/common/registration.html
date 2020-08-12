@@ -24,6 +24,14 @@
               <label for="phone_number">Phone Number: </label>
               <input type="tel" name="phone_number" id="phone_number" class="form-control" placeholder="8112345678" required>
             </div>
+            <div class="form-group">
+              <img id="business-picture" src="images/placeholderImage.png" 
+                class="card-img-top mt-2"
+                alt="images/placeholderImage.png">
+              <label class="mt-2" for="imageFile"><b>Select a new business photo</b></label>
+              <input type="hidden" id="blobKey" name="blobKey">
+              <input type="file" class="form-control-file" id="imageFile" name="imageFile">
+            </div>
             <div class="align-items-center justify-content-center modal-footer">
               <button type="button" class="btn btn-primary" onclick="validateRegistrationFormInputs()">Sign in</button>
             </div>

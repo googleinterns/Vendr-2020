@@ -43,6 +43,7 @@ public class UpdateVendorServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     
     if (!userService.isUserLoggedIn()) {
       System.out.println("User is not logged in.");
@@ -53,6 +54,8 @@ public class UpdateVendorServlet extends HttpServlet {
     String firstName = HttpServletUtils.getParameter(request, "firstName", "");
     String lastName = HttpServletUtils.getParameter(request, "lastName", "");
     String phoneNumber = HttpServletUtils.getParameter(request, "phoneNumber", "");
+
+    System.out.println(firstName + " " + lastName + " "  + phoneNumber);
       
     // Get values to add/update vendor's profile picture
     String currentBlobKey = HttpServletUtils.getParameter(request, "blobKey", "");
@@ -80,9 +83,8 @@ public class UpdateVendorServlet extends HttpServlet {
     Key vendorKey = KeyFactory.createKey("Vendor", vendorId);
     Entity vendorEntity = HttpServletUtils.getVendorEntity(vendorId);
     if (vendorEntity == null) {
-      System.out.println("Vendor Account does not exist");
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vendor Account does not exist");
-      return;
+      vendorEntity = new Entity(vendorKey);
+      datastore.put(vendorEntity);      
     }
     Vendor vendorObject = new Vendor(vendorEntity);
 
@@ -91,8 +93,6 @@ public class UpdateVendorServlet extends HttpServlet {
     Entity picture = (vendorObject.getProfilePic() == null)
         ? new Entity("Picture", vendorKey)
         : new Entity("Picture", vendorObject.getProfilePic().getId(), vendorKey);
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     // If not the same, delete previous blob from blobstore
     if (vendorObject.getProfilePic() != null && imageBlobKey != null &&
@@ -120,6 +120,7 @@ public class UpdateVendorServlet extends HttpServlet {
     vendorEntity.setProperty("firstName", firstName);
     vendorEntity.setProperty("lastName", lastName);
     vendorEntity.setProperty("phoneNumber", phoneNumber);
+    vendorEntity.setProperty("email", userService.getCurrentUser().getEmail());
     datastore.put(vendorEntity);
       
     response.sendRedirect("/");
