@@ -17,19 +17,71 @@
  * Function to load the search vendors around bar
  */
 $(() => {
-  $('#searchBarVendors-placeholder').load('common/searchBarVendors.html'); 
+  $('#searchBarVendors-placeholder').load('common/searchBarVendors.html');
 });
 
 /**
  * Function that creates h3 element to display the number of vendors
- * @param {Object} vendors
+ * @param {int} vendorsLength the length of the array of vendors.
  */
-const displayNumberOfVendors = (vendors) => {
+const displayNumberOfVendors = (vendorsLength) => {
   const numberOfVendorsElement = document.createElement('h3');
-  numberOfVendorsElement.textContent = (vendors.length === 1) 
+  numberOfVendorsElement.textContent = (vendorsLength === 1)
     ? '1 vendor found.'
-    : `${vendors.length} vendors found.`;
+    : `${vendorsLength} vendors found.`;
   const containerElement = document.getElementById('numberOfVendors');
   containerElement.textContent = '';
   containerElement.appendChild(numberOfVendorsElement);
 };
+
+/**
+ * Function that returns parameters to query neraby vendors
+ * @returns {URLSearchParams} with parameters to query
+ */
+function getQueryParams() {
+  const params = new URLSearchParams();
+  updateDeliverySelection();
+
+  params.append('hasDelivery', document.getElementById('hasDelivery').value);
+  params.append('distance', document.getElementById('distance').value);
+  params.append('lat', document.getElementById('lat').value);
+  params.append('lng', document.getElementById('lng').value);
+
+  return params;
+}
+
+/**
+ * Function that assign value when delivery is checked
+ */
+const updateDeliverySelection = () => {
+  const DeliveryCheckBox = document.getElementById('hasDelivery');
+  DeliveryCheckBox.value = DeliveryCheckBox.checked;
+};
+
+/**
+ * Get vendor id in the URL
+ * @returns {String} vendor's ID.
+ */
+function getVendorId() {
+  const url = window.location.href;
+  const id = url.split('id=');
+  return id[1];
+}
+
+/**
+ * Function that parse hours object to string
+ * @param {object} time Time retrieved from servlet
+ * @returns {String} time in String format.
+ */
+function parseTime(time){
+  let timeString = '';
+
+  if (time.hour < 10) timeString += '0' + time.hour + ':';
+  else timeString += time.hour + ':';
+
+  if (time.minute < 10) timeString += '0' + time.minute;
+  else timeString += time.minute;
+
+  return timeString;
+}
+
