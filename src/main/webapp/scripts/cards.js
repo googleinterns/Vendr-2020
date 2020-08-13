@@ -13,30 +13,45 @@
 // limitations under the License.
 
 /**
- * Function that retrive vendors given query parameters
- * TODO: Add fetch from servelt & retrieve picture from blobstore
+ * Function that retrieve vendors given query parameters
+ * and creates a card for each vendor retrieved.
  */
-querySalecards = () => {
-    const salecardTemplate = document.getElementById('salecard-template');
-    const salecardsContainer = document.getElementById('salecards-container');
+async function querySalecards() {
+  const salecardTemplate = document.getElementById('salecard-template');
+  const salecardsContainer = document.getElementById('salecards-container');
 
-    // Clean previously retrieved cards.
-    salecardsContainer.textContent = '';
+  // Clean previously retrieved cards.
+  salecardsContainer.textContent = '';
 
-    Object.keys(vendors).forEach(vendorNumber => {
-        let vendor = vendors[vendorNumber];
-        let salecard = vendor.saleCard;
-        let salecardCloned = salecardTemplate.content.cloneNode(true);
-        salecardCloned.getElementById('business-name').textContent = salecard.businessName;
-        salecardCloned.getElementById('business-description').textContent = salecard.description;
-        salecardCloned.getElementById('vendor-name').textContent = `${vendor.firstName} ${vendor.lastName}`;
-        salecardCloned.getElementById('vendor-phone').textContent = vendor.phoneNumber;
-        salecardCloned.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient}m`;
-        salecardCloned.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${salecard.id}`);
+  // Get user's location.
+  await updateLocation();
 
-        salecardsContainer.appendChild(salecardCloned);
-    });
+  const params = getQueryParams();
 
-    // Display number of vendor found.
-    displayNumberOfVendors(vendors);
-};
+  fetch('/get-nearby-vendors', {
+    method: 'POST',
+    body: params
+  })
+      .then(response => response.json())
+      .then(nearbyVendors => {
+        // Display number of vendor found.
+        displayNumberOfVendors(nearbyVendors.length);
+
+        Object.keys(nearbyVendors).forEach(vendorNumber => {
+          let vendor = nearbyVendors[vendorNumber];
+          let salecard = vendor.saleCard;
+          let salecardCloned = salecardTemplate.content.cloneNode(true);
+          salecardCloned.getElementById('business-picture').src
+              = `/serve-blob?blobKey=${vendor.saleCard.picture.blobKey.blobKey}`;
+          salecardCloned.getElementById('business-picture').alt = vendor.saleCard.picture.altText;
+          salecardCloned.getElementById('business-name').textContent = salecard.businessName;
+          salecardCloned.getElementById('business-description').textContent = salecard.description;
+          salecardCloned.getElementById('vendor-name').textContent = `${vendor.firstName} ${vendor.lastName}`;
+          salecardCloned.getElementById('vendor-phone').textContent = vendor.phoneNumber;
+          salecardCloned.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient.toFixed(2)}m`;
+          salecardCloned.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${vendor.id}`);
+
+          salecardsContainer.appendChild(salecardCloned);
+        });
+      });
+}
