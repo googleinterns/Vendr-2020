@@ -19,9 +19,9 @@ import java.util.List;
 
 /** Definition of constants that servlets will use. */
 public interface COMMONS {
-  float MAX_DISTANCE_CLIENT = 20000f; // 20 kilometers
-  float MAX_DISTANCE_VENDOR = 3000f; // 3 kilometers
-  float MIN_DISTANCE = 0f;
+  int MAX_DISTANCE_CLIENT = 20000; // 20 kilometers
+  int MAX_DISTANCE_VENDOR = 3000; // 3 kilometers
+  int MIN_DISTANCE = 0;
 
   // Geohash
   String BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz"; // (geohash-specific) Base32 map

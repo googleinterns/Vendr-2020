@@ -43,7 +43,7 @@ public class GetVendorServlet extends HttpServlet {
     try {
       // If not provided, we set them to 360 to throw an error when trying to use them to create a GeoPt
       latitude = Float.parseFloat(HttpServletUtils.getParameter(request, "lat", "360"));
-      longitude = Float.parseFloat(HttpServletUtils.getParameter(request, "long", "360"));
+      longitude = Float.parseFloat(HttpServletUtils.getParameter(request, "lng", "360"));
       clientLocation = new GeoPt(latitude, longitude);
     } catch (NumberFormatException e) {
       System.out.println("The string is not a parsable float: " + e);

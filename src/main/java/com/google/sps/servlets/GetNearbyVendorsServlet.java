@@ -29,6 +29,8 @@ import com.google.sps.COMMONS;
 import com.google.sps.data.HttpServletUtils;
 import com.google.sps.data.SaleCard;
 import com.google.sps.data.Vendor;
+import com.google.sps.utility.GeoHash;
+
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -41,21 +43,21 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that looks for nearby vendors */
 @WebServlet("/get-nearby-vendors")
 public class GetNearbyVendorsServlet extends HttpServlet {
-
   @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {    
-    String prefixGeoHash = HttpServletUtils.getParameter(request, "prefixGeoHash", "");
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     boolean hasDelivery = Boolean.parseBoolean(HttpServletUtils.getParameter(request, "hasDelivery", "false"));
     float latitude = 0f;
     float longitude = 0f;
-    float distance = 0f;
+    int distance = 0;
     GeoPt clientLocation = new GeoPt(0f, 0f);
+    List<String> geoHashesToQuery;
     try {
-      distance = Float.parseFloat(HttpServletUtils.getParameter(request, "distance", "1000"));
+      distance = Integer.parseInt(HttpServletUtils.getParameter(request, "distance", "1000"));
       // If not provided, we set them to 360 to throw an error when trying to use them to create a GeoPt
       latitude = Float.parseFloat(HttpServletUtils.getParameter(request, "lat", "360"));
-      longitude = Float.parseFloat(HttpServletUtils.getParameter(request, "long", "360"));
+      longitude = Float.parseFloat(HttpServletUtils.getParameter(request, "lng", "360"));
       clientLocation = new GeoPt(latitude, longitude);
+      geoHashesToQuery = GeoHash.getHashesToQuery(latitude, longitude, distance);
     } catch (NumberFormatException e) {
       System.out.println("The string is not a parsable float: " + e);
       response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -65,17 +67,21 @@ public class GetNearbyVendorsServlet extends HttpServlet {
       response.sendError(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
-    
+
     // Check values exist and are in the range
-    if (prefixGeoHash.isEmpty() || distance > COMMONS.MAX_DISTANCE_CLIENT || distance < COMMONS.MIN_DISTANCE) {
+    if (geoHashesToQuery.isEmpty() || distance > COMMONS.MAX_DISTANCE_CLIENT || distance < COMMONS.MIN_DISTANCE) {
       System.out.println("The values do not exist and/or are outside the range.");
       response.sendError(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
-    Query query = buildGeoQuery(prefixGeoHash, hasDelivery);
-    Iterable<Entity> vendorsRetrieved = fetchVendors(query);
-    List<Vendor> nearbyVendors = createVendorsList(vendorsRetrieved, clientLocation, distance);
+    List<Vendor> nearbyVendors = new ArrayList<>();
+    for(String prefixGeoHash : geoHashesToQuery) {
+      Query query = buildGeoQuery(prefixGeoHash, hasDelivery);
+      Iterable<Entity> vendorsRetrieved = fetchVendors(query);
+      nearbyVendors.addAll(createVendorsList(vendorsRetrieved, clientLocation, distance));
+    }
+
     Gson gson = new Gson();
     response.setContentType("application/json;");
     response.setCharacterEncoding("UTF-8");
@@ -106,7 +112,7 @@ public class GetNearbyVendorsServlet extends HttpServlet {
   }
 
   /** Returns a list with the retrieved vendors and check they are within the requested distance*/
-  private List<Vendor> createVendorsList(Iterable<Entity> vendors, GeoPt clientLocation, float distanceLimit) {
+  private List<Vendor> createVendorsList(Iterable<Entity> vendors, GeoPt clientLocation, int distanceLimit) {
     List<Vendor> nearbyVendors = new ArrayList<>();
     for (Entity vendorEntity : vendors) {
       Vendor vendor = new Vendor(vendorEntity);
