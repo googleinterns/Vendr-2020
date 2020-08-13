@@ -14,7 +14,7 @@
 
 // User's blue dot mark for the map.
 const USER_MARKER = {
-  url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+  url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png'
 };
 
 // Map theme (removes nearby business).
