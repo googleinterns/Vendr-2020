@@ -39,6 +39,7 @@ function getLogStatus(fileName) {
 function showRegistrationForm(isRegistered) {
   $('#registration-modal').load('common/registration.html', () => {
     setUploadedImaged();
+    setIconClickEvent();
     if (isRegistered) {
       getUserInformation();
     }
@@ -65,6 +66,12 @@ function getUserInformation() {
   );
 }
 
+function setIconClickEvent() {
+  $(".upload-button").on('click', function() {
+      $("#imageFile").click();
+  });
+}
+
 function setUploadedImaged() {
   $("#imageFile").change(function () {
     if (this.files && this.files[0]) {
@@ -80,7 +87,6 @@ function setUploadedImaged() {
 }
 
 function setVendorInformationInModal(vendorInformation) {
-  console.log(vendorInformation);
   const firstName = document.getElementById('first_name');
   const lastName = document.getElementById('last_name');
   const phoneNumber = document.getElementById('phone_number');

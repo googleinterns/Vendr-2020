@@ -1,3 +1,7 @@
+:root {
+  --transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+}
+
 body {
   height: 100vh;
 }
@@ -13,8 +17,39 @@ img {
   overflow: hidden;
   width: 256px;
   height: 256px;
-  border: 8px solid rgba(241, 18, 18, 0.7);
+  border: 8px solid black;
   top: 72px;
+}
+
+.profile-picture-input {
+  position: absolute; 
+  top: 37%;
+  right: 28%;
+  color: #666666;
+  transition: var(--transition);
+}
+
+@media only screen and (max-width: 767px) {
+  .profile-picture-input {
+    position: absolute; 
+    top: 32%;
+    right: 26%;
+    color: #666666;
+    transition: var(--transition);
+  }
+}
+
+.upload-button {
+  font-size: 1.8em !important;
+}
+
+.upload-button:hover {
+  transition: var(--transition);
+  color: #999;
+}
+
+#imageFile {
+  display: none;
 }
 
 #profile-picture {
