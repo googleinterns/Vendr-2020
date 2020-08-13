@@ -18,16 +18,17 @@
 async function querySalecard() {
   await updateLocation();
 
-  // Object to draw the map
+  // Object to draw the map.
   const clientInfo = {
     latitude: parseFloat(document.getElementById('lat').value),
     longitude: parseFloat(document.getElementById('lng').value),
     radius: Number(document.getElementById('distance').value),
     markerName: 'Your Position',
-    type: 'client'
+    type: 'client',
+    drawCircleRadius: true
   }
 
-  // Draw client information
+  // Draw client information.
   const map = drawMap(clientInfo);
 
   // Add vendor's markers.
@@ -49,7 +50,7 @@ const fetchVendors = (map) => {
       .then(nearbyVendors => {
         displayNumberOfVendors(nearbyVendors.length);
 
-        // Add vendor's marker and modal to the map
+        // Add vendor's marker and modal to the map.
         addVendorsToMap(map, nearbyVendors);
       });
 };

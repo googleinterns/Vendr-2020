@@ -16,7 +16,7 @@
  * Function that retrieve vendors given query parameters
  * and creates a card for each vendor retrieved.
  */
-async function querySalecards() {
+async function querySalecard() {
   const salecardTemplate = document.getElementById('salecard-template');
   const salecardsContainer = document.getElementById('salecards-container');
 
