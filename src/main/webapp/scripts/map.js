@@ -13,89 +13,61 @@
 // limitations under the License.
 
 /**
- * Map declaration and initial setup
- * At the beginning, retrieves the API_KEY from an external file
- */
-$(function () {
-  jQuery.get('../API_KEY.txt', function (textString) {
-    const API_KEY = textString;
-
-    // Create the script tag, set the appropriate attributes.
-    const scriptMapTag = document.createElement('script');
-    scriptMapTag.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}`;
-    scriptMapTag.defer = true;
-
-    document.head.appendChild(scriptMapTag);
-  });
-});
-
-/**
  * Function that queries salecards from servlet.
- * TODO: implement fetch from servlet
  */
-querySalecards = () => {
+async function querySalecard() {
+  await updateLocation();
 
-  const map = new google.maps.Map(
-    document.getElementById('map'), { zoom: 15 });
-
-  // Get client current location.
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const userPosition = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
-      map.setCenter(userPosition);
-      map.setOptions({ styles: MAP_THEME });
-
-      // The marker, positioned at client's location.
-      const marker = new google.maps.Marker({
-        icon: {
-          url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-        },
-        map: map,
-        position: userPosition,
-        title: 'Your position'
-      });
-
-      // Declare circle that match user's query parameters.
-      const userCircle = new google.maps.Circle({
-        center: userPosition,
-        fillColor: '#FF0000',
-        fillOpacity: 0.20,
-        map,
-        radius: parseInt(document.getElementById('distance').value),
-        strokeColor: '#FF0000',
-        strokeOpacity: 0.8,
-        strokeWeight: 2
-      });
-      // Add vendor's markers.
-      addVendorsToMap(map);
-    },
-      (error) => {
-        alert(error.message);
-      });
-  } else {
-    alert('This browser does not support location');
+  // Object to draw the map
+  const clientInfo = {
+    latitude: parseFloat(document.getElementById('lat').value),
+    longitude: parseFloat(document.getElementById('lng').value),
+    radius: Number(document.getElementById('distance').value),
+    markerName: 'Your Position',
+    type: 'client'
   }
-};
+
+  // Draw client information
+  const map = drawMap(clientInfo);
+
+  // Add vendor's markers.
+  fetchVendors(map);
+}
 
 /**
  * Function that adds vendor marks to the map
  * @param {Object} map
  */
-const addVendorsToMap = (map) => {
+const fetchVendors = (map) => {
+  const params = getQueryParams();
+
+  fetch('/get-nearby-vendors', {
+    method: 'POST',
+    body: params
+  })
+      .then(response => response.json())
+      .then(nearbyVendors => {
+        displayNumberOfVendors(nearbyVendors.length);
+
+        // Add vendor's marker and modal to the map
+        addVendorsToMap(map, nearbyVendors);
+      });
+};
+
+/**
+ * Draws vendor's marker on the map
+ * @param {Object} map where the markers will be placed.
+ * @param {List<Object>} List of nearby vendors retrieved.
+ */
+const addVendorsToMap = (map, nearbyVendors) => {
   const salecardTemplate = document.getElementById('salecard-template');
   const salecardsContainer = document.getElementById('salecards-container');
 
   // Clean previously retrieved cards.
   salecardsContainer.textContent = '';
 
-  // Display number of vendor found.
-  displayNumberOfVendors(vendors);
-
-  Object.keys(vendors).forEach(vendorNumber => {
-    let vendor = vendors[vendorNumber];
+  Object.keys(nearbyVendors).forEach(vendorNumber => {
+    let vendor = nearbyVendors[vendorNumber];
     let salecard = vendor.saleCard;
 
     createModal(vendor, salecard, salecardTemplate, salecardsContainer);
@@ -103,8 +75,8 @@ const addVendorsToMap = (map) => {
     const marker = new google.maps.Marker({
       map: map,
       position: {
-        lat: salecard.location.salepoint.latitude,
-        lng: salecard.location.salepoint.longitude
+        lat: salecard.location.salePoint.latitude,
+        lng: salecard.location.salePoint.longitude
       },
       title: salecard.businessName
     });
@@ -126,14 +98,21 @@ const addVendorsToMap = (map) => {
 const createModal = (vendor, salecard, salecardTemplate, salecardsContainer) => {
   let salecardCloned = salecardTemplate.content.cloneNode(true);
 
+  salecardCloned.getElementById('business-picture').src
+      = `/serve-blob?blobKey=${vendor.saleCard.picture.blobKey.blobKey}`;
+  salecardCloned.getElementById('business-picture').alt = vendor.saleCard.picture.altText;
   salecardCloned.getElementById('business-title').textContent = salecard.businessName;
   salecardCloned.getElementById('business-name').textContent = salecard.businessName;
   salecardCloned.getElementById('business-description').textContent = salecard.description;
   salecardCloned.getElementById('vendor-name').textContent = `${vendor.firstName} ${vendor.lastName}`;
   salecardCloned.getElementById('vendor-phone').textContent = vendor.phoneNumber;
-  salecardCloned.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient}m`;
-  salecardCloned.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${salecard.id}`);
+  salecardCloned.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient.toFixed(2)}m`;
+  salecardCloned.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${vendor.id}`);
   salecardCloned.getElementById('myModal').id = `modal${vendor.id}`;
 
   salecardsContainer.appendChild(salecardCloned);
+};
+
+window.onload = () => {
+  initMap();
 };

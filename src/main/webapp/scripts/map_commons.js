@@ -12,6 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// User's blue dot mark for the map.
+const USER_MARKER = {
+  url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+};
 
 // Map theme (removes nearby business).
 const MAP_THEME = [
@@ -44,7 +48,7 @@ const MAP_THEME = [
   
       // Create the script tag, set the appropriate attributes.
       const scriptMapTag = document.createElement('script');
-      scriptMapTag.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=drawMap`;
+      scriptMapTag.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=querySalecard`;
       scriptMapTag.defer = true;
   
       document.head.appendChild(scriptMapTag);
@@ -53,37 +57,69 @@ const MAP_THEME = [
   
   /**
    * Callback function once the map is retrieved from Maps' API
+   * @param {object} person Vendor or Client to display on map.
+   * @returns {object} map - The map object for future map modification.
    */
-  function drawMap() {
+  function drawMap(person) {
     const map = new google.maps.Map(
       document.getElementById('card-map'), { zoom: 15 });
-  
-    // Insert vendor location
-    const vendorLocation = {
-      lat: parseFloat(document.getElementById('business-lat').value),
-      lng: parseFloat(document.getElementById('business-lng').value)
+
+    const personLocation = {
+      lat: person.latitude,
+      lng: person.longitude
     };
   
-    map.setCenter(vendorLocation);
+    map.setCenter(personLocation);
     map.setOptions({ styles: MAP_THEME });
   
-    // The marker, positioned at vendor's location
+    // The marker, positioned at person's location.
     const marker = new google.maps.Marker({
       map: map,
-      position: vendorLocation,
-      title: vendor.saleCard.businessName,
+      icon: '',
+      position: personLocation,
+      title: person.markerName,
     });
-  
-    // Declare circle with radius of the delivery service of the vendor
+
+    // Display blue marker to differentiate markers on map.
+    if (person.type === 'client') {
+      marker.icon = USER_MARKER;
+    }
+
+    // Declare circle with radius of the delivery service of the person.
     const vendorCircle = new google.maps.Circle({
-      center: vendorLocation,
+      center: personLocation,
       fillColor: '#F00',
       fillOpacity: 0.20,
       map,
-      radius: vendor.saleCard.hasDelivery
-        ? vendor.saleCard.location.radius : 0,
+      radius: person.radius,
       strokeColor: '#F00',
       strokeOpacity: 0.8,
       strokeWeight: 2
     });
+
+    return map;
   }
+
+const getCurrentPositionPromise = geolocation => new Promise((resolve, reject) => {
+  geolocation.getCurrentPosition((position) => {
+        resolve(position);
+      },
+      (error) => {
+        reject(error)
+      });
+});
+
+async function updateLocation() {
+  // Get client current location.
+  if (navigator.geolocation) {
+    try {
+      const position = await getCurrentPositionPromise(navigator.geolocation);
+      document.getElementById('lat').value = position.coords.latitude;
+      document.getElementById('lng').value = position.coords.longitude;
+    }catch (error) {
+      alert(error.message);
+    }
+  } else {
+    alert('This browser does not support location');
+  }
+}
