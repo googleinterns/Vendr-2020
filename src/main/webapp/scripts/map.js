@@ -71,7 +71,9 @@ const addVendorsToMap = (map, nearbyVendors) => {
     let vendor = nearbyVendors[vendorNumber];
     let salecard = vendor.saleCard;
 
-    createModal(vendor, salecard, salecardTemplate, salecardsContainer);
+    const salecardCloned = salecardTemplate.content.cloneNode(true);
+    salecardCloned.getElementById('myModal').id = `modal${vendor.id}`;
+    insertVendorInfo(salecardsContainer, salecardCloned, vendor);
 
     const marker = new google.maps.Marker({
       map: map,
@@ -87,31 +89,6 @@ const addVendorsToMap = (map, nearbyVendors) => {
       $(`#modal${vendor.id}`).modal('toggle');
     })
   });
-};
-
-/**
- * Function that creates a modal given a salecard
- * @param {Object} vendor
- * @param {Object} salecard
- * @param {Element} salecardTemplate
- * @param {Element} salecardsContainer
- */
-const createModal = (vendor, salecard, salecardTemplate, salecardsContainer) => {
-  let salecardCloned = salecardTemplate.content.cloneNode(true);
-
-  salecardCloned.getElementById('business-picture').src
-      = `/serve-blob?blobKey=${vendor.saleCard.picture.blobKey.blobKey}`;
-  salecardCloned.getElementById('business-picture').alt = vendor.saleCard.picture.altText;
-  salecardCloned.getElementById('business-title').textContent = salecard.businessName;
-  salecardCloned.getElementById('business-name').textContent = salecard.businessName;
-  salecardCloned.getElementById('business-description').textContent = salecard.description;
-  salecardCloned.getElementById('vendor-name').textContent = `${vendor.firstName} ${vendor.lastName}`;
-  salecardCloned.getElementById('vendor-phone').textContent = vendor.phoneNumber;
-  salecardCloned.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient.toFixed(2)}m`;
-  salecardCloned.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${vendor.id}`);
-  salecardCloned.getElementById('myModal').id = `modal${vendor.id}`;
-
-  salecardsContainer.appendChild(salecardCloned);
 };
 
 window.onload = () => {

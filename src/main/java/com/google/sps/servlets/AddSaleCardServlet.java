@@ -33,7 +33,6 @@ import com.google.sps.COMMONS;
 import com.google.sps.data.HttpServletUtils;
 import com.google.sps.data.Vendor;
 import com.google.sps.utility.GeoHash;
-import com.sun.org.apache.xml.internal.utils.SystemIDResolver;
 
 import java.io.IOException;
 import java.time.LocalTime;

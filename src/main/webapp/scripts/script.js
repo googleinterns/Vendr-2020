@@ -84,3 +84,23 @@ function parseTime(time){
   return timeString;
 }
 
+/**
+ * Function that inserts vendor's info given an HTML container
+ * @param {Element} container - HTML container
+ * @param {Element} template - template HTML element.
+ * @param {object} vendor - Vendor object that contains its info.
+ */
+function insertVendorInfo(container, template, vendor) {
+  let salecard = vendor.saleCard;
+  template.getElementById('business-picture').src
+      = `/serve-blob?blobKey=${vendor.saleCard.picture.blobKey.blobKey}`;
+  template.getElementById('business-picture').alt = vendor.saleCard.picture.altText;
+  template.getElementById('business-name').textContent = salecard.businessName;
+  template.getElementById('business-description').textContent = salecard.description;
+  template.getElementById('vendor-name').textContent = `${vendor.firstName} ${vendor.lastName}`;
+  template.getElementById('vendor-phone').textContent = vendor.phoneNumber;
+  template.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient.toFixed(2)}m`;
+  template.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${vendor.id}`);
+
+  container.appendChild(template);
+}

@@ -22,7 +22,12 @@ async function querySalecard() {
       .then(vendorEntity => {
         vendor = vendorEntity;
       });
-  showVendorData(vendor);
+
+  if (!('saleCard' in vendor)) {
+    await updateLocation();
+  } else{
+    showVendorData(vendor);
+  }
 
   drawMap(getVendorInfo());
 }

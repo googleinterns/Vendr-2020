@@ -38,20 +38,8 @@ async function querySalecard() {
         displayNumberOfVendors(nearbyVendors.length);
 
         Object.keys(nearbyVendors).forEach(vendorNumber => {
-          let vendor = nearbyVendors[vendorNumber];
-          let salecard = vendor.saleCard;
-          let salecardCloned = salecardTemplate.content.cloneNode(true);
-          salecardCloned.getElementById('business-picture').src
-              = `/serve-blob?blobKey=${vendor.saleCard.picture.blobKey.blobKey}`;
-          salecardCloned.getElementById('business-picture').alt = vendor.saleCard.picture.altText;
-          salecardCloned.getElementById('business-name').textContent = salecard.businessName;
-          salecardCloned.getElementById('business-description').textContent = salecard.description;
-          salecardCloned.getElementById('vendor-name').textContent = `${vendor.firstName} ${vendor.lastName}`;
-          salecardCloned.getElementById('vendor-phone').textContent = vendor.phoneNumber;
-          salecardCloned.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient.toFixed(2)}m`;
-          salecardCloned.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${vendor.id}`);
-
-          salecardsContainer.appendChild(salecardCloned);
+          const salecardCloned = salecardTemplate.content.cloneNode(true);
+          insertVendorInfo(salecardsContainer, salecardCloned, nearbyVendors[vendorNumber]);
         });
       });
 }
