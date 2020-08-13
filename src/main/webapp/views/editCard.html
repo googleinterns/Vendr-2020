@@ -15,32 +15,32 @@
   <script src="../scripts/script.js"></script>
   <script src="../scripts/navbar.js"></script>
   <script src="../scripts/map_commons.js"></script>
-  <!--Mock vendor object -->
-  <script src="mockSingleVendor.js"></script>
   <script src="../scripts/edit_card.js"></script>
 </head>
 
 <body>
-  <div id="navbar_container"></div>
-  <div id="card-placeholder" class="container mb-5">
-    <div class="row justify-content-md-center mt-3">
-      <div class="col-12">
-        <div class="card border-primary">
-          <h5 class="card-header">Edit card #ID</h5>
-          <div class="card-body">
-            <div id="card-form">
+<div id="navbar_container"></div>
+<div id="card-placeholder" class="container mb-5">
+  <div class="row justify-content-md-center mt-3">
+    <div class="col-12">
+      <div class="card border-primary">
+        <h5 class="card-header">Edit card #ID</h5>
+        <div class="card-body">
+          <div id="card-form">
+            <form action="" id="form-card" method="POST" enctype="multipart/form-data">
               <div class="row">
                 <div class="col">
-                  <label for="business-name">Business Name:</label>
-                  <input type="text" class="form-control" id="business-name" aria-describedby="Business Name"
-                    placeholder="Business Name">
+                  <label for="businessName"">Business Name:</label>
+                  <input type="text" class="form-control" id="businessName" name="businessName"
+                         aria-describedby="Business Name"
+                         placeholder="Business Name">
                 </div>
               </div>
               <div class="row mt-4">
                 <div class="col">
-                  <label for="business-description">Business description:</label>
-                  <textarea class="form-control" id="business-description" rows="3"
-                    placeholder="Your business description"></textarea>
+                  <label for="description">Business description:</label>
+                  <textarea class="form-control" id="description" rows="3" name="description"
+                            placeholder="Your business description"></textarea>
                 </div>
               </div>
               <hr>
@@ -48,48 +48,51 @@
                 <div class="col-lg-3">
                   <h5>Current business photo</h5>
                   <img id="business-picture" src="images/placeholderImage.png" class="card-img-top mt-2"
-                    alt="images/placeholderImage.png">
-                  <label class="mt-2" for="business-photo"><b>Select a new business photo</b></label>
-                  <input type="file" class="form-control-file" id="business-photo">
+                       alt="images/placeholderImage.png">
+                  <label class="mt-2" for="imageFile"><b>Select a new business photo</b></label>
+                  <input type="hidden" id="blobKey" name="blobKey">
+                  <input type="file" class="form-control-file" id="imageFile" name="imageFile">
                 </div>
                 <div class="col">
                   <p>Business Working Hours</p>
                   <div class="row">
                     <div class="col">
                       <p>From</p>
-                      <input type="time" class="form-control" id="business-startTime"
-                        aria-describedby="Business opened from" placeholder="From">
+                      <input type="time" class="form-control" id="startTime" name="startTime"
+                             aria-describedby="Business opened from" placeholder="From">
                     </div>
                     <div class="col">
                       <p>To</p>
-                      <input type="time" class="form-control" id="business-endTime"
-                        aria-describedby="Business opened to" placeholder="To">
+                      <input type="time" class="form-control" id="endTime" name="endTime"
+                             aria-describedby="Business opened to" placeholder="To">
                     </div>
                   </div>
                   <div class="row mt-4">
                     <div class="col-auto mt-3">
-                      <input class="form-control" type="checkbox" value="" id="delivery">
-                      <label for="delivery"><b>Delivery Service</b></label>
+                      <input class="form-control" type="checkbox" value="" id="hasDelivery" name="hasDelivery"
+                             onchange="updateDeliverySelection()">
+                      <label for="hasDelivery"><b>Delivery Service</b></label>
                     </div>
                     <div class="col">
                       <p>Delivery service distance in meters</p>
-                      <input type="number" class="form-control" id="business-distanceOfDelivery"
-                        aria-describedby="Business delivery distance" placeholder="Distance" onchange="drawMap()">
+                      <input type="number" class="form-control" id="radius" name="radius"
+                             aria-describedby="Business delivery distance" placeholder="Distance" onchange="drawMap()">
                     </div>
                   </div>
                 </div>
               </div>
-              <label class="mt-2" for="photo-description">Photo description</label>
-              <textarea class="form-control" id="photo-description" rows="3"
-                placeholder="Your business photo description"></textarea>
+              <label class="mt-2" for="altText">Photo description</label>
+              <textarea class="form-control" id="altText" name="altText" rows="3"
+                        placeholder="Your business photo description"></textarea>
               <hr>
               <div class="row mt-4">
                 <div class="col">
                   <h5>Current business location</h5>
                   <div id="card-map"></div>
-                  <input type="hidden" id="business-lat" name="business-lat">
-                  <input type="hidden" id="business-lng" name="business-lng">
-                  <a id="update-location-btn" onclick="updateLocation()" class="btn btn-info mt-1">Set current location
+                  <input type="hidden" id="lat" name="lat">
+                  <input type="hidden" id="lng" name="lng">
+                  <input type="hidden" id="distance">
+                  <a id="update-location-btn" onclick="refreshLocation()" class="btn btn-info mt-1">Set current location
                     to the
                     business</a>
                 </div>
@@ -97,22 +100,24 @@
               <hr>
               <div class="row mt-4">
                 <div class="col">
-                  <a id="update-business-btn" onclick="updateBusiness()" class="btn btn-warning btn-lg btn-block">Update
+
+                  <button id="update-business-btn" type="submit" class="btn btn-warning btn-lg btn-block">Update
                     business
-                    information</a>
+                    information</button>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </body>
 
 <!-- Error Message Modal -->
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalCenterTitle"
-  aria-hidden="true">
+     aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
