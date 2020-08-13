@@ -7,34 +7,34 @@ body {
 }
 
 img {
-  vertical-align: middle;
   border-style: none;
   max-width: 100%;
+  vertical-align: middle;
 }
 
 .circle {
-  border-radius: 1000px !important;
-  overflow: hidden;
-  width: 256px;
-  height: 256px;
   border: 8px solid black;
+  border-radius: 1000px !important;
+  height: 256px;
+  overflow: hidden;
   top: 72px;
+  width: 256px;
 }
 
 .profile-picture-input {
-  position: absolute; 
-  top: 37%;
-  right: 28%;
   color: #666666;
+  position: absolute; 
+  right: 28%;
+  top: 37%;
   transition: var(--transition);
 }
 
 @media only screen and (max-width: 767px) {
   .profile-picture-input {
-    position: absolute; 
-    top: 32%;
-    right: 26%;
     color: #666666;
+    position: absolute; 
+    right: 26%;
+    top: 32%;
     transition: var(--transition);
   }
 }
@@ -44,8 +44,8 @@ img {
 }
 
 .upload-button:hover {
-  transition: var(--transition);
   color: #999;
+  transition: var(--transition);
 }
 
 #imageFile {
@@ -53,10 +53,10 @@ img {
 }
 
 #profile-picture {
-  height: 100%;
-  width: auto;
   display: inline;
+  height: 100%;
   margin: 0 auto;
+  width: auto;
 }
 
 #registration_form_container {
