@@ -47,6 +47,7 @@ function showRegistrationForm(isRegistered) {
   });
 }
 
+// Retrieves the user information to set it in the registration form
 function getUserInformation() {
   fetch('/get-vendor', {method: 'POST'}).then(
     response => {
@@ -66,12 +67,14 @@ function getUserInformation() {
   );
 }
 
+// Sets the input event on the profile picture icon.
 function setIconClickEvent() {
   $(".upload-button").on('click', function() {
       $("#imageFile").click();
   });
 }
 
+// Checks for uploaded files by the user to set the image or a placeholder
 function setUploadedImaged() {
   $("#imageFile").change(function () {
     if (this.files && this.files[0]) {
@@ -86,6 +89,8 @@ function setUploadedImaged() {
   });
 }
 
+// Sets the dropdown menu or URL link
+/** @param {{firstName:string, lastName:string, phoneNumber:string, blobKey:string, altText:string}} logStatus */
 function setVendorInformationInModal(vendorInformation) {
   const firstName = document.getElementById('first_name');
   const lastName = document.getElementById('last_name');
@@ -98,7 +103,7 @@ function setVendorInformationInModal(vendorInformation) {
   phoneNumber.value = vendorInformation.phoneNumber;
   registerButton.innerHTML = 'Update Account'
 
-  if (vendorInformation.profilePic){
+  if (vendorInformation.profilePic) {
     const profilePic = document.getElementById('profile-picture');
     const altText = document.getElementById('altText');
 
@@ -192,7 +197,7 @@ async function handleRegistration(firstName, lastName, phoneNumber, profilePictu
   await fetch(blobURL, {method: 'POST', body: vendorsParams})
   .then(response => {
     // If the registration is complete then hide the modal
-    if(response.redirected) {
+    if (response.redirected) {
       alert('Successful Registration');
       $('#exampleModalCenter').modal('hide');
       return;
