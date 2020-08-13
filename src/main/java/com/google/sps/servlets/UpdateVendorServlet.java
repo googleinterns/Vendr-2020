@@ -59,7 +59,6 @@ public class UpdateVendorServlet extends HttpServlet {
     String currentBlobKey = HttpServletUtils.getParameter(request, "blobKey", "");
     BlobKey imageBlobKey = HttpServletUtils.getUploadedFileBlobKey(request, "imageFile");
     String altText = HttpServletUtils.getParameter(request, "altText", "");
-    System.out.println(imageBlobKey);
     // If nothing was uploaded and there is a current picture, keep current
     if (!currentBlobKey.isEmpty() && imageBlobKey == null) {
       imageBlobKey = new BlobKey(currentBlobKey);

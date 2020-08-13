@@ -92,8 +92,14 @@ function setUploadedImaged() {
   });
 }
 
-// Sets the dropdown menu or URL link
-/** @param {{firstName:string, lastName:string, phoneNumber:string, blobKey:string, altText:string}} logStatus */
+/**
+* Sets the dropdown menu or URL link 
+* @param {string} firstName
+* @param {string} lastName
+* @param {string} phoneNumber
+* @param {string} blobKey
+* @param {string} altText
+*/
 function setVendorInformationInModal(vendorInformation) {
   const firstName = document.getElementById('first_name');
   const lastName = document.getElementById('last_name');
@@ -116,8 +122,12 @@ function setVendorInformationInModal(vendorInformation) {
   }
 }
 
-// Sets the dropdown menu or URL link
-/** @param {{url:string, isLogged:boolean, isRegistered:boolean}} logStatus */
+/**
+* Sets the dropdown menu or URL link 
+* @param {string} url 
+* @param {boolean} isLogged
+* @param {boolean} isRegistered
+*/
 function handleLogForm(logStatus) {
   if (logStatus.isLogged) {
     setDropdownMenuInDOM(logStatus.url);
@@ -163,8 +173,8 @@ function validateRegistrationFormInputs() {
   handleRegistration(firstName, lastName, phoneNumber,profilePictureFile.files[0], blobKey, altText);
 }
 
-// Checks if input is valid
-/** 
+/**
+* Checks if user's input is valid 
 * @param {string} vendorInput
 * @param {boolean} isNameInput
 * @return {boolean}
