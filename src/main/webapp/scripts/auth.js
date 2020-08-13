@@ -35,12 +35,13 @@ function getLogStatus(fileName) {
   });
 }
 
+/** @param {boolean} isRegistered */
 function showRegistrationForm(isRegistered) {
   $('#registration-modal').load('common/registration.html', () => {
+    setUploadedImaged();
     if (isRegistered) {
       getUserInformation();
     }
-    setUploadedImaged();
     $('#exampleModalCenter').modal('show');
   });
 }
@@ -69,23 +70,36 @@ function setUploadedImaged() {
     if (this.files && this.files[0]) {
       const reader = new FileReader();
       reader.onload = function (e) {
-        $('#business-picture').attr('src', e.target.result);
+        $('#profile-picture').attr('src', e.target.result);
       }
       reader.readAsDataURL(this.files[0]);
     } else {
-      $('#business-picture').attr('src', 'images/placeholderImage.png');
+      $('#profile-picture').attr('src', 'images/placeholderImage.png');
     }
   });
 }
 
 function setVendorInformationInModal(vendorInformation) {
+  console.log(vendorInformation);
   const firstName = document.getElementById('first_name');
   const lastName = document.getElementById('last_name');
   const phoneNumber = document.getElementById('phone_number');
+  const blobKey = document.getElementById('blobKey');
+  const registerButton = document.getElementById('registerButton');
 
   firstName.value = vendorInformation.firstName;
   lastName.value = vendorInformation.lastName;
   phoneNumber.value = vendorInformation.phoneNumber;
+  registerButton.innerHTML = 'Update Account'
+
+  if (vendorInformation.profilePic){
+    const profilePic = document.getElementById('profile-picture');
+    const altText = document.getElementById('altText');
+
+    blobKey.value = vendorInformation.profilePic.blobKey.blobKey;
+    profilePic.src = `/serve-blob?blobKey=${blobKey.value}`;
+    altText.value = vendorInformation.profilePic.altText;
+  }
 }
 
 // Sets the dropdown menu or URL link
@@ -98,6 +112,8 @@ function handleLogForm(logStatus) {
   }
 }
 
+// Sets the log URL link on the DOM
+/** @param {string} logURL */
 function setLogURL(logURL) {
   const logButton = document.getElementById('log-button');
   logButton.href = logURL;
@@ -108,6 +124,9 @@ function validateRegistrationFormInputs() {
   const firstName = document.getElementById('first_name').value;
   const lastName = document.getElementById('last_name').value;
   const phoneNumber = document.getElementById('phone_number').value;
+  const profilePictureFile = document.getElementById('imageFile');
+  const blobKey = document.getElementById('blobKey').value;
+  const altText = document.getElementById('altText').value;
 
   if (!firstName || !lastName || !isValidInput(firstName, true) || !isValidInput(lastName, true)) {
     alert('Names can\'t be empty or have special characters');
@@ -119,7 +138,12 @@ function validateRegistrationFormInputs() {
     return;
   }
 
-  handleRegistration(firstName, lastName, phoneNumber);
+  if (!altText) {
+    alert('Alt text can\'t be empty');
+    return;
+  }
+
+  handleRegistration(firstName, lastName, phoneNumber,profilePictureFile.files[0], blobKey, altText);
 }
 
 // Checks if input is valid
@@ -145,15 +169,19 @@ function isValidInput(vendorInput, isNameInput) {
 * @param {string} firstName
 * @param {string} lastName
 * @param {string} phoneNumber
+* @param {file} profilePictureImg
 * @return {void} 
 */
-async function handleRegistration(firstName, lastName, phoneNumber) {
+async function handleRegistration(firstName, lastName, phoneNumber, profilePictureImg, blobKey, altText) {
   const blobURL = await getBlobstoreURL();
   const vendorsParams = new FormData();
-  
+
   vendorsParams.append('firstName', firstName);
   vendorsParams.append('lastName', lastName);
   vendorsParams.append('phoneNumber', phoneNumber);
+  vendorsParams.append('imageFile', profilePictureImg);
+  vendorsParams.append('blobKey', blobKey);
+  vendorsParams.append('altText', altText);
 
   await fetch(blobURL, {method: 'POST', body: vendorsParams})
   .then(response => {

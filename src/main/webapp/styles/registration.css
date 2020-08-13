@@ -2,6 +2,28 @@ body {
   height: 100vh;
 }
 
+img {
+  vertical-align: middle;
+  border-style: none;
+  max-width: 100%;
+}
+
+.circle {
+  border-radius: 1000px !important;
+  overflow: hidden;
+  width: 256px;
+  height: 256px;
+  border: 8px solid rgba(241, 18, 18, 0.7);
+  top: 72px;
+}
+
+#profile-picture {
+  height: 100%;
+  width: auto;
+  display: inline;
+  margin: 0 auto;
+}
+
 #registration_form_container {
   border: 1px solid #bdbdbd;
   border-radius: 8px;

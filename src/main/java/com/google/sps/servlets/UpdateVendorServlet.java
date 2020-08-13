@@ -54,13 +54,12 @@ public class UpdateVendorServlet extends HttpServlet {
     String firstName = HttpServletUtils.getParameter(request, "firstName", "");
     String lastName = HttpServletUtils.getParameter(request, "lastName", "");
     String phoneNumber = HttpServletUtils.getParameter(request, "phoneNumber", "");
-
-    System.out.println(firstName + " " + lastName + " "  + phoneNumber);
       
     // Get values to add/update vendor's profile picture
     String currentBlobKey = HttpServletUtils.getParameter(request, "blobKey", "");
     BlobKey imageBlobKey = HttpServletUtils.getUploadedFileBlobKey(request, "imageFile");
     String altText = HttpServletUtils.getParameter(request, "altText", "");
+    System.out.println(imageBlobKey);
     // If nothing was uploaded and there is a current picture, keep current
     if (!currentBlobKey.isEmpty() && imageBlobKey == null) {
       imageBlobKey = new BlobKey(currentBlobKey);
