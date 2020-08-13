@@ -47,7 +47,10 @@ function showRegistrationForm(isRegistered) {
   });
 }
 
-// Retrieves the user information to set it in the registration form
+/** 
+* Retrieves the user information to set it in the registration form
+* @return {void}
+*/
 function getUserInformation() {
   fetch('/get-vendor', {method: 'POST'}).then(
     response => {
@@ -130,7 +133,10 @@ function setLogURL(logURL) {
   logButton.href = logURL;
 }
 
-// Valids that the user inputs are in the right format
+/**
+* Valids that the user inputs are in the right format
+* @return {void}
+*/
 function validateRegistrationFormInputs() {
   const firstName = document.getElementById('first_name').value;
   const lastName = document.getElementById('last_name').value;
@@ -210,6 +216,10 @@ async function handleRegistration(firstName, lastName, phoneNumber, profilePictu
   });
 }
 
+/** 
+* Function to get a Blobstore servlet URL
+* @return {string}
+*/
 async function getBlobstoreURL() {
   let blobURL;
   await fetch('/blobstore-upload-url?formHandler=/update-vendor')
