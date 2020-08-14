@@ -23,18 +23,20 @@ public final class SaleCard {
   private String businessName;
   private String description;
   private boolean hasDelivery;
+  private boolean isTemporarilyClosed;
   private LocalTime startTime;
   private LocalTime endTime;
   private LocationData location;
   private Picture picture;
   private float distanceFromClient;
 
-  public SaleCard(long id, String businessName, String description, boolean hasDelivery,
+  public SaleCard(long id, String businessName, String description, boolean hasDelivery, boolean isTemporarilyClosed,
       LocalTime startTime, LocalTime endTime, LocationData location, Picture picture) {
     this.id = id;
     this.businessName = businessName;
     this.description = description;
     this.hasDelivery = hasDelivery;
+    this.isTemporarilyClosed = isTemporarilyClosed;
     this.startTime = startTime;
     this.endTime = endTime;
     this.location = location;
@@ -51,6 +53,7 @@ public final class SaleCard {
     this.businessName = (String) embeddedSaleCard.getProperty("businessName");
     this.description = (String) embeddedSaleCard.getProperty("description");
     this.hasDelivery = (boolean) embeddedSaleCard.getProperty("hasDelivery");
+    this.isTemporarilyClosed = (boolean) embeddedSaleCard.getProperty("isTemporarilyClosed");
 
     CharSequence start = (CharSequence) embeddedSaleCard.getProperty("startTime");
     this.startTime = LocalTime.parse(start);
@@ -78,6 +81,10 @@ public final class SaleCard {
 
   public boolean hasDelivery() {
     return hasDelivery;
+  }
+
+  public boolean isTemporarilyClosed() {
+    return isTemporarilyClosed;
   }
 
   public LocalTime getStartTime() {
@@ -110,6 +117,10 @@ public final class SaleCard {
 
   public void setHasDelivery(boolean hasDelivery) {
     this.hasDelivery = hasDelivery;
+  }
+
+  public void setIsTemporarilyClosed(boolean isTemporarilyClosed) {
+    this.isTemporarilyClosed = isTemporarilyClosed;
   }
 
   public void setStartTime(LocalTime startTime) {
