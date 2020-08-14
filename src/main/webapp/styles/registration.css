@@ -1,5 +1,62 @@
+:root {
+  --transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+}
+
 body {
   height: 100vh;
+}
+
+img {
+  border-style: none;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.circle {
+  border: 8px solid black;
+  border-radius: 1000px !important;
+  height: 256px;
+  overflow: hidden;
+  top: 72px;
+  width: 256px;
+}
+
+.profile-picture-input {
+  color: #666666;
+  position: absolute; 
+  right: 28%;
+  top: 37%;
+  transition: var(--transition);
+}
+
+@media only screen and (max-width: 767px) {
+  .profile-picture-input {
+    color: #666666;
+    position: absolute; 
+    right: 26%;
+    top: 32%;
+    transition: var(--transition);
+  }
+}
+
+.upload-button {
+  font-size: 1.8em !important;
+}
+
+.upload-button:hover {
+  color: #999;
+  transition: var(--transition);
+}
+
+#imageFile {
+  display: none;
+}
+
+#profile-picture {
+  display: inline;
+  height: 100%;
+  margin: 0 auto;
+  width: auto;
 }
 
 #registration_form_container {
