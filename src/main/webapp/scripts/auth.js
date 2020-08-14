@@ -36,14 +36,14 @@ function getLogStatus(fileName) {
 }
 
 /** @param {boolean} isRegistered */
-function showRegistrationForm(isRegistered) {
+async function showRegistrationForm(isRegistered) {
   $('#registration-modal').load('common/registration.html', () => {
     setUploadedImaged();
     setIconClickEvent();
     if (isRegistered) {
-      getUserInformation();
+      await getUserInformation();
     }
-    $('#exampleModalCenter').modal('show');
+    $('#registrationModal').modal('show');
   });
 }
 
@@ -51,8 +51,8 @@ function showRegistrationForm(isRegistered) {
 * Retrieves the user information to set it in the registration form
 * @return {void}
 */
-function getUserInformation() {
-  fetch('/get-vendor', {method: 'POST'}).then(
+async function getUserInformation() {
+  await fetch('/get-vendor', {method: 'POST'}).then(
     response => {
       if (response.status === 401) {
         response.text().then((error) => {
