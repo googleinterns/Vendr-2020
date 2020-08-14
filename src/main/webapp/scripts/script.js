@@ -34,7 +34,7 @@ const displayNumberOfVendors = (vendorsLength) => {
 };
 
 /**
- * Function that returns parameters to query neraby vendors
+ * Function that returns parameters to query nearby vendors
  * @returns {URLSearchParams} with parameters to query
  */
 function getQueryParams() {
@@ -69,7 +69,7 @@ function getVendorId() {
 
 /**
  * Function that parse hours object to string
- * @param {object} time Time retrieved from servlet
+ * @param {Object} time Time retrieved from servlet
  * @returns {String} time in String format.
  */
 function parseTime(time){
@@ -90,7 +90,7 @@ function parseTime(time){
  * Function that inserts vendor's info given an HTML container
  * @param {Element} container - HTML container
  * @param {Element} template - template HTML element.
- * @param {object} vendor - Vendor object that contains its info.
+ * @param {Object} vendor - Vendor object that contains its info.
  */
 function insertVendorInfo(container, template, vendor) {
   let salecard = vendor.saleCard;

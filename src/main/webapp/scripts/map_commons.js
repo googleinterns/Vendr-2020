@@ -57,8 +57,8 @@ const initMap = () => {
 
 /**
  * Callback function once the map is retrieved from Maps' API
- * @param {object} person Vendor or Client to display on map.
- * @returns {object} map - The map object for future map modification.
+ * @param {Object} person - Vendor or Client to display on map.
+ * @returns {Object} map - The map object for future map modification.
  */
 function drawMap(person) {
   const map = new google.maps.Map(

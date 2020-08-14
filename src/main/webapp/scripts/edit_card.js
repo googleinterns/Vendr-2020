@@ -46,6 +46,7 @@ async function querySalecard() {
 
 /**
  * Function that shows vendor information in the form
+ * @param {Object} vendor - Vendor object to show information
  */
 function showVendorData(vendor) {
   let salecard = vendor.saleCard;
