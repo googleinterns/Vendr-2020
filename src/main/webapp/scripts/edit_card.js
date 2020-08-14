@@ -13,82 +13,96 @@
 // limitations under the License.
 
 /**
- * Query salecard from servlet and insert values in the form
- * TODO: fetch from servlet
- * TODO: handle case where a vendor does not have a card registered
+ * Query salecard from servlet
  */
-const querySalecard = () => {
+async function querySalecard() {
+  let vendor;
+  await fetch('/get-vendor', {method: 'POST'})
+      .then((response) => {
+        if (response.redirected) {
+          window.location.href = response.url;
+          return;
+        }
+        // Response status 200 = Servlet response OK
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          alert(response);
+          return;
+        }
+      })
+      .then(vendorEntity => {
+        vendor = vendorEntity;
+      });
+
+  if (!('saleCard' in vendor)) {
+    await updateLocation();
+  } else {
+    showVendorData(vendor);
+  }
+
+  drawMap(getVendorInfo());
+}
+
+/**
+ * Function that shows vendor information in the form
+ * @param {Object} vendor - Vendor object to show information
+ */
+function showVendorData(vendor) {
   let salecard = vendor.saleCard;
 
-  document.getElementById('business-name').value = salecard.businessName;
-  document.getElementById('business-description').value = salecard.description;
-  document.getElementById('business-startTime').value = salecard.startTime;
-  document.getElementById('business-endTime').value = salecard.endTime;
-  document.getElementById('delivery').checked = salecard.hasDelivery;
-  document.getElementById('business-distanceOfDelivery').value = salecard.location.radius;
-  document.getElementById('photo-description').value = salecard.picture.altText;
-  document.getElementById('business-lat').value = salecard.location.salePoint.latitude;
-  document.getElementById('business-lng').value = salecard.location.salePoint.longitude;
-  
-  // After the card is inserted on the body we can init the map
-  initMap();
-};
+  document.getElementById('business-picture').src
+      = `/serve-blob?blobKey=${vendor.saleCard.picture.blobKey.blobKey}`;
+  document.getElementById('altText').alt
+      = vendor.saleCard.picture.altText;
+  document.getElementById('blobKey').value = salecard.picture.blobKey.blobKey;
+  document.getElementById('businessName').value = salecard.businessName;
+  document.getElementById('description').value = salecard.description;
+  document.getElementById('startTime').value = parseTime(salecard.startTime);
+  document.getElementById('endTime').value = parseTime(salecard.endTime);
+  document.getElementById('hasDelivery').checked = salecard.hasDelivery;
+  document.getElementById('hasDelivery').value = salecard.hasDelivery;
+  document.getElementById('radius').value = salecard.location.radius;
+  document.getElementById('altText').value = salecard.picture.altText;
+  document.getElementById('lat').value = salecard.location.salePoint.latitude;
+  document.getElementById('lng').value = salecard.location.salePoint.longitude;
+}
 
 /**
- * Update location to inserts current vendor's location
+ * Update Location and refreshMap
  */
-const updateLocation = () => {
-  // Get client current location
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition((position) => {
-      document.getElementById('business-lat').value = position.coords.latitude;
-      document.getElementById('business-lng').value = position.coords.longitude;
-      
-      // Refresh current map
-      drawMap();
-    },
-      (error) => {
-        alert(error.message);
-      });
-  } else {
-    alert('This browser does not support location');
-  }
-};
+async function refreshLocation() {
+  await updateLocation();
+  drawMap(getVendorInfo());
+}
 
 /**
- * Function that submits business information
+ * Function that returns vendor information object to draw a map.
  */
-const updateBusiness = () => {
-  const postParams = {
-    businessName: document.getElementById('business-name').value,
-    description: document.getElementById('business-description').value,
-    startTime: document.getElementById('business-startTime').value,
-    endTime: document.getElementById('business-endTime').value,
-    hasDelivery: document.getElementById('delivery').value,
-    radius: 
-      document.getElementById('business-distanceOfDelivery').value,
-      altText: document.getElementById('photo-description').value,
-    lat: document.getElementById('business-lat').value,
-    long: document.getElementById('business-lng').value
+function getVendorInfo() {
+  // Create object to draw the map.
+  const vendorInfo = {
+    latitude: parseFloat(document.getElementById('lat').value),
+    longitude: parseFloat(document.getElementById('lng').value),
+    radius: Number(document.getElementById('radius').value),
+    markerName: document.getElementById('businessName').value,
+    type: 'vendor',
+    drawCircleRadius: document.getElementById('hasDelivery').checked
   };
-  fetch('/add-saleCard', {method: 'POST', body: postParams})
-  .then(response => {
-    if (response.redirected) {
-      window.location.href = response.url;
-      return;
-    } else {
-      // Show error message to the user.
-      let errorMessage = document.getElementById('error-message');
-      errorMessage.innerText = 'An error occurred updating business' +
-        ' information, please try again.';
-      $('#errorModal').modal('show');
-    }
-  });
-};
+
+  return vendorInfo;
+}
 
 /**
  * When window.load retrieve the card
  */
 window.onload = () => {
-  querySalecard();
+  fetch('/blobstore-upload-url?formHandler=/add-saleCard')
+      .then((response) => {
+        return response.text();
+      }).then((formUrl) => {
+    document.getElementById('form-card').action = formUrl;
+  });
+
+  initMap();
 };

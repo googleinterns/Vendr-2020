@@ -12,78 +12,116 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// User's blue dot mark for the map.
+const USER_MARKER = {
+  url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+};
 
 // Map theme (removes nearby business).
 const MAP_THEME = [
-    {
-      featureType: 'poi.business',
-      stylers: [
-        {
-          visibility: 'off'
-        }
-      ]
-    },
-    {
-      featureType: 'poi.park',
-      elementType: 'labels.text',
-      stylers: [
-        {
-          visibility: 'off'
-        }
-      ]
-    }
-  ];
-  
-  /**
-   * Map declaration and initial setup
-   * At the beginning, retrieves the API_KEY from an external file
-   */
-  const initMap = () => {
-    jQuery.get('../../../../API_KEY.txt', function (textString) {
-      const API_KEY = textString;
-  
-      // Create the script tag, set the appropriate attributes.
-      const scriptMapTag = document.createElement('script');
-      scriptMapTag.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=drawMap`;
-      scriptMapTag.defer = true;
-  
-      document.head.appendChild(scriptMapTag);
-    });
+  {
+    featureType: 'poi.business',
+    stylers: [
+      {
+        visibility: 'off'
+      }
+    ]
+  },
+  {
+    featureType: 'poi.park',
+    elementType: 'labels.text',
+    stylers: [
+      {
+        visibility: 'off'
+      }
+    ]
+  }
+];
+
+/**
+ * Map declaration and initial setup
+ * At the beginning, retrieves the API_KEY from an external file
+ */
+const initMap = () => {
+  jQuery.get('../API_KEY.txt', function (textString) {
+    const API_KEY = textString;
+
+    // Create the script tag, set the appropriate attributes.
+    const scriptMapTag = document.createElement('script');
+    scriptMapTag.src = `https://maps.googleapis.com/maps/api/js?key=${API_KEY}&callback=querySalecard`;
+    scriptMapTag.defer = true;
+
+    document.head.appendChild(scriptMapTag);
+  });
+};
+
+/**
+ * Callback function once the map is retrieved from Maps' API
+ * @param {Object} person - Vendor or Client to display on map.
+ * @returns {Object} map - The map object for future map modification.
+ */
+function drawMap(person) {
+  const map = new google.maps.Map(
+      document.getElementById('card-map'), {zoom: 15});
+
+  const personLocation = {
+    lat: person.latitude,
+    lng: person.longitude
   };
-  
-  /**
-   * Callback function once the map is retrieved from Maps' API
-   */
-  function drawMap() {
-    const map = new google.maps.Map(
-      document.getElementById('card-map'), { zoom: 15 });
-  
-    // Insert vendor location
-    const vendorLocation = {
-      lat: parseFloat(document.getElementById('business-lat').value),
-      lng: parseFloat(document.getElementById('business-lng').value)
-    };
-  
-    map.setCenter(vendorLocation);
-    map.setOptions({ styles: MAP_THEME });
-  
-    // The marker, positioned at vendor's location
-    const marker = new google.maps.Marker({
-      map: map,
-      position: vendorLocation,
-      title: vendor.saleCard.businessName,
-    });
-  
-    // Declare circle with radius of the delivery service of the vendor
+
+  map.setCenter(personLocation);
+  map.setOptions({styles: MAP_THEME});
+
+  // The marker, positioned at person's location.
+  const marker = new google.maps.Marker({
+    map: map,
+    icon: '',
+    position: personLocation,
+    title: person.markerName,
+  });
+
+  // Display blue marker to differentiate markers on map.
+  if (person.type === 'client') {
+    marker.icon = USER_MARKER;
+  }
+
+  if (person.drawCircleRadius) {
+    // Declare circle with radius of the delivery service of the person.
     const vendorCircle = new google.maps.Circle({
-      center: vendorLocation,
+      center: personLocation,
       fillColor: '#F00',
       fillOpacity: 0.20,
       map,
-      radius: vendor.saleCard.hasDelivery
-        ? vendor.saleCard.location.radius : 0,
+      radius: person.radius,
       strokeColor: '#F00',
       strokeOpacity: 0.8,
       strokeWeight: 2
     });
   }
+
+  return map;
+}
+
+const getCurrentPositionPromise = geolocation => new Promise((resolve, reject) => {
+  geolocation.getCurrentPosition((position) => {
+        resolve(position);
+      },
+      (error) => {
+        reject(error)
+      });
+});
+
+async function updateLocation() {
+  // Get client current location.
+  if (navigator.geolocation) {
+    try {
+      const position = await getCurrentPositionPromise(navigator.geolocation);
+      document.getElementById('lat').value = position.coords.latitude;
+      document.getElementById('lng').value = position.coords.longitude;
+    } catch (error) {
+      alert(error.message);
+    }
+  } else {
+    alert('This browser does not support location');
+  }
+}

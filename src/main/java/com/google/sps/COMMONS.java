@@ -19,14 +19,14 @@ import java.util.List;
 
 /** Definition of constants that servlets will use. */
 public interface COMMONS {
-  float MAX_DISTANCE_CLIENT = 20000f; // 20 kilometers
-  float MAX_DISTANCE_VENDOR = 3000f; // 3 kilometers
-  float MIN_DISTANCE = 0f;
+  int MAX_DISTANCE_CLIENT = 20 * 1000; // 20 kilometers
+  int MAX_DISTANCE_VENDOR = 2 * 1000; // 3 kilometers
+  int MIN_DISTANCE = 0;
 
   // Geohash
   String BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz"; // (geohash-specific) Base32 map
   int MAX_GEOHASH_PRECISION = 9; // Max precision stored in datastore.
-  int MAX_GEOHASH_HEIGHT = 5000000; // 5000km
+  int MAX_GEOHASH_HEIGHT = 5 * 1000; // 5000km
   List<String> GEOHASH_DIRECTIONS =
           Arrays.asList("n","ne","e","se","s","sw","w","nw");
 }

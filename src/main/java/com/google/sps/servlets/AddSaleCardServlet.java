@@ -32,6 +32,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.sps.COMMONS;
 import com.google.sps.data.HttpServletUtils;
 import com.google.sps.data.Vendor;
+import com.google.sps.utility.GeoHash;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
@@ -59,21 +60,20 @@ public class AddSaleCardServlet extends HttpServlet {
       String startTime = HttpServletUtils.getParameter(request, "startTime", "");
       String endTime = HttpServletUtils.getParameter(request, "endTime", "");
       String description = HttpServletUtils.getParameter(request, "description", "");
-      String geoHash = HttpServletUtils.getParameter(request, "geoHash", "");
-      float radius = 0f;
-      float latitude = 0f;
-      float longitude = 0f;
+      float radius, latitude, longitude;
+      String geoHash;
       GeoPt vendorLocation = new GeoPt(0f, 0f);
-      
-      // Check values are valid format 
+
+      // Check values are valid format
       try {
         LocalTime start = LocalTime.parse(startTime);
         LocalTime end = LocalTime.parse(endTime);
         radius = Float.parseFloat(HttpServletUtils.getParameter(request, "radius", "1000"));
         // If not provided, we set them to 360 to throw an error when trying to use them to create a GeoPt
         latitude = Float.parseFloat(HttpServletUtils.getParameter(request, "lat", "360"));
-        longitude = Float.parseFloat(HttpServletUtils.getParameter(request, "long", "360"));
+        longitude = Float.parseFloat(HttpServletUtils.getParameter(request, "lng", "360"));
         vendorLocation = new GeoPt(latitude, longitude);
+        geoHash = GeoHash.encodeVendor(latitude, longitude);
       } catch (DateTimeParseException e) {
         System.out.println("Bad format to parse: " + e);
         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -98,7 +98,7 @@ public class AddSaleCardServlet extends HttpServlet {
       }
 
       // Check values are not empty or outside range
-      if (businessName.isEmpty() || description.isEmpty() || geoHash.isEmpty() || altText.isEmpty() || 
+      if (businessName.isEmpty() || description.isEmpty() || geoHash.isEmpty() || altText.isEmpty() ||
           imageBlobKey == null || radius < COMMONS.MIN_DISTANCE || radius > COMMONS.MAX_DISTANCE_VENDOR) {
         System.out.println("The values do not exist and/or are outside the range.");
         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -123,7 +123,7 @@ public class AddSaleCardServlet extends HttpServlet {
       // Else, use the already existing Entities
       if (vendorObject.getSaleCard() == null) {
         saleCard = new Entity("SaleCard", vendorKey);
-        datastore.put(saleCard); 
+        datastore.put(saleCard);
 
         picture = new Entity("Picture", saleCard.getKey());
         locationData = new Entity("LocationData", saleCard.getKey());
@@ -137,7 +137,7 @@ public class AddSaleCardServlet extends HttpServlet {
       }
 
       // If not the same, delete previous blob from blobstore
-      if (vendorObject.getSaleCard() != null && 
+      if (vendorObject.getSaleCard() != null &&
           imageBlobKey.compareTo(vendorObject.getSaleCard().getPicture().getBlobKey()) != 0) {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
         blobstoreService.delete(vendorObject.getSaleCard().getPicture().getBlobKey());
@@ -173,7 +173,7 @@ public class AddSaleCardServlet extends HttpServlet {
 
       vendorEntity.setIndexedProperty("saleCard", saleInfo);
       datastore.put(vendorEntity);
-      
+
       response.sendRedirect("/");
     } else {
       System.out.println("User is not logged in.");
