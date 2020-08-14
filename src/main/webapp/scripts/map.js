@@ -46,7 +46,19 @@ const fetchVendors = (map) => {
     method: 'POST',
     body: params
   })
-      .then(response => response.json())
+      .then((response) => {
+        if (response.redirected) {
+          window.location.href = response.url;
+          return;
+        }
+        // Response status 200 = Servlet response OK
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          alert(response);
+          return;
+        }
+      })
       .then(nearbyVendors => {
         displayNumberOfVendors(nearbyVendors.length);
 
@@ -68,8 +80,8 @@ const addVendorsToMap = (map, nearbyVendors) => {
   salecardsContainer.textContent = '';
 
   Object.keys(nearbyVendors).forEach(vendorNumber => {
-    let vendor = nearbyVendors[vendorNumber];
-    let salecard = vendor.saleCard;
+    const vendor = nearbyVendors[vendorNumber];
+    const salecard = vendor.saleCard;
 
     const salecardCloned = salecardTemplate.content.cloneNode(true);
     salecardCloned.getElementById('myModal').id = `modal${vendor.id}`;

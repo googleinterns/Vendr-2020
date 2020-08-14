@@ -18,14 +18,26 @@
 async function querySalecard() {
   let vendor;
   await fetch('/get-vendor', {method: 'POST'})
-      .then(response => response.json())
+      .then((response) => {
+        if (response.redirected) {
+          window.location.href = response.url;
+          return;
+        }
+        // Response status 200 = Servlet response OK
+        if (response.status === 200) {
+          return response.json();
+        } else {
+          alert(response);
+          return;
+        }
+      })
       .then(vendorEntity => {
         vendor = vendorEntity;
       });
 
   if (!('saleCard' in vendor)) {
     await updateLocation();
-  } else{
+  } else {
     showVendorData(vendor);
   }
 
