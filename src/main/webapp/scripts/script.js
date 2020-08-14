@@ -75,13 +75,13 @@ function getVendorId() {
 function parseTime(time){
   let timeString = '';
 
-  (time.hour < 10)
-      ? timeString += '0' + time.hour + ':'
-      : timeString += time.hour + ':';
+  timeString += (time.hour < 10)
+      ? '0' + time.hour + ':'
+      : time.hour + ':';
 
-  (time.minute < 10)
-      ? timeString += '0' + time.minute
-      : timeString += time.minute;
+  timeString += (time.minute < 10)
+      ? '0' + time.minute
+      : time.minute;
 
   return timeString;
 }
