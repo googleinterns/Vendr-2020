@@ -30,7 +30,6 @@ import com.google.sps.data.HttpServletUtils;
 import com.google.sps.data.SaleCard;
 import com.google.sps.data.Vendor;
 import com.google.sps.utility.GeoHash;
-
 import java.io.IOException;
 import java.time.LocalTime;
 import java.util.ArrayList;

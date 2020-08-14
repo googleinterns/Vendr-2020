@@ -33,7 +33,6 @@ import com.google.sps.COMMONS;
 import com.google.sps.data.HttpServletUtils;
 import com.google.sps.data.Vendor;
 import com.google.sps.utility.GeoHash;
-
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
@@ -61,9 +60,7 @@ public class AddSaleCardServlet extends HttpServlet {
       String startTime = HttpServletUtils.getParameter(request, "startTime", "");
       String endTime = HttpServletUtils.getParameter(request, "endTime", "");
       String description = HttpServletUtils.getParameter(request, "description", "");
-      float radius = 0f;
-      float latitude = 0f;
-      float longitude = 0f;
+      float radius, latitude, longitude;
       String geoHash;
       GeoPt vendorLocation = new GeoPt(0f, 0f);
 
