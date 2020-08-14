@@ -38,10 +38,10 @@ function getLogStatus(fileName) {
 /** @param {boolean} isRegistered */
 async function showRegistrationForm(isRegistered) {
   $('#registration-modal').load('common/registration.html', () => {
-    setUploadedImaged();
+    setUploadedImage();
     setIconClickEvent();
     if (isRegistered) {
-      await getUserInformation();
+      getUserInformation();
     }
     $('#registrationModal').modal('show');
   });
@@ -49,10 +49,9 @@ async function showRegistrationForm(isRegistered) {
 
 /** 
 * Retrieves the user information to set it in the registration form
-* @return {void}
 */
-async function getUserInformation() {
-  await fetch('/get-vendor', {method: 'POST'}).then(
+function getUserInformation() {
+  fetch('/get-vendor', {method: 'POST'}).then(
     response => {
       if (response.status === 401) {
         response.text().then((error) => {
@@ -70,7 +69,7 @@ async function getUserInformation() {
   );
 }
 
-// Sets the input event on the profile picture icon.
+/** Sets the input event on the profile picture icon. */
 function setIconClickEvent() {
   $(".upload-button").on('click', function() {
       $("#imageFile").click();
@@ -78,7 +77,7 @@ function setIconClickEvent() {
 }
 
 // Checks for uploaded files by the user to set the image or a placeholder
-function setUploadedImaged() {
+function setUploadedImage() {
   $("#imageFile").change(function () {
     if (this.files && this.files[0]) {
       const reader = new FileReader();
@@ -94,11 +93,7 @@ function setUploadedImaged() {
 
 /**
 * Sets the dropdown menu or URL link 
-* @param {string} firstName
-* @param {string} lastName
-* @param {string} phoneNumber
-* @param {string} blobKey
-* @param {string} altText
+* @param {{firstName:string, lastName:string, phoneNumber:string, blobKey:string, altText:string}} vendorInformation
 */
 function setVendorInformationInModal(vendorInformation) {
   const firstName = document.getElementById('first_name');
@@ -115,18 +110,18 @@ function setVendorInformationInModal(vendorInformation) {
   if (vendorInformation.profilePic) {
     const profilePic = document.getElementById('profile-picture');
     const altText = document.getElementById('altText');
+    const profilePictureAltText = vendorInformation.profilePic.altText;
 
     blobKey.value = vendorInformation.profilePic.blobKey.blobKey;
     profilePic.src = `/serve-blob?blobKey=${blobKey.value}`;
-    altText.value = vendorInformation.profilePic.altText;
+    profilePic.altText = profilePictureAltText
+    altText.value = profilePictureAltText;
   }
 }
 
 /**
 * Sets the dropdown menu or URL link 
-* @param {string} url 
-* @param {boolean} isLogged
-* @param {boolean} isRegistered
+* @param {{string:url, boolean:isLogged, boolean:isRegistered}} logStatus 
 */
 function handleLogForm(logStatus) {
   if (logStatus.isLogged) {
@@ -145,7 +140,6 @@ function setLogURL(logURL) {
 
 /**
 * Valids that the user inputs are in the right format
-* @return {void}
 */
 function validateRegistrationFormInputs() {
   const firstName = document.getElementById('first_name').value;
@@ -191,13 +185,14 @@ function isValidInput(vendorInput, isNameInput) {
   return regexCheck.test(vendorInput);
 }
 
-// Fetch vendor data to add it to datastore
-/** 
+/**
+* Fetch vendor data to add it to datastore 
 * @param {string} firstName
 * @param {string} lastName
 * @param {string} phoneNumber
 * @param {file} profilePictureImg
-* @return {void} 
+* @param {Object} blobKey
+* @param {altText} altText
 */
 async function handleRegistration(firstName, lastName, phoneNumber, profilePictureImg, blobKey, altText) {
   const blobURL = await getBlobstoreURL();

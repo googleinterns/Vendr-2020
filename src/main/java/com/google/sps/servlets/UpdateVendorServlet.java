@@ -98,8 +98,8 @@ public class UpdateVendorServlet extends HttpServlet {
       BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
       blobstoreService.delete(vendorObject.getProfilePic().getBlobKey());
     }
-
-    // If there is a picture with alt text, set properties; Else if only picture, delete from blobstore 
+    
+    // If there is a picture with alt text, set properties; 
     if (imageBlobKey != null && !altText.isEmpty()) {
       picture.setProperty("blobKey", imageBlobKey);
       picture.setProperty("altText", altText);
@@ -111,6 +111,7 @@ public class UpdateVendorServlet extends HttpServlet {
 
       vendorEntity.setProperty("profilePic", picInfo);
     } else if (imageBlobKey != null) {
+      // If only picture, delete from blobstore 
       BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
       blobstoreService.delete(imageBlobKey);
     }

@@ -21,7 +21,7 @@ function setDropdownMenuInDOM(logOutURL) {
 
   // Deletes the log button from the navbar
   $(logFormTag).empty();
-  //Inserts bootstrap dropdown menu navbar
+  // Inserts bootstrap dropdown menu navbar
   $(logFormTag).load('common/dropdown.html', () => {
     setLogURL(logOutURL);
   });
