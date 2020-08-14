@@ -157,4 +157,17 @@ public final class HttpServletUtils {
 
     return (float) (GeoPt.EARTH_RADIUS_METERS * c);
   }
+
+  /**
+   * Creates an embedded entity from the entity provided
+   * @param entity an entity with a complete key
+   * @return an embedded entity with the properties of the entity provided
+   */
+  public static EmbeddedEntity createEmbeddedEntity(Entity entity) {
+    EmbeddedEntity embedded = new EmbeddedEntity();
+    embedded.setKey(entity.getKey());
+    embedded.setPropertiesFrom(entity);
+
+    return embedded;
+  }
 }
