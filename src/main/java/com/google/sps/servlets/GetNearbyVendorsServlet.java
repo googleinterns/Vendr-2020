@@ -45,12 +45,14 @@ public class GetNearbyVendorsServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     boolean hasDelivery = Boolean.parseBoolean(HttpServletUtils.getParameter(request, "hasDelivery", "false"));
-    float latitude = 0f;
-    float longitude = 0f;
+    boolean onlyOpenNow = Boolean.parseBoolean(HttpServletUtils.getParameter(request, "onlyOpenNow", "false"));
+    LocalTime currentTime;
+    float latitude ,longitude;
     int distance = 0;
     GeoPt clientLocation = new GeoPt(0f, 0f);
     List<String> geoHashesToQuery;
     try {
+      currentTime = LocalTime.parse(HttpServletUtils.getParameter(request, "currentTime", ""));
       distance = Integer.parseInt(HttpServletUtils.getParameter(request, "distance", "1000"));
       // If not provided, we set them to 360 to throw an error when trying to use them to create a GeoPt
       latitude = Float.parseFloat(HttpServletUtils.getParameter(request, "lat", "360"));
@@ -78,7 +80,7 @@ public class GetNearbyVendorsServlet extends HttpServlet {
     for(String prefixGeoHash : geoHashesToQuery) {
       Query query = buildGeoQuery(prefixGeoHash, hasDelivery);
       Iterable<Entity> vendorsRetrieved = fetchVendors(query);
-      nearbyVendors.addAll(createVendorsList(vendorsRetrieved, clientLocation, distance));
+      nearbyVendors.addAll(createVendorsList(vendorsRetrieved, clientLocation, distance, onlyOpenNow, currentTime));
     }
 
     Gson gson = new Gson();
@@ -111,13 +113,16 @@ public class GetNearbyVendorsServlet extends HttpServlet {
   }
 
   /** Returns a list with the retrieved vendors and check they are within the requested distance*/
-  private List<Vendor> createVendorsList(Iterable<Entity> vendors, GeoPt clientLocation, int distanceLimit) {
+  private List<Vendor> createVendorsList(Iterable<Entity> vendors, GeoPt clientLocation, int distanceLimit,
+      boolean onlyOpenNow, LocalTime currentTime) {
     List<Vendor> nearbyVendors = new ArrayList<>();
     for (Entity vendorEntity : vendors) {
       Vendor vendor = new Vendor(vendorEntity);
       GeoPt vendorLocation = vendor.getSaleCard().getLocation().getSalePoint();
-      float distanceClientVendor = computeDistance(clientLocation, vendorLocation);
-      if (distanceClientVendor <= distanceLimit) {
+      float distanceClientVendor = HttpServletUtils.computeGeoDistance(clientLocation, vendorLocation);
+      boolean addVendor = (onlyOpenNow) ? isBetweenOpeningHours(vendor, currentTime) : true;
+
+      if (distanceClientVendor <= distanceLimit && addVendor) {
         vendor.getSaleCard().setDistanceFromClient(distanceClientVendor);
         nearbyVendors.add(vendor);
       }    
@@ -126,18 +131,9 @@ public class GetNearbyVendorsServlet extends HttpServlet {
     return nearbyVendors;
   }
 
-  /** Computes the distance between two geographical points using Haversine formula */
-  private float computeDistance(GeoPt pointA, GeoPt pointB) {
-    double latitudeRadiansA = Math.toRadians(pointA.getLatitude());
-    double latitudeRadiansB = Math.toRadians(pointB.getLatitude());
-
-    double latitudeDifference = Math.toRadians(pointB.getLatitude() - pointA.getLatitude());
-    double longitudeDifference = Math.toRadians(pointB.getLongitude() - pointA.getLongitude());
-
-    double a = Math.pow(Math.sin(latitudeDifference / 2), 2) + 
-        Math.cos(latitudeRadiansA) * Math.cos(latitudeRadiansB) * Math.pow(Math.sin(longitudeDifference / 2), 2);
-    double c = 2 * Math.asin(Math.sqrt(a));
-
-    return (float) (GeoPt.EARTH_RADIUS_METERS * c);
+  /** Returns true if the time is between the vendor's business opening hours */
+  private boolean isBetweenOpeningHours(Vendor vendor, LocalTime currentTime) {
+    return currentTime.isAfter(vendor.getSaleCard().getStartTime()) && 
+      currentTime.isBefore(vendor.getSaleCard().getEndTime());
   }
 }
