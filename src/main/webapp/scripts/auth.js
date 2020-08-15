@@ -24,36 +24,130 @@ const TUTORIAL_FILENAME = 'home';
 function getLogStatus(fileName) {
   fetch('/log-status').then(response => response.json()).then((logStatus) => {
     if (!logStatus.isRegistered && logStatus.isLogged) {
-      redirectToRegistrationForm();
+      showRegistrationForm(logStatus.isRegistered);
     }
     
     if (fileName === TUTORIAL_FILENAME) {
       handleTutorialContent(logStatus.isLogged);
     }
 
-    setLogURLInNavBar(logStatus);
+    handleLogForm(logStatus);
   });
 }
 
-function redirectToRegistrationForm() {
-  window.location.replace('./registration.html');
+/** @param {boolean} isRegistered */
+async function showRegistrationForm(isRegistered) {
+  $('#registration-modal').load('common/registration.html', () => {
+    setUploadedImage();
+    setIconClickEvent();
+    if (isRegistered) {
+      getUserInformation();
+    }
+    $('#registrationModal').modal('show');
+  });
 }
 
-// Sets URL from Auth API in the navbar log button
-/** @param {{url:string, isLogged:boolean, isRegistered:boolean}} logStatus */
-function setLogURLInNavBar(logStatus) {
-  const logButton = document.getElementById('log_button');
-  const logForm = document.getElementById('log_submit_form');
-
-  logButton.innerText = (logStatus.isLogged) ? 'Log Out' : 'Log In';
-  logButton.href = logStatus.url;
+/** 
+* Retrieves the user information to set it in the registration form
+*/
+function getUserInformation() {
+  fetch('/get-vendor', {method: 'POST'}).then(
+    response => {
+      if (response.status === 401) {
+        response.text().then((error) => {
+          $('#log-button').trigger('click');
+          alert(error);
+          return;
+        });
+      } else if (response.status === 200) {
+        response.json()
+        .then((vendorInformation) => {
+          setVendorInformationInModal(vendorInformation);
+        });
+      }
+    }
+  );
 }
 
-// Valids that the user inputs are in the right format
+/** Sets the input event on the profile picture icon. */
+function setIconClickEvent() {
+  $(".upload-button").on('click', function() {
+      $("#imageFile").click();
+  });
+}
+
+// Checks for uploaded files by the user to set the image or a placeholder
+function setUploadedImage() {
+  $("#imageFile").change(function () {
+    if (this.files && this.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        $('#profile-picture').attr('src', e.target.result);
+      }
+      reader.readAsDataURL(this.files[0]);
+    } else {
+      $('#profile-picture').attr('src', 'images/placeholderImage.png');
+    }
+  });
+}
+
+/**
+* Sets the dropdown menu or URL link 
+* @param {{firstName:string, lastName:string, phoneNumber:string, blobKey:string, altText:string}} vendorInformation
+*/
+function setVendorInformationInModal(vendorInformation) {
+  const firstName = document.getElementById('first_name');
+  const lastName = document.getElementById('last_name');
+  const phoneNumber = document.getElementById('phone_number');
+  const blobKey = document.getElementById('blobKey');
+  const registerButton = document.getElementById('registerButton');
+
+  firstName.value = vendorInformation.firstName;
+  lastName.value = vendorInformation.lastName;
+  phoneNumber.value = vendorInformation.phoneNumber;
+  registerButton.innerHTML = 'Update Account'
+
+  if (vendorInformation.profilePic) {
+    const profilePic = document.getElementById('profile-picture');
+    const altText = document.getElementById('altText');
+    const profilePictureAltText = vendorInformation.profilePic.altText;
+
+    blobKey.value = vendorInformation.profilePic.blobKey.blobKey;
+    profilePic.src = `/serve-blob?blobKey=${blobKey.value}`;
+    profilePic.altText = profilePictureAltText
+    altText.value = profilePictureAltText;
+  }
+}
+
+/**
+* Sets the dropdown menu or URL link 
+* @param {{string:url, boolean:isLogged, boolean:isRegistered}} logStatus 
+*/
+function handleLogForm(logStatus) {
+  if (logStatus.isLogged) {
+    setDropdownMenuInDOM(logStatus.url);
+  } else {
+    setLogURL(logStatus.url);
+  }
+}
+
+// Sets the log URL link on the DOM
+/** @param {string} logURL */
+function setLogURL(logURL) {
+  const logButton = document.getElementById('log-button');
+  logButton.href = logURL;
+}
+
+/**
+* Valids that the user inputs are in the right format
+*/
 function validateRegistrationFormInputs() {
   const firstName = document.getElementById('first_name').value;
   const lastName = document.getElementById('last_name').value;
   const phoneNumber = document.getElementById('phone_number').value;
+  const profilePictureFile = document.getElementById('imageFile');
+  const blobKey = document.getElementById('blobKey').value;
+  const altText = document.getElementById('altText').value;
 
   if (!firstName || !lastName || !isValidInput(firstName, true) || !isValidInput(lastName, true)) {
     alert('Names can\'t be empty or have special characters');
@@ -65,11 +159,16 @@ function validateRegistrationFormInputs() {
     return;
   }
 
-  handleRegistration(firstName, lastName, phoneNumber);
+  if (!altText) {
+    alert('Alt text can\'t be empty');
+    return;
+  }
+
+  handleRegistration(firstName, lastName, phoneNumber,profilePictureFile.files[0], blobKey, altText);
 }
 
-// Checks if input is valid
-/** 
+/**
+* Checks if user's input is valid 
 * @param {string} vendorInput
 * @param {boolean} isNameInput
 * @return {boolean}
@@ -86,24 +185,32 @@ function isValidInput(vendorInput, isNameInput) {
   return regexCheck.test(vendorInput);
 }
 
-// Fetch vendor data to add it to datastore
-/** 
+/**
+* Fetch vendor data to add it to datastore 
 * @param {string} firstName
 * @param {string} lastName
 * @param {string} phoneNumber
-* @return {void} 
+* @param {file} profilePictureImg
+* @param {Object} blobKey
+* @param {altText} altText
 */
-function handleRegistration(firstName, lastName, phoneNumber) {
-  const vendorsParams = new URLSearchParams();
-  vendorsParams.append('first_name', firstName);
-  vendorsParams.append('last_name', lastName);
-  vendorsParams.append('phone_number', phoneNumber);
+async function handleRegistration(firstName, lastName, phoneNumber, profilePictureImg, blobKey, altText) {
+  const blobURL = await getBlobstoreURL();
+  const vendorsParams = new FormData();
 
-  fetch('/new-vendor', {method: 'POST', body: vendorsParams})
+  vendorsParams.append('firstName', firstName);
+  vendorsParams.append('lastName', lastName);
+  vendorsParams.append('phoneNumber', phoneNumber);
+  vendorsParams.append('imageFile', profilePictureImg);
+  vendorsParams.append('blobKey', blobKey);
+  vendorsParams.append('altText', altText);
+
+  await fetch(blobURL, {method: 'POST', body: vendorsParams})
   .then(response => {
-    // If the registration is complete then redirect to home
-    if(response.redirected) {
-      window.location.replace('./home.html');
+    // If the registration is complete then hide the modal
+    if (response.redirected) {
+      alert('Successful Registration');
+      $('#exampleModalCenter').modal('hide');
       return;
     }
 
@@ -112,4 +219,19 @@ function handleRegistration(firstName, lastName, phoneNumber) {
       alert(error);
     });
   });
+}
+
+/** 
+* Function to get a Blobstore servlet URL
+* @return {string}
+*/
+async function getBlobstoreURL() {
+  let blobURL;
+  await fetch('/blobstore-upload-url?formHandler=/update-vendor')
+    .then((response) => {
+      return response.text();
+    }).then((formUrl) => {
+      blobURL = formUrl;
+    });
+  return blobURL;
 }

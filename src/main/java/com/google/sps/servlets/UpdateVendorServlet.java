@@ -43,6 +43,7 @@ public class UpdateVendorServlet extends HttpServlet {
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     UserService userService = UserServiceFactory.getUserService();
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     
     if (!userService.isUserLoggedIn()) {
       System.out.println("User is not logged in.");
@@ -65,7 +66,7 @@ public class UpdateVendorServlet extends HttpServlet {
 
     // Check values are not empty and valid
     if (!HttpServletUtils.hasOnlyLetters(firstName) || !HttpServletUtils.hasOnlyLetters(lastName) || 
-        !HttpServletUtils.hasOnlyNumbers(phoneNumber) || altText.isEmpty() || imageBlobKey == null) {
+        !HttpServletUtils.hasOnlyNumbers(phoneNumber)) {
       // Delete from blobstore if the uploaded file was a new one
       if (imageBlobKey != null && !currentBlobKey.equals(imageBlobKey.toString())) {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
@@ -80,9 +81,8 @@ public class UpdateVendorServlet extends HttpServlet {
     Key vendorKey = KeyFactory.createKey("Vendor", vendorId);
     Entity vendorEntity = HttpServletUtils.getVendorEntity(vendorId);
     if (vendorEntity == null) {
-      System.out.println("Vendor Account does not exist");
-      response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Vendor Account does not exist");
-      return;
+      vendorEntity = new Entity(vendorKey);
+      datastore.put(vendorEntity);      
     }
     Vendor vendorObject = new Vendor(vendorEntity);
 
@@ -92,26 +92,34 @@ public class UpdateVendorServlet extends HttpServlet {
         ? new Entity("Picture", vendorKey)
         : new Entity("Picture", vendorObject.getProfilePic().getId(), vendorKey);
 
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
     // If not the same, delete previous blob from blobstore
-    if (vendorObject.getProfilePic() != null && 
+    if (vendorObject.getProfilePic() != null && imageBlobKey != null &&
         imageBlobKey.compareTo(vendorObject.getProfilePic().getBlobKey()) != 0) {
       BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
       blobstoreService.delete(vendorObject.getProfilePic().getBlobKey());
     }
-    picture.setProperty("blobKey", imageBlobKey);
-    picture.setProperty("altText", altText);
-    datastore.put(picture);
+    
+    // If there is a picture with alt text, set properties; 
+    if (imageBlobKey != null && !altText.isEmpty()) {
+      picture.setProperty("blobKey", imageBlobKey);
+      picture.setProperty("altText", altText);
+      datastore.put(picture);
 
-    EmbeddedEntity picInfo = new EmbeddedEntity();
-    picInfo.setKey(picture.getKey());
-    picInfo.setPropertiesFrom(picture);
+      EmbeddedEntity picInfo = new EmbeddedEntity();
+      picInfo.setKey(picture.getKey());
+      picInfo.setPropertiesFrom(picture);
+
+      vendorEntity.setProperty("profilePic", picInfo);
+    } else if (imageBlobKey != null) {
+      // If only picture, delete from blobstore 
+      BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+      blobstoreService.delete(imageBlobKey);
+    }
 
     vendorEntity.setProperty("firstName", firstName);
     vendorEntity.setProperty("lastName", lastName);
     vendorEntity.setProperty("phoneNumber", phoneNumber);
-    vendorEntity.setProperty("profilePic", picInfo);
+    vendorEntity.setProperty("email", userService.getCurrentUser().getEmail());
     datastore.put(vendorEntity);
       
     response.sendRedirect("/");
