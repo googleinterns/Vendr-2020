@@ -26,7 +26,7 @@ public interface COMMONS {
   // Geohash
   String BASE32 = "0123456789bcdefghjkmnpqrstuvwxyz"; // (geohash-specific) Base32 map
   int MAX_GEOHASH_PRECISION = 9; // Max precision stored in datastore.
-  int MAX_GEOHASH_HEIGHT = 5 * 1000; // 5000km
+  int MAX_GEOHASH_HEIGHT = 5000 * 1000; // 5000km
   List<String> GEOHASH_DIRECTIONS =
           Arrays.asList("n","ne","e","se","s","sw","w","nw");
 }
