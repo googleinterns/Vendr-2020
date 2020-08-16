@@ -73,19 +73,29 @@ const fetchVendors = (map) => {
  * @param {List<Object>} List of nearby vendors retrieved.
  */
 const addVendorsToMap = (map, nearbyVendors) => {
+  // Template and container for vendor's modal on the map.
+  const salecardModalTemplate = document.getElementById('salecard-modal-template');
+  const salecardsModalContainer = document.getElementById('salecards-modal-container');
+  // Template and container for vendor's saleCard on the map.
   const salecardTemplate = document.getElementById('salecard-template');
   const salecardsContainer = document.getElementById('salecards-container');
 
   // Clean previously retrieved cards.
+  salecardsModalContainer.textContent = '';
   salecardsContainer.textContent = '';
 
   Object.keys(nearbyVendors).forEach(vendorNumber => {
     const vendor = nearbyVendors[vendorNumber];
     const salecard = vendor.saleCard;
 
+    // Create modal for vendor.
+    const salecardModalCloned = salecardModalTemplate.content.cloneNode(true);
+    salecardModalCloned.getElementById('myModal').id = `modal${vendor.id}`;
+    insertVendorInfo(salecardsModalContainer, salecardModalCloned, vendor, true);
+
+    // Create salecard for vendor.
     const salecardCloned = salecardTemplate.content.cloneNode(true);
-    salecardCloned.getElementById('myModal').id = `modal${vendor.id}`;
-    insertVendorInfo(salecardsContainer, salecardCloned, vendor);
+    insertVendorInfo(salecardsContainer, salecardCloned, vendor, false);
 
     const marker = new google.maps.Marker({
       map: map,

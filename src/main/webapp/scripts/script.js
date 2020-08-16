@@ -91,18 +91,22 @@ function parseTime(time){
  * @param {Element} container - HTML container
  * @param {Element} template - template HTML element.
  * @param {Object} vendor - Vendor object that contains its info.
+ * @param {Boolean} isModal - Check if the container is a modal
  */
-function insertVendorInfo(container, template, vendor) {
+function insertVendorInfo(container, template, vendor, isModal) {
   let salecard = vendor.saleCard;
-  template.getElementById('business-picture').src
+  let prefix;
+  prefix = (isModal) ? 'modal' : 'card';
+  
+  template.getElementById(`${prefix}-business-picture`).src
       = `/serve-blob?blobKey=${vendor.saleCard.picture.blobKey.blobKey}`;
-  template.getElementById('business-picture').alt = vendor.saleCard.picture.altText;
-  template.getElementById('business-name').textContent = salecard.businessName;
-  template.getElementById('business-description').textContent = salecard.description;
-  template.getElementById('vendor-name').textContent = `${vendor.firstName} ${vendor.lastName}`;
-  template.getElementById('vendor-phone').textContent = vendor.phoneNumber;
-  template.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient.toFixed(2)}m`;
-  template.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${vendor.id}`);
+  template.getElementById(`${prefix}-business-picture`).alt = vendor.saleCard.picture.altText;
+  template.getElementById(`${prefix}-business-name`).textContent = salecard.businessName;
+  template.getElementById(`${prefix}-business-description`).textContent = salecard.description;
+  template.getElementById(`${prefix}-vendor-name`).textContent = `${vendor.firstName} ${vendor.lastName}`;
+  template.getElementById(`${prefix}-vendor-phone`).textContent = vendor.phoneNumber;
+  template.getElementById(`${prefix}-vendor-distance`).textContent = `${salecard.distanceFromClient.toFixed(2)}m`;
+  template.getElementById(`${prefix}-vendor-salecard-btn`).setAttribute('href', `viewCard.html?id=${vendor.id}`);
 
   container.appendChild(template);
 }

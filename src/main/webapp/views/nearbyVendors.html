@@ -18,7 +18,7 @@
   <script src="../scripts/auth.js"></script>
   <script src="../scripts/navbar.js"></script>
   <script src="../scripts/map_commons.js"></script>
-  <script src="../scripts/map.js"></script>
+  <script src="../scripts/nearbyVendors.js"></script>
 </head>
 <body>
   <div id="navbar_container"></div>
@@ -26,44 +26,52 @@
   <div id="registration-modal"></div>
   <div id="searchBarVendors-placeholder" class="container mt-3"></div>
   <div id="numberOfVendors" class="container mt-3"></div>
+  <h4 class="row mt-3 justify-content-md-center">Map view</h4>
   <div id="card-map" class="container mb-3"></div>
-  <div id="salecards-container"></div>
+  <div class="row justify-content-md-center">
+    <div class="col-12">
+      <h4 class="row mt-3 justify-content-md-center">Salecards view</h4>
+      <div id="salecards-container" class="row mb-3 justify-content-md-center">
+      </div>
+    </div>
+  </div>
+  <div id="salecards-modal-container"></div>
 </body>
 
 <!-- Template Section -->
-<template id="salecard-template">
+<template id="salecard-modal-template">
   <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="Salecard modal"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="business-title">Business Name</h5>
+          <h5 class="modal-title" id="modal-business-title">Business Name</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <div id="vendorCard" class="card">
-            <img id="business-picture" src="images/placeholderImage.png" class="card-img-top mt-2"
+          <div id="modal-vendorCard" class="card">
+            <img id="modal-business-picture" src="images/placeholderImage.png" class="card-img-top mt-2"
               alt="images/placeholderImage.png">
             <div class="card-body">
-              <h5 id="business-name" class="card-title">Card title</h5>
-              <p id="business-description" class="card-text">Some quick example text to build on the card title and make
+              <h5 id="modal-business-name" class="card-title">Card title</h5>
+              <p id="modal-business-description" class="card-text">Some quick example text to build on the card title and make
                 up the bulk of the card's content.</p>
             </div>
             <ul class="list-group list-group-flush">
               <li class="list-group-item"><i class="fa fa-user text-primary mr-2" aria-hidden="true"></i><span
-                  id="vendor-name"></span></li>
+                  id="modal-vendor-name"></span></li>
               <li class="list-group-item"><i class="fa fa-phone-square text-success mr-2" aria-hidden="true"></i><span
-                  id="vendor-phone"></span></li>
+                  id="modal-vendor-phone"></span></li>
               <li class="list-group-item"><i class="fa fa-map-marker text-danger mr-2" aria-hidden="true"></i><span
-                  id="vendor-distance"></span></li>
+                  id="modal-vendor-distance"></span></li>
             </ul>
           </div>
         </div>
         <div class="modal-footer">
           <div class="col-sm-8 mx-auto">
-            <a id="vendor-salecard-btn" href="#" class="btn btn-primary col-12">More info</a>
+            <a id="modal-vendor-salecard-btn" href="#" class="btn btn-primary col-12">More info</a>
           </div>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
@@ -71,5 +79,26 @@
     </div>
   </div>
 </template>
-
+<template id="salecard-template">
+  <div id="card-vendorCard" class="card col-lg-3 mx-4 mt-2">
+    <img id="card-business-picture" src="images/placeholderImage.png" class="card-img-top mt-2"
+         alt="images/placeholderImage.png">
+    <div class="card-body">
+      <h5 id="card-business-name" class="card-title">Card title</h5>
+      <p id="card-business-description" class="card-text">Some quick example text to build on the card title and make up the
+        bulk of the card's content.</p>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item"><i class="fa fa-user text-primary mr-2" aria-hidden="true"></i><span
+              id="card-vendor-name"></span></li>
+      <li class="list-group-item"><i class="fa fa-phone-square text-success mr-2" aria-hidden="true"></i><span
+              id="card-vendor-phone"></span></li>
+      <li class="list-group-item"><i class="fa fa-map-marker text-danger mr-2" aria-hidden="true"></i><span
+              id="card-vendor-distance"></span></li>
+    </ul>
+    <div class="card-body mx-auto">
+      <a id="card-vendor-salecard-btn" href="#" class="btn btn-primary">More info</a>
+    </div>
+  </div>
+</template>
 </html>
