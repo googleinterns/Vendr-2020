@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletResponse;
  * to this servlet.
  */
 @WebServlet("/update-salecard")
-public class AddSaleCardServlet extends HttpServlet {
+public class UpdateSaleCardServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -79,11 +79,11 @@ public class AddSaleCardServlet extends HttpServlet {
     float radius, latitude, longitude;
     String geoHash;
     GeoPt vendorLocation = new GeoPt(0f, 0f);
-
+    LocalTime start, end;
     // Check values are valid format
     try {
-      LocalTime start = LocalTime.parse(startTime);
-      LocalTime end = LocalTime.parse(endTime);
+      start = LocalTime.parse(startTime);
+      end = LocalTime.parse(endTime);
       radius = Float.parseFloat(HttpServletUtils.getParameter(request, "radius", "1000"));
       // If not provided, we set them to 360 to throw an error when trying to use them to create a GeoPt
       latitude = Float.parseFloat(HttpServletUtils.getParameter(request, "lat", "360"));
@@ -114,7 +114,7 @@ public class AddSaleCardServlet extends HttpServlet {
     }
 
     // Check values are not empty or outside range
-    if (businessName.isEmpty() || description.isEmpty() || geoHash.isEmpty() || altText.isEmpty() ||
+    if (businessName.isEmpty() || description.isEmpty() || geoHash.isEmpty() || altText.isEmpty() || start.isAfter(end) ||
         imageBlobKey == null || radius < COMMONS.MIN_DISTANCE || radius > COMMONS.MAX_DISTANCE_VENDOR) {
       // Delete from blobstore if the uploaded file was a new one
       if (imageBlobKey != null && !currentBlobKey.equals(imageBlobKey.toString())) {
@@ -179,6 +179,6 @@ public class AddSaleCardServlet extends HttpServlet {
     vendorEntity.setIndexedProperty("saleCard", saleInfo);
     datastore.put(vendorEntity);
 
-    response.sendRedirect("/");
+    response.sendRedirect("/views/editCard.html");
   }
 }
