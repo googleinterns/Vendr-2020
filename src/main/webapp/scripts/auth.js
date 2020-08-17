@@ -23,9 +23,17 @@ const TUTORIAL_FILENAME = 'home';
 /** @param {string} fileName */
 function getLogStatus(fileName) {
   fetch('/log-status').then(response => response.json()).then((logStatus) => {
-    if (!logStatus.isRegistered && logStatus.isLogged) {
-      showRegistrationForm(logStatus.isRegistered);
+    const isRegistered = logStatus.isRegistered;
+
+    if (!isRegistered && logStatus.isLogged) {
+      showRegistrationForm(isRegistered);
     }
+    
+    if (isRegistered) {
+      insertEditCardTab();
+    }
+  
+    setActiveTab(fileName);
     
     if (fileName === TUTORIAL_FILENAME) {
       handleTutorialContent(logStatus.isLogged);

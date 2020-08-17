@@ -13,13 +13,6 @@
 // limitations under the License.
 
 /**
- * Function to load the search vendors around bar
- */
-$(() => {
-  $('#searchBarVendors-placeholder').load('common/searchBarVendors.html');
-});
-
-/**
  * Function that creates h3 element to display the number of vendors
  * @param {int} vendorsLength the length of the array of vendors.
  */
