@@ -27,7 +27,7 @@ async function querySalecard() {
         if (response.status === 200) {
           return response.json();
         } else {
-          alert(response);
+          alert(response.statusText);
           return;
         }
       })
@@ -35,10 +35,17 @@ async function querySalecard() {
         vendor = vendorEntity;
       });
 
+  if (vendor === undefined) {
+    window.location.href = '/';
+    return;
+  }
+
   if (!('saleCard' in vendor)) {
     await updateLocation();
+    document.getElementById('salecard-btns').appendChild(createButton('create'));
   } else {
     showVendorData(vendor);
+    addSaleCardButtons(vendor.saleCard);
   }
 
   drawMap(getVendorInfo());
@@ -53,8 +60,8 @@ function showVendorData(vendor) {
 
   document.getElementById('business-picture').src
       = `/serve-blob?blobKey=${vendor.saleCard.picture.blobKey.blobKey}`;
-  document.getElementById('altText').alt
-      = vendor.saleCard.picture.altText;
+  document.getElementById('business-picture').alt
+      = `Business picture: ${vendor.saleCard.picture.altText}`;
   document.getElementById('blobKey').value = salecard.picture.blobKey.blobKey;
   document.getElementById('businessName').value = salecard.businessName;
   document.getElementById('description').value = salecard.description;
@@ -66,6 +73,108 @@ function showVendorData(vendor) {
   document.getElementById('altText').value = salecard.picture.altText;
   document.getElementById('lat').value = salecard.location.salePoint.latitude;
   document.getElementById('lng').value = salecard.location.salePoint.longitude;
+  document.getElementById('isTemporarilyClosed').value = salecard.isTemporarilyClosed;
+}
+
+/**
+ * Function that adds salecard's buttons to the container in the DOM.
+ * Adds Open/Close, Update and Delete buttons.
+ * @param {Object} salecard - A vendor's salecard
+ */
+function addSaleCardButtons(salecard) {
+  const buttonsContainer = document.getElementById('salecard-btns');
+
+  const openCloseButton = (salecard.isTemporarilyClosed) 
+      ? createButton('open')
+      : createButton('close');
+  const updateButton = createButton('update');
+  const deleteButton = createButton('delete');  
+
+  buttonsContainer.append(openCloseButton, updateButton, deleteButton);
+}
+
+/**
+ * Function that returns a button according to the type provided
+ * @param {string} buttonType - The type of button to create
+ */
+function createButton(buttonType) {
+  const template = document.getElementById('button-template');
+  const button = template.content.querySelector('button').cloneNode(true);
+  switch(buttonType.toLowerCase()) {
+    case 'open':
+      button.classList.add('btn-primary');
+      button.setAttribute('data-toggle', 'modal');
+      button.setAttribute('data-target', '#open-business-modal');
+      button.textContent = 'Open my business now';
+      button.addEventListener('click', displayBusinessHours);
+      break;
+    case 'close':
+      button.classList.add('btn-danger');
+      button.setAttribute('data-toggle', 'modal');
+      button.setAttribute('data-target', '#close-business-modal');
+      button.textContent = 'Close my business now';
+      break;
+    case 'create':
+      button.setAttribute('type', 'submit');
+      button.classList.add('btn-success');
+      button.textContent = 'Create business';
+      break;
+    case 'update':
+      button.setAttribute('type', 'submit');
+      button.classList.add('btn-warning');
+      button.textContent = 'Update business information';
+      break;
+    case 'delete':
+      button.classList.add('btn-danger');
+      button.setAttribute('data-toggle', 'modal');
+      button.setAttribute('data-target', '#delete-business-modal');
+      button.textContent = 'Delete my business';
+      break;
+    default:
+      throw new Error('No button option');
+  }
+
+  return button;
+}
+
+/**
+ * Function that display the business hours in the open biz modal
+ */
+function displayBusinessHours() {
+  const start = document.getElementById('startTime').value;
+  const end = document.getElementById('endTime').value;
+
+  const modalBody = document.getElementById('business-hours-modal');
+  modalBody.textContent = `From ${start} to ${end}.`;
+}
+
+/**
+ * Function that updates the salecard to be open or temporarily close
+ * @param {boolean} isClosed - Indicates if the business is closed or not
+ */
+function updateSaleCard(isClosed) {
+  document.getElementById('isTemporarilyClosed').value = isClosed;
+  const form = document.getElementById('form-card');
+  const formData = new FormData(form);
+
+  fetch(form.action, {method: 'POST', body: formData}).then(response => {
+    if (!response.redirected) {
+      alert(response.statusText);
+    }
+    location.reload();
+  });
+}
+
+/**
+ * Function that deletes the vendor's salecard
+ */
+function deleteSaleCard() {
+  fetch('/delete-salecard', {method: 'POST'}).then(response => {
+    if (!response.redirected) {
+      alert(response.statusText);
+    }
+    location.reload();
+  });
 }
 
 /**
@@ -97,7 +206,7 @@ function getVendorInfo() {
  * When window.load retrieve the card
  */
 window.onload = () => {
-  fetch('/blobstore-upload-url?formHandler=/add-saleCard')
+  fetch('/blobstore-upload-url?formHandler=/update-salecard')
       .then((response) => {
         return response.text();
       }).then((formUrl) => {
