@@ -32,6 +32,7 @@ import com.google.sps.data.Vendor;
 import com.google.sps.utility.GeoHash;
 import java.io.IOException;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -78,7 +79,7 @@ public class GetNearbyVendorsServlet extends HttpServlet {
 
     List<Vendor> nearbyVendors = new ArrayList<>();
     for(String prefixGeoHash : geoHashesToQuery) {
-      Query query = buildGeoQuery(prefixGeoHash, hasDelivery);
+      Query query = buildGeoQuery(prefixGeoHash, hasDelivery, onlyOpenNow);
       Iterable<Entity> vendorsRetrieved = fetchVendors(query);
       nearbyVendors.addAll(createVendorsList(vendorsRetrieved, clientLocation, distance, onlyOpenNow, currentTime));
     }
@@ -93,16 +94,27 @@ public class GetNearbyVendorsServlet extends HttpServlet {
    * Returns a query for a Vendor with a filter to match a substring (the prefix of a geoHash) and
    * if the vendor has or not delivery service 
    */
-  private Query buildGeoQuery(String prefixGeoHash, boolean hasDelivery) {
+  private Query buildGeoQuery(String prefixGeoHash, boolean hasDelivery, boolean onlyOpenNow) {
     Filter lowerBound = new FilterPredicate("saleCard.location.geoHash",
         FilterOperator.GREATER_THAN_OR_EQUAL, prefixGeoHash);
     Filter upperBound = new FilterPredicate("saleCard.location.geoHash",
         FilterOperator.LESS_THAN, prefixGeoHash + "\ufffd");
-    Filter deliveryFilter = new FilterPredicate("saleCard.hasDelivery",
-        FilterOperator.EQUAL, hasDelivery);
 
-    Filter geoFilter = CompositeFilterOperator.and(lowerBound, upperBound, deliveryFilter);
+    // Mandatory GeoHash Filters
+    List<Filter> filtersList = new ArrayList<>(Arrays.asList(lowerBound, upperBound));
 
+    // Only with delivery
+    if (hasDelivery) {
+      filtersList.add(
+          new FilterPredicate("saleCard.hasDelivery", FilterOperator.EQUAL, hasDelivery));
+    }
+    // Only open now
+    if (onlyOpenNow) {
+      filtersList.add(
+          new FilterPredicate("saleCard.isTemporarilyClosed", FilterOperator.EQUAL, !onlyOpenNow));
+    }
+
+    Filter geoFilter = CompositeFilterOperator.and(filtersList);
     return new Query("Vendor").setFilter(geoFilter);
   }
 
@@ -120,9 +132,9 @@ public class GetNearbyVendorsServlet extends HttpServlet {
       Vendor vendor = new Vendor(vendorEntity);
       GeoPt vendorLocation = vendor.getSaleCard().getLocation().getSalePoint();
       float distanceClientVendor = HttpServletUtils.computeGeoDistance(clientLocation, vendorLocation);
-      boolean addVendor = (onlyOpenNow) ? isBetweenOpeningHours(vendor, currentTime) : true;
+      boolean hourCheck = (onlyOpenNow) ? isBetweenOpeningHours(vendor, currentTime) : true;
 
-      if (distanceClientVendor <= distanceLimit && addVendor) {
+      if (distanceClientVendor <= distanceLimit && hourCheck) {
         vendor.getSaleCard().setDistanceFromClient(distanceClientVendor);
         nearbyVendors.add(vendor);
       }    
