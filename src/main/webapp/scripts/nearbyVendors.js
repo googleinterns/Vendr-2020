@@ -117,5 +117,5 @@ const addVendorsToMap = (map, nearbyVendors) => {
  * To insert the search bar when page loads and then initialize the map of the webpage.
  */
 $(() => {
-  $('#searchBarVendors-placeholder').load('common/searchBarVendors.html', initMap());
+  $('#searchBarVendors-placeholder').load('common/searchBarVendors.html', initMap);
 });
