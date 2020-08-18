@@ -24,6 +24,7 @@ public final class SaleCard {
   private String description;
   private boolean hasDelivery;
   private boolean isTemporarilyClosed;
+  private boolean openDuringNight;
   private LocalTime startTime;
   private LocalTime endTime;
   private LocationData location;
@@ -31,12 +32,13 @@ public final class SaleCard {
   private float distanceFromClient;
 
   public SaleCard(long id, String businessName, String description, boolean hasDelivery, boolean isTemporarilyClosed,
-      LocalTime startTime, LocalTime endTime, LocationData location, Picture picture) {
+      boolean openDuringNight, LocalTime startTime, LocalTime endTime, LocationData location, Picture picture) {
     this.id = id;
     this.businessName = businessName;
     this.description = description;
     this.hasDelivery = hasDelivery;
     this.isTemporarilyClosed = isTemporarilyClosed;
+    this.openDuringNight = openDuringNight;
     this.startTime = startTime;
     this.endTime = endTime;
     this.location = location;
@@ -54,6 +56,7 @@ public final class SaleCard {
     this.description = (String) embeddedSaleCard.getProperty("description");
     this.hasDelivery = (boolean) embeddedSaleCard.getProperty("hasDelivery");
     this.isTemporarilyClosed = (boolean) embeddedSaleCard.getProperty("isTemporarilyClosed");
+    this.openDuringNight = (boolean) embeddedSaleCard.getProperty("openDuringNight");
 
     CharSequence start = (CharSequence) embeddedSaleCard.getProperty("startTime");
     this.startTime = LocalTime.parse(start);
@@ -85,6 +88,10 @@ public final class SaleCard {
 
   public boolean isTemporarilyClosed() {
     return isTemporarilyClosed;
+  }
+
+  public boolean isOpenDuringNight() {
+    return openDuringNight;
   }
 
   public LocalTime getStartTime() {
@@ -121,6 +128,10 @@ public final class SaleCard {
 
   public void setIsTemporarilyClosed(boolean isTemporarilyClosed) {
     this.isTemporarilyClosed = isTemporarilyClosed;
+  }
+
+  public void setOpenDuringNight(boolean openDuringNight) {
+    this.openDuringNight = openDuringNight;
   }
 
   public void setStartTime(LocalTime startTime) {

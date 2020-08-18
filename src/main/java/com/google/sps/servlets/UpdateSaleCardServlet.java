@@ -114,7 +114,7 @@ public class UpdateSaleCardServlet extends HttpServlet {
     }
 
     // Check values are not empty or outside range
-    if (businessName.isEmpty() || description.isEmpty() || geoHash.isEmpty() || altText.isEmpty() || start.isAfter(end) ||
+    if (businessName.isEmpty() || description.isEmpty() || geoHash.isEmpty() || altText.isEmpty() ||
         imageBlobKey == null || radius < COMMONS.MIN_DISTANCE || radius > COMMONS.MAX_DISTANCE_VENDOR) {
       // Delete from blobstore if the uploaded file was a new one
       if (imageBlobKey != null && !currentBlobKey.equals(imageBlobKey.toString())) {
@@ -168,6 +168,8 @@ public class UpdateSaleCardServlet extends HttpServlet {
     saleCard.setProperty("description", description);
     saleCard.setProperty("hasDelivery", hasDelivery);
     saleCard.setProperty("isTemporarilyClosed", isTemporarilyClosed);
+    // E.g. true if start: 20:00 - end: 02:00
+    saleCard.setProperty("openDuringNight", start.isAfter(end));
     saleCard.setProperty("startTime", startTime);
     saleCard.setProperty("endTime", endTime);
     saleCard.setProperty("picture", picInfo);
