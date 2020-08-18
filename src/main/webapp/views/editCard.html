@@ -60,11 +60,13 @@
                   <div class="row">
                     <div class="col">
                       <p>From</p>
+                      <label class="sr-only" for="startTime">Start Time</label>
                       <input type="time" class="form-control" id="startTime" name="startTime"
                              aria-describedby="startTime" placeholder="From">
                     </div>
                     <div class="col">
                       <p>To</p>
+                      <label class="sr-only" for="endTime">End Time</label>
                       <input type="time" class="form-control" id="endTime" name="endTime"
                              aria-describedby="endTime" placeholder="To">
                     </div>
@@ -76,7 +78,7 @@
                       <label for="hasDelivery"><b>Delivery Service</b></label>
                     </div>
                     <div class="col">
-                      <p>Delivery service distance in meters</p>
+                      <label for="radius"><p>Delivery service distance in meters</p></label>
                       <input type="number" class="form-control" id="radius" name="radius"
                              aria-describedby="radius" placeholder="Distance" onchange="drawMap(getVendorInfo())">
                     </div>
@@ -90,9 +92,10 @@
               <div class="row mt-4">
                 <div class="col">
                   <h5>Current business location</h5>
-                  <div id="card-map"></div>
+                  <div id="card-map" aria-hidden="true"></div>
                   <input type="hidden" id="lat" name="lat">
                   <input type="hidden" id="lng" name="lng">
+                  <input type="hidden" id="isTemporarilyClosed" name="isTemporarilyClosed" value="false">
                   <input type="hidden" id="distance">
                   <a id="update-location-btn" onclick="refreshLocation()" class="btn btn-info mt-1">Set current location
                     to the
@@ -101,11 +104,7 @@
               </div>
               <hr>
               <div class="row mt-4">
-                <div class="col">
-
-                  <button id="update-business-btn" type="submit" class="btn btn-warning btn-lg btn-block">Update
-                    business
-                    information</button>
+                <div id="salecard-btns" class="col">
                 </div>
               </div>
             </form>
@@ -116,7 +115,9 @@
   </div>
 </div>
 </body>
-
+<template id='button-template'>
+  <button type="button" class="btn btn-lg btn-block"></button>
+</template>
 <!-- Error Message Modal -->
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalCenterTitle"
      aria-hidden="true">
@@ -137,5 +138,58 @@
     </div>
   </div>
 </div>
-
+<!-- Delete Biz Modal -->
+<div class="modal fade" id="delete-business-modal" tabindex="-1" role="dialog" aria-labelledby="delete-business-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="delete-business-title">Delete my business</h5>
+      </div>
+      <div class="modal-body text-center">
+        <p>Are you sure you want to permanently delete it?</p>
+        <p>Next time you will need to create one from scratch.</p>
+      </div>
+      <div class="modal-footer text-center">
+        <button type="button" class="btn btn-danger" onclick="deleteSaleCard()">Yes, delete business now</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">No, go back</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Close Biz Modal -->
+<div class="modal fade" id="close-business-modal" tabindex="-1" role="dialog" aria-labelledby="close-business-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="close-business-title">Temporarily close my business</h5>
+      </div>
+      <div class="modal-body text-center">
+        <p>Are you sure you want to temporarily close it?</p>
+        <p>You will need to open it again next time.</p>
+      </div>
+      <div class="modal-footer text-center">
+        <button type="button" class="btn btn-danger" onclick="updateSaleCard(true)">Yes, close now</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">No, go back</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Open Biz Modal -->
+<div class="modal fade" id="open-business-modal" tabindex="-1" role="dialog" aria-labelledby="open-business-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="open-business-title">Do you want to open again?</h5>
+      </div>
+      <div class="modal-body text-center">
+        <p>Your business will be open during these hours:</p>
+        <p id="business-hours-modal"></p>
+      </div>
+      <div class="modal-footer text-center">
+        <button type="button" class="btn btn-primary" onclick="updateSaleCard(false)">Yes, open now</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">No, go back</button>
+      </div>
+    </div>
+  </div>
+</div>
 </html>

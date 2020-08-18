@@ -29,6 +29,7 @@
   padding: 20px;
   position: absolute;
   text-align: center;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
   transform: translate(-50%, -150%);
   width: 80%;
   z-index: 2;
@@ -39,10 +40,10 @@
 }
 
 .margin-navbar {
-   margin-top: 6% !important;
+  margin-top: 6% !important;
  }
 
  #salecards-container {
-   max-height: 700px !important;
-   overflow-y: scroll;
+  max-height: 700px !important;
+  overflow-y: scroll;
  }

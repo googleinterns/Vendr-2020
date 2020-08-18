@@ -32,12 +32,15 @@ const displayNumberOfVendors = (vendorsLength) => {
  */
 function getQueryParams() {
   const params = new URLSearchParams();
-  updateDeliverySelection();
 
-  params.append('hasDelivery', document.getElementById('hasDelivery').value);
+  params.append('hasDelivery', document.getElementById('hasDelivery').checked);
   params.append('distance', document.getElementById('distance').value);
   params.append('lat', document.getElementById('lat').value);
   params.append('lng', document.getElementById('lng').value);
+  params.append('onlyOpenNow', document.getElementById('onlyOpenNow').checked);
+  const today = new Date();
+  const currentTime = { hour: today.getHours(), minute: today.getMinutes() };
+  params.append('currentTime', parseTime(currentTime));
 
   return params;
 }
@@ -84,20 +87,26 @@ function parseTime(time){
  * @param {Object} vendor - Vendor object that contains its info
  * @return {boolean} 
  */
-function isOpened(vendor) {
-  const vendorStartTime = vendor.saleCard.startTime;
-  const vendorEndTime = vendor.saleCard.endTime;
+function isOpened(saleCard) {
+  if (saleCard.isTemporarilyClosed) {
+    return false;
+  }
+
+  const businessStartTime = saleCard.startTime;
+  const businessEndTime = saleCard.endTime;
 
   const startTime = new Date();
-  startTime.setHours(vendorStartTime.hour, vendorStartTime.minute, vendorStartTime.second);
+  startTime.setHours(businessStartTime.hour, businessStartTime.minute, businessStartTime.second);
 
   const endTime = new Date();
-  endTime.setHours(vendorEndTime.hour, vendorEndTime.minute, vendorEndTime.second);  
+  endTime.setHours(businessEndTime.hour, businessEndTime.minute, businessEndTime.second);
 
   const currentTime = new Date();
   currentTime.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
 
-  return (startTime <= currentTime && currentTime <= endTime);
+  return (saleCard.openDuringNight) 
+    ? (startTime <= currentTime || currentTime <= endTime)
+    : (startTime <= currentTime && currentTime <= endTime);
 }
 
 /**
@@ -113,7 +122,7 @@ function insertVendorInfo(container, template, vendor, isModal) {
   prefix = (isModal) ? 'modal' : 'card';
 
   if (!isModal) {
-    if (!isOpened(vendor)) {
+    if (!isOpened(salecard)) {
       const businessPictureContainer =
         template.getElementById('business-picture-container');
       const closedHeader = template.getElementById('closed-title');

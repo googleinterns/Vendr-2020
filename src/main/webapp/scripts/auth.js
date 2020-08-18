@@ -218,7 +218,7 @@ async function handleRegistration(firstName, lastName, phoneNumber, profilePictu
     // If the registration is complete then hide the modal
     if (response.redirected) {
       alert('Successful Registration');
-      $('#exampleModalCenter').modal('hide');
+      location.reload();
       return;
     }
 
