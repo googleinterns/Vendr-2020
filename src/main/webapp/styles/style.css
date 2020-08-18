@@ -21,3 +21,19 @@
   height: 200px;
   margin: auto;
  }
+
+ #closed-title {
+  color: rgba(210, 20, 20, 1);
+  font-weight: bold;
+  left: 50%;
+  padding: 20px;
+  position: absolute;
+  text-align: center;
+  transform: translate(-50%, -150%);
+  width: 80%;
+  z-index: 2;
+ }
+
+.blur-picture {
+  filter: blur(4px) grayscale(100%);
+}

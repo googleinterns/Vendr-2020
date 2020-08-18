@@ -73,8 +73,18 @@
 </template>
 <template id="salecard-template">
   <div id="card-vendorCard" class="card col-lg-3 mx-4 mt-2">
-    <img id="card-business-picture" src="images/placeholderImage.png" class="card-img-top mt-2"
-         alt="images/placeholderImage.png">
+    <div>
+      <div id="business-picture-container">
+        <img 
+          id="card-business-picture" src="images/placeholderImage.png" 
+          class="card-img-top mt-2"
+          alt="images/placeholderImage.png"
+        >
+      </div>
+      <div id="closed-title" class="d-none">
+        <h1>Closed</h1>
+      </div>
+    </div>
     <div class="card-body">
       <h5 id="card-business-name" class="card-title">Card title</h5>
       <p id="card-business-description" class="card-text">Some quick example text to build on the card title and make up the
