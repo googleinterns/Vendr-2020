@@ -46,7 +46,8 @@ function getQueryParams() {
   params.append('lng', document.getElementById('lng').value);
   params.append('onlyOpenNow', document.getElementById('onlyOpenNow').checked);
   const today = new Date();
-  params.append('currentTime', `${today.getHours()}:${today.getMinutes()}`);
+  const currentTime = { hour: today.getHours(), minute: today.getMinutes()};
+  params.append('currentTime', parseTime(currentTime));
 
   return params;
 }
