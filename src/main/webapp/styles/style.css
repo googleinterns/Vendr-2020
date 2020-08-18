@@ -12,6 +12,16 @@
   text-align: center;
 }
 
+#log-button {
+  background-color: rgb(108, 117, 125);
+  color: white;
+}
+
+#log-button:hover {
+  background-color: white;
+  color: rgb(108, 117, 125);
+}
+
  #card-map {
   height: 700px;
   margin: auto;

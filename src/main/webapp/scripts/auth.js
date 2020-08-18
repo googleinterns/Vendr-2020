@@ -55,6 +55,13 @@ async function showRegistrationForm(isRegistered) {
   });
 }
 
+function handleRegistrationClose() {
+  const message = 'Return to Home?';
+  if (confirm(message)) {
+    $('#log-button span').trigger('click');
+  }
+}
+
 /** 
 * Retrieves the user information to set it in the registration form
 */
