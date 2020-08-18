@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Global map to paint the markers
-let NEARBY_VENDORS_MAP;
-
-// Markers
+// Global list of markers placed on the map
 let MARKERS = new Map();
 
 // Green dot mark for the map.
@@ -41,10 +38,10 @@ async function querySalecard() {
   }
 
   // Draw client information.
-  NEARBY_VENDORS_MAP = drawMap(clientInfo);
+  map = drawMap(clientInfo);
 
   // Add vendor's markers.
-  fetchVendors(NEARBY_VENDORS_MAP);
+  fetchVendors(map);
 }
 
 /**
@@ -117,8 +114,7 @@ const addVendorsToMap = (map, nearbyVendors) => {
         lng: salecard.location.salePoint.longitude
       },
       icon: DEFAULT_MARKER,
-      title: salecard.businessName,
-      vendorId: vendor.id
+      title: salecard.businessName
     });
     MARKERS[vendor.id] = marker;
 
