@@ -13,7 +13,7 @@
 }
 
  #card-map {
-  height: 600px;
+  height: 700px;
   margin: auto;
  }
 
@@ -21,40 +21,6 @@
   height: 200px;
   margin: auto;
  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
  #closed-title {
   color: rgba(210, 20, 20, 1);
@@ -71,3 +37,12 @@
 .blur-picture {
   filter: blur(4px) grayscale(100%);
 }
+
+.margin-navbar {
+   margin-top: 6% !important;
+ }
+
+ #salecards-container {
+   max-height: 700px !important;
+   overflow-y: scroll;
+ }
