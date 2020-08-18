@@ -55,6 +55,7 @@ async function showRegistrationForm(isRegistered) {
   });
 }
 
+/** Handles registration modal close request*/
 function handleRegistrationClose() {
   const message = 'Return to Home?';
   if (confirm(message)) {

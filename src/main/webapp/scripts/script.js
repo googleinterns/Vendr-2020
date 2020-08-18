@@ -83,8 +83,8 @@ function parseTime(time){
 }
 
 /**
- * function to prove check if business is still opened if it hasn't been updated
- * @param {Object} vendor - Vendor object that contains its info
+ * Function to prove check if business is still opened if it hasn't been updated
+ * @param {Object} saleCard - Salecard object that contains its info
  * @return {boolean} 
  */
 function isOpened(saleCard) {
@@ -104,6 +104,11 @@ function isOpened(saleCard) {
   const currentTime = new Date();
   currentTime.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
 
+  /**
+   * Returns true if the time is between the salecard's opening hours
+   * E.g. if isOpenDuringNight, currentTime between (startTime, 23:59] or [00:00, endTime)
+   * else, currentTime between (startTime, endTime)
+   */
   return (saleCard.openDuringNight) 
     ? (startTime <= currentTime || currentTime <= endTime)
     : (startTime <= currentTime && currentTime <= endTime);
