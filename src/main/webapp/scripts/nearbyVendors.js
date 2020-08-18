@@ -12,6 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Global map to paint the markers
+let NEARBY_VENDORS_MAP;
+
+// Markers
+let MARKERS = new Map();
+
+// Green dot mark for the map.
+const HOVER_MARKER = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png';
+
+// Vendor's default dot mark for the map.
+const DEFAULT_MARKER = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png';
+
 /**
  * Function that queries salecards from servlet.
  */
@@ -29,10 +41,10 @@ async function querySalecard() {
   }
 
   // Draw client information.
-  const map = drawMap(clientInfo);
+  NEARBY_VENDORS_MAP = drawMap(clientInfo);
 
   // Add vendor's markers.
-  fetchVendors(map);
+  fetchVendors(NEARBY_VENDORS_MAP);
 }
 
 /**
@@ -95,6 +107,7 @@ const addVendorsToMap = (map, nearbyVendors) => {
 
     // Create salecard for vendor.
     const salecardCloned = salecardTemplate.content.cloneNode(true);
+    salecardCloned.getElementById('mySalecard').id = `salecard-${vendor.id}`;
     insertVendorInfo(salecardsContainer, salecardCloned, vendor, false);
 
     const marker = new google.maps.Marker({
@@ -103,8 +116,11 @@ const addVendorsToMap = (map, nearbyVendors) => {
         lat: salecard.location.salePoint.latitude,
         lng: salecard.location.salePoint.longitude
       },
-      title: salecard.businessName
+      icon: DEFAULT_MARKER,
+      title: salecard.businessName,
+      vendorId: vendor.id
     });
+    MARKERS[vendor.id] = marker;
 
     // Toggles salecard's modal when vendor's marker is clicked.
     marker.addListener('click', () => {
@@ -114,8 +130,36 @@ const addVendorsToMap = (map, nearbyVendors) => {
 };
 
 /**
- * To insert the search bar when page loads and then initialize the map of the webpage.
+ * Highlights marker of the vendor in the map
+ * @param {Element} Card element container of the vendor
  */
-$(() => {
-  $('#searchBarVendors-placeholder').load('common/searchBarVendors.html', initMap);
-});
+function showMarker(cardContainer) {
+  const vendorId = getVendorId(cardContainer);
+  MARKERS[vendorId].setIcon(HOVER_MARKER);
+}
+
+/**
+ * Unhighlights marker of the vendor in the map
+ * @param {Element} Card element container of the vendor
+ */
+function hideMarker(cardContainer) {
+  const vendorId = getVendorId(cardContainer);
+  MARKERS[vendorId].setIcon(DEFAULT_MARKER);
+}
+
+/**
+ * Get vendor id given a salecard element.
+ * @param {Element} HTML container of the salecard
+ * @returns {String} vendor's id.
+ */
+function getVendorId(cardContainer) {
+  const id = cardContainer.id.split('-');
+  return id[1];
+}
+
+/**
+ * Initalize the map of the webpage
+ */
+window.onload = () => {
+  initMap();
+};

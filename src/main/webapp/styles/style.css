@@ -13,11 +13,20 @@
 }
 
  #card-map {
-  height: 600px;
+  height: 700px;
   margin: auto;
  }
 
  #edit-card-map {
   height: 200px;
   margin: auto;
+ }
+
+ .margin-navbar {
+   margin-top: 6% !important;
+ }
+
+ #salecards-container {
+   max-height: 700px !important;
+   overflow-y: scroll;
  }
