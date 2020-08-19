@@ -39,11 +39,7 @@ function getQueryParams() {
   params.append('lng', document.getElementById('lng').value);
   params.append('onlyOpenNow', document.getElementById('onlyOpenNow').checked);
   const today = new Date();
-<<<<<<< HEAD
-  const currentTime = { hour: today.getHours(), minute: today.getMinutes() };
-=======
   const currentTime = { hour: today.getHours(), minute: today.getMinutes()};
->>>>>>> e80045b8991837ccd1ab1db156eff4262555f69c
   params.append('currentTime', parseTime(currentTime));
 
   return params;
@@ -113,7 +109,7 @@ function isOpened(saleCard) {
    * E.g. if isOpenDuringNight, currentTime between (startTime, 23:59] or [00:00, endTime)
    * else, currentTime between (startTime, endTime)
    */
-  return (saleCard.openDuringNight) 
+  return (startTime > endTime) 
     ? (startTime <= currentTime || currentTime <= endTime)
     : (startTime <= currentTime && currentTime <= endTime);
 }
