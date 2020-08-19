@@ -21,6 +21,10 @@ body {
   height: 500px;
 }
 
+.fix-width {
+  width: 5% !important;
+}
+
 .home-header {
   font-family: Arial, Helvetica, sans-serif;
 }

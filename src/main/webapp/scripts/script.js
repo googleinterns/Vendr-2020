@@ -109,7 +109,7 @@ function isOpened(saleCard) {
    * E.g. if isOpenDuringNight, currentTime between (startTime, 23:59] or [00:00, endTime)
    * else, currentTime between (startTime, endTime)
    */
-  return (saleCard.openDuringNight) 
+  return (startTime > endTime) 
     ? (startTime <= currentTime || currentTime <= endTime)
     : (startTime <= currentTime && currentTime <= endTime);
 }
