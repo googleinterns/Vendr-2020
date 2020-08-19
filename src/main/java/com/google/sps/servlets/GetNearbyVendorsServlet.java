@@ -147,22 +147,12 @@ public class GetNearbyVendorsServlet extends HttpServlet {
 
   /**
    * Returns true if the time is between the salecard's opening hours
-<<<<<<< HEAD
-   * E.g. if isOpenDuringNight, currentTime between (startTime, 23:59] or [00:00, endTime)
-   * else, currentTime between (startTime, endTime)
-   */
-  private boolean isBetweenOpeningHours(SaleCard saleCard, LocalTime currentTime) {
-    return (saleCard.isOpenDuringNight())
-        ? currentTime.isAfter(saleCard.getStartTime()) || currentTime.isBefore(saleCard.getEndTime())
-        : currentTime.isAfter(saleCard.getStartTime()) && currentTime.isBefore(saleCard.getEndTime());
-=======
    * E.g. if startTime after endTime, currentTime between (startTime, 23:59] or [00:00, endTime)
    * else, currentTime between (startTime, endTime)
    */
   private boolean isBetweenOpeningHours(LocalTime start, LocalTime end, LocalTime currentTime) {
     return (start.isAfter(end))
-        ? currentTime.isAfter(start) || currentTime.isBefore(end)
-        : currentTime.isAfter(start) && currentTime.isBefore(end);
->>>>>>> e80045b8991837ccd1ab1db156eff4262555f69c
+      ? currentTime.isAfter(start) || currentTime.isBefore(end)
+      : currentTime.isAfter(start) && currentTime.isBefore(end);
   }
 }
