@@ -25,6 +25,10 @@ body {
   width: 5% !important;
 }
 
+.icon-size {
+  font-size: 15em !important;
+}
+
 .home-header {
   font-family: Arial, Helvetica, sans-serif;
 }
