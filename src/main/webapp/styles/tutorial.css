@@ -32,3 +32,7 @@ body {
 .home-header {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.tutorial-image-style {
+  height: 330px;
+}
