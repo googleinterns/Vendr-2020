@@ -22,11 +22,15 @@ body {
 }
 
 .fix-width {
-  width: 5% !important;
+  width: 3% !important;
 }
 
 .icon-size {
   font-size: 15em !important;
+}
+
+.font-size {
+  font-size: 19px;
 }
 
 .home-header {
