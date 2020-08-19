@@ -39,7 +39,11 @@ function getQueryParams() {
   params.append('lng', document.getElementById('lng').value);
   params.append('onlyOpenNow', document.getElementById('onlyOpenNow').checked);
   const today = new Date();
+<<<<<<< HEAD
   const currentTime = { hour: today.getHours(), minute: today.getMinutes() };
+=======
+  const currentTime = { hour: today.getHours(), minute: today.getMinutes()};
+>>>>>>> e80045b8991837ccd1ab1db156eff4262555f69c
   params.append('currentTime', parseTime(currentTime));
 
   return params;
@@ -144,7 +148,8 @@ function insertVendorInfo(container, template, vendor, isModal) {
   template.getElementById(`${prefix}-business-description`).textContent = salecard.description;
   template.getElementById(`${prefix}-vendor-name`).textContent = `${vendor.firstName} ${vendor.lastName}`;
   template.getElementById(`${prefix}-vendor-phone`).textContent = vendor.phoneNumber;
-  template.getElementById(`${prefix}-vendor-distance`).textContent = `${salecard.distanceFromClient.toFixed(2)}m`;
+  template.getElementById(`${prefix}-vendor-distance`).textContent =
+      `${Math.round(salecard.distanceFromClient / 10) * 10}m`;
   template.getElementById(`${prefix}-vendor-salecard-btn`).setAttribute('href', `viewCard.html?id=${vendor.id}`);
 
   container.appendChild(template);

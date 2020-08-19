@@ -168,8 +168,6 @@ public class UpdateSaleCardServlet extends HttpServlet {
     saleCard.setProperty("description", description);
     saleCard.setProperty("hasDelivery", hasDelivery);
     saleCard.setProperty("isTemporarilyClosed", isTemporarilyClosed);
-    // E.g. true if start: 20:00 - end: 02:00
-    saleCard.setProperty("openDuringNight", start.isAfter(end));
     saleCard.setProperty("startTime", startTime);
     saleCard.setProperty("endTime", endTime);
     saleCard.setProperty("picture", picInfo);
