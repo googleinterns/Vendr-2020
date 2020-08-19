@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
-* Fuction to set drop down menu in the webapp
+* Fuction to set drop down menu in the navbar
 * @param {string} logOutURL 
 */
 function setDropdownMenuInDOM(logOutURL) {

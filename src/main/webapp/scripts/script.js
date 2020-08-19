@@ -32,12 +32,15 @@ const displayNumberOfVendors = (vendorsLength) => {
  */
 function getQueryParams() {
   const params = new URLSearchParams();
-  updateDeliverySelection();
 
-  params.append('hasDelivery', document.getElementById('hasDelivery').value);
+  params.append('hasDelivery', document.getElementById('hasDelivery').checked);
   params.append('distance', document.getElementById('distance').value);
   params.append('lat', document.getElementById('lat').value);
   params.append('lng', document.getElementById('lng').value);
+  params.append('onlyOpenNow', document.getElementById('onlyOpenNow').checked);
+  const today = new Date();
+  const currentTime = { hour: today.getHours(), minute: today.getMinutes()};
+  params.append('currentTime', parseTime(currentTime));
 
   return params;
 }
