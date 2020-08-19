@@ -132,7 +132,9 @@ public class GetNearbyVendorsServlet extends HttpServlet {
       Vendor vendor = new Vendor(vendorEntity);
       GeoPt vendorLocation = vendor.getSaleCard().getLocation().getSalePoint();
       float distanceClientVendor = HttpServletUtils.computeGeoDistance(clientLocation, vendorLocation);
-      boolean timeCheck = (onlyOpenNow) ? isBetweenOpeningHours(vendor.getSaleCard(), currentTime) : true;
+      boolean timeCheck = (onlyOpenNow) 
+        ? isBetweenOpeningHours(vendor.getSaleCard().getStartTime(), vendor.getSaleCard().getEndTime(), currentTime)
+        : true;
 
       if (distanceClientVendor <= distanceLimit && timeCheck) {
         vendor.getSaleCard().setDistanceFromClient(distanceClientVendor);
@@ -145,12 +147,12 @@ public class GetNearbyVendorsServlet extends HttpServlet {
 
   /**
    * Returns true if the time is between the salecard's opening hours
-   * E.g. if isOpenDuringNight, currentTime between (startTime, 23:59] or [00:00, endTime)
+   * E.g. if startTime after endTime, currentTime between (startTime, 23:59] or [00:00, endTime)
    * else, currentTime between (startTime, endTime)
    */
-  private boolean isBetweenOpeningHours(SaleCard saleCard, LocalTime currentTime) {
-    return (saleCard.isOpenDuringNight())
-        ? currentTime.isAfter(saleCard.getStartTime()) || currentTime.isBefore(saleCard.getEndTime())
-        : currentTime.isAfter(saleCard.getStartTime()) && currentTime.isBefore(saleCard.getEndTime());
+  private boolean isBetweenOpeningHours(LocalTime start, LocalTime end, LocalTime currentTime) {
+    return (start.isAfter(end))
+      ? currentTime.isAfter(start) || currentTime.isBefore(end)
+      : currentTime.isAfter(start) && currentTime.isBefore(end);
   }
 }
