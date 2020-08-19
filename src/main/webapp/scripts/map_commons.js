@@ -14,7 +14,7 @@
 
 // User's blue dot mark for the map.
 const USER_MARKER = {
-  url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+  url: 'https://mt.google.com/vt/icon/name=icons/spotlight/directions_decision_point_walking_large.png&scale=2'
 };
 
 // Map theme (removes nearby business).

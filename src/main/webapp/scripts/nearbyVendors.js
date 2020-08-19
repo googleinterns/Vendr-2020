@@ -16,10 +16,10 @@
 let MARKERS = new Map();
 
 // Green dot mark for the map.
-const HOVER_MARKER = 'https://maps.google.com/mapfiles/ms/icons/green-dot.png';
+const HOVER_MARKER = 'https://mt.google.com/vt/icon?psize=30&font=fonts/arialuni_t.ttf&color=ff304C13&name=icons/spotlight/spotlight-waypoint-a.png&ax=43&ay=48&text=%E2%80%A2&scale=1.5';
 
 // Vendor's default dot mark for the map.
-const DEFAULT_MARKER = 'https://maps.google.com/mapfiles/ms/icons/red-dot.png';
+const DEFAULT_MARKER = 'http://mt.googleapis.com/vt/icon/name=icons/spotlight/spotlight-poi.png';
 
 /**
  * Function that queries salecards from servlet.
@@ -38,7 +38,7 @@ async function querySalecard() {
   }
 
   // Draw client information.
-  map = drawMap(clientInfo);
+  const map = drawMap(clientInfo);
 
   // Add vendor's markers.
   fetchVendors(map);
@@ -121,7 +121,17 @@ const addVendorsToMap = (map, nearbyVendors) => {
     // Toggles salecard's modal when vendor's marker is clicked.
     marker.addListener('click', () => {
       $(`#modal${vendor.id}`).modal('toggle');
-    })
+    });
+
+    // Highlights marker of the vendor in the map when mouse enter.
+    marker.addListener('mouseover', () => {
+      marker.setIcon(HOVER_MARKER);
+    });
+    
+    // unhighlights marker of the vendor in the map when mouse is out.
+    marker.addListener('mouseout', () => {
+      marker.setIcon(DEFAULT_MARKER);
+    });
   });
 };
 
@@ -129,7 +139,7 @@ const addVendorsToMap = (map, nearbyVendors) => {
  * Highlights marker of the vendor in the map
  * @param {Element} Card element container of the vendor
  */
-function showMarker(cardContainer) {
+function highlightMarker(cardContainer) {
   const vendorId = getVendorId(cardContainer);
   MARKERS[vendorId].setIcon(HOVER_MARKER);
 }
@@ -138,7 +148,7 @@ function showMarker(cardContainer) {
  * Unhighlights marker of the vendor in the map
  * @param {Element} Card element container of the vendor
  */
-function hideMarker(cardContainer) {
+function unhighlightMarker(cardContainer) {
   const vendorId = getVendorId(cardContainer);
   MARKERS[vendorId].setIcon(DEFAULT_MARKER);
 }
