@@ -37,6 +37,9 @@ function getActiveTab() {
 
 function setActiveTab(fileName) {
   const activeTabElement = document.getElementById(`${fileName}_tab`);
+  if (activeTabElement === null) {
+    return;
+  }
   activeTabElement.classList.add('active');
 }
 
