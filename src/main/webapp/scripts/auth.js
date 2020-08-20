@@ -23,9 +23,17 @@ const TUTORIAL_FILENAME = 'home';
 /** @param {string} fileName */
 function getLogStatus(fileName) {
   fetch('/log-status').then(response => response.json()).then((logStatus) => {
-    if (!logStatus.isRegistered && logStatus.isLogged) {
-      showRegistrationForm(logStatus.isRegistered);
+    const isRegistered = logStatus.isRegistered;
+
+    if (!isRegistered && logStatus.isLogged) {
+      showRegistrationForm(isRegistered);
     }
+    
+    if (isRegistered) {
+      insertEditCardTab();
+    }
+  
+    setActiveTab(fileName);
     
     if (fileName === TUTORIAL_FILENAME) {
       handleTutorialContent(logStatus.isLogged);
@@ -45,6 +53,14 @@ async function showRegistrationForm(isRegistered) {
     }
     $('#registrationModal').modal('show');
   });
+}
+
+/** Handles registration modal close request*/
+function handleRegistrationClose() {
+  const message = 'Return to Home?';
+  if (confirm(message)) {
+    $('#log-button span').trigger('click');
+  }
 }
 
 /** 
@@ -210,7 +226,7 @@ async function handleRegistration(firstName, lastName, phoneNumber, profilePictu
     // If the registration is complete then hide the modal
     if (response.redirected) {
       alert('Successful Registration');
-      $('#exampleModalCenter').modal('hide');
+      location.reload();
       return;
     }
 

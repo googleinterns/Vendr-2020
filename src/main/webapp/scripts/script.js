@@ -13,13 +13,6 @@
 // limitations under the License.
 
 /**
- * Function to load the search vendors around bar
- */
-$(() => {
-  $('#searchBarVendors-placeholder').load('common/searchBarVendors.html');
-});
-
-/**
  * Function that creates h3 element to display the number of vendors
  * @param {int} vendorsLength the length of the array of vendors.
  */
@@ -39,12 +32,15 @@ const displayNumberOfVendors = (vendorsLength) => {
  */
 function getQueryParams() {
   const params = new URLSearchParams();
-  updateDeliverySelection();
 
-  params.append('hasDelivery', document.getElementById('hasDelivery').value);
+  params.append('hasDelivery', document.getElementById('hasDelivery').checked);
   params.append('distance', document.getElementById('distance').value);
   params.append('lat', document.getElementById('lat').value);
   params.append('lng', document.getElementById('lng').value);
+  params.append('onlyOpenNow', document.getElementById('onlyOpenNow').checked);
+  const today = new Date();
+  const currentTime = { hour: today.getHours(), minute: today.getMinutes()};
+  params.append('currentTime', parseTime(currentTime));
 
   return params;
 }
@@ -87,22 +83,67 @@ function parseTime(time){
 }
 
 /**
+ * Function to prove check if business is still opened if it hasn't been updated
+ * @param {Object} saleCard - Salecard object that contains its info
+ * @return {boolean} - If the business opened or not
+ */
+function isOpened(saleCard) {
+  if (saleCard.isTemporarilyClosed) {
+    return false;
+  }
+
+  const businessStartTime = saleCard.startTime;
+  const businessEndTime = saleCard.endTime;
+
+  const startTime = new Date();
+  startTime.setHours(businessStartTime.hour, businessStartTime.minute, businessStartTime.second);
+
+  const endTime = new Date();
+  endTime.setHours(businessEndTime.hour, businessEndTime.minute, businessEndTime.second);
+
+  const currentTime = new Date();
+  currentTime.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
+
+  /**
+   * If startTime > endTime, currentTime between (startTime, 23:59] or [00:00, endTime)
+   * else, currentTime between (startTime, endTime)
+   */
+  return (startTime > endTime) 
+    ? (startTime <= currentTime || currentTime <= endTime)
+    : (startTime <= currentTime && currentTime <= endTime);
+}
+
+/**
  * Function that inserts vendor's info given an HTML container
  * @param {Element} container - HTML container
  * @param {Element} template - template HTML element.
  * @param {Object} vendor - Vendor object that contains its info.
+ * @param {Boolean} isModal - Check if the container is a modal
  */
-function insertVendorInfo(container, template, vendor) {
+function insertVendorInfo(container, template, vendor, isModal) {
   let salecard = vendor.saleCard;
-  template.getElementById('business-picture').src
+  let prefix;
+  prefix = (isModal) ? 'modal' : 'card';
+
+  if (!isModal && !isOpened(salecard)) {
+    const businessPictureContainer =
+      template.getElementById('business-picture-container');
+    const closedHeader = template.getElementById('closed-title');
+
+    businessPictureContainer.classList.add('blur-picture');
+    closedHeader.classList.remove('d-none');
+  }
+  
+  template.getElementById(`${prefix}-business-picture`).src
       = `/serve-blob?blobKey=${vendor.saleCard.picture.blobKey.blobKey}`;
-  template.getElementById('business-picture').alt = vendor.saleCard.picture.altText;
-  template.getElementById('business-name').textContent = salecard.businessName;
-  template.getElementById('business-description').textContent = salecard.description;
-  template.getElementById('vendor-name').textContent = `${vendor.firstName} ${vendor.lastName}`;
-  template.getElementById('vendor-phone').textContent = vendor.phoneNumber;
-  template.getElementById('vendor-distance').textContent = `${salecard.distanceFromClient.toFixed(2)}m`;
-  template.getElementById('vendor-salecard-btn').setAttribute('href', `viewCard.html?id=${vendor.id}`);
+  template.getElementById(`${prefix}-business-picture`).alt = vendor.saleCard.picture.altText;
+  template.getElementById(`${prefix}-business-name`).textContent = salecard.businessName;
+  template.getElementById(`${prefix}-business-description`).textContent = salecard.description;
+  template.getElementById(`${prefix}-vendor-name`).textContent = `${vendor.firstName} ${vendor.lastName}`;
+  template.getElementById(`${prefix}-vendor-phone`).textContent = vendor.phoneNumber;
+  template.getElementById(`${prefix}-vendor-distance`).textContent =
+      `${Math.round(salecard.distanceFromClient / 10) * 10}m`;
+  template.getElementById(`${prefix}-vendor-salecard-btn`).setAttribute('href', `viewCard.html?id=${vendor.id}`);
 
   container.appendChild(template);
 }
