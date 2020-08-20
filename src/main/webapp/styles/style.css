@@ -5,7 +5,7 @@
   height: 600px;
   margin: auto;
   width: 75%;
- }
+}
 
 .tutorial-title {
   font-size: 3vw;
@@ -21,17 +21,17 @@
   color: rgb(108, 117, 125);
 }
 
- #card-map {
+#card-map {
   height: 700px;
   margin: auto;
- }
+}
 
- #edit-card-map {
+#edit-card-map {
   height: 200px;
   margin: auto;
- }
+}
 
- #closed-title {
+#closed-title {
   color: rgba(210, 20, 20, 1);
   font-weight: bold;
   left: 50%;
@@ -42,7 +42,7 @@
   transform: translate(-50%, -150%);
   width: 80%;
   z-index: 2;
- }
+}
 
 .blur-picture {
   filter: blur(4px) grayscale(100%);
@@ -50,9 +50,9 @@
 
 .margin-navbar {
   margin-top: 6% !important;
- }
+}
 
- #salecards-container {
+#salecards-container {
   max-height: 700px !important;
   overflow-y: scroll;
- }
+}

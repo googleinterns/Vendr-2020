@@ -85,7 +85,7 @@ function parseTime(time){
 /**
  * Function to prove check if business is still opened if it hasn't been updated
  * @param {Object} saleCard - Salecard object that contains its info
- * @return {boolean} 
+ * @return {boolean} - If the business opened or not
  */
 function isOpened(saleCard) {
   if (saleCard.isTemporarilyClosed) {
@@ -105,8 +105,7 @@ function isOpened(saleCard) {
   currentTime.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
 
   /**
-   * Returns true if the time is between the salecard's opening hours
-   * E.g. if isOpenDuringNight, currentTime between (startTime, 23:59] or [00:00, endTime)
+   * If startTime > endTime, currentTime between (startTime, 23:59] or [00:00, endTime)
    * else, currentTime between (startTime, endTime)
    */
   return (startTime > endTime) 
@@ -126,15 +125,13 @@ function insertVendorInfo(container, template, vendor, isModal) {
   let prefix;
   prefix = (isModal) ? 'modal' : 'card';
 
-  if (!isModal) {
-    if (!isOpened(salecard)) {
-      const businessPictureContainer =
-        template.getElementById('business-picture-container');
-      const closedHeader = template.getElementById('closed-title');
+  if (!isModal && !isOpened(salecard)) {
+    const businessPictureContainer =
+      template.getElementById('business-picture-container');
+    const closedHeader = template.getElementById('closed-title');
 
-      businessPictureContainer.classList.add('blur-picture');
-      closedHeader.classList.remove('d-none');
-   }
+    businessPictureContainer.classList.add('blur-picture');
+    closedHeader.classList.remove('d-none');
   }
   
   template.getElementById(`${prefix}-business-picture`).src

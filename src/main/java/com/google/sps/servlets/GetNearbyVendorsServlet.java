@@ -133,8 +133,8 @@ public class GetNearbyVendorsServlet extends HttpServlet {
       GeoPt vendorLocation = vendor.getSaleCard().getLocation().getSalePoint();
       float distanceClientVendor = HttpServletUtils.computeGeoDistance(clientLocation, vendorLocation);
       boolean timeCheck = (onlyOpenNow) 
-        ? isBetweenOpeningHours(vendor.getSaleCard().getStartTime(), vendor.getSaleCard().getEndTime(), currentTime)
-        : true;
+          ? isBetweenOpeningHours(vendor.getSaleCard().getStartTime(), vendor.getSaleCard().getEndTime(), currentTime)
+          : true;
 
       if (distanceClientVendor <= distanceLimit && timeCheck) {
         vendor.getSaleCard().setDistanceFromClient(distanceClientVendor);
@@ -152,7 +152,7 @@ public class GetNearbyVendorsServlet extends HttpServlet {
    */
   private boolean isBetweenOpeningHours(LocalTime start, LocalTime end, LocalTime currentTime) {
     return (start.isAfter(end))
-      ? currentTime.isAfter(start) || currentTime.isBefore(end)
-      : currentTime.isAfter(start) && currentTime.isBefore(end);
+        ? currentTime.isAfter(start) || currentTime.isBefore(end)
+        : currentTime.isAfter(start) && currentTime.isBefore(end);
   }
 }
