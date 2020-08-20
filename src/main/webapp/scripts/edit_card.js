@@ -43,11 +43,12 @@ async function querySalecard() {
   if (!('saleCard' in vendor)) {
     await updateLocation();
     document.getElementById('salecard-btns').appendChild(createButton('create'));
+    setUploadedImage();
   } else {
     showVendorData(vendor);
     addSaleCardButtons(vendor.saleCard);
   }
-
+ 
   drawMap(getVendorInfo());
 }
 
