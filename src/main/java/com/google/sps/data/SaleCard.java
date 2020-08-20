@@ -31,7 +31,7 @@ public final class SaleCard {
   private float distanceFromClient;
 
   public SaleCard(long id, String businessName, String description, boolean hasDelivery, boolean isTemporarilyClosed,
-    LocalTime startTime, LocalTime endTime, LocationData location, Picture picture) {
+      LocalTime startTime, LocalTime endTime, LocationData location, Picture picture) {
     this.id = id;
     this.businessName = businessName;
     this.description = description;

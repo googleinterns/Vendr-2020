@@ -17,7 +17,7 @@
  */
 
 $(() => {
-  // After the navbar finishes loading, set the active tab
+  // After the navbar finishes loading, handle user's login status
   $('#navbar_container').load('common/navbar.html', handleLogIn); 
 });
 
@@ -42,16 +42,16 @@ function setActiveTab(fileName) {
 
 function insertEditCardTab() {
   const navBarList = document.getElementById('navbar-list');
-  const LiTag = document.createElement('li');
-  const aTag = document.createElement('a');
+  const tabElement = document.createElement('li');
+  const navLink = document.createElement('a');
 
-  LiTag.classList.add('nav-item');
-  LiTag.setAttribute('id','editCard_tab');
+  tabElement.classList.add('nav-item');
+  tabElement.setAttribute('id','editCard_tab');
 
-  aTag.classList.add('nav-link');
-  aTag.setAttribute('href', './editCard.html');
-  aTag.innerHTML = 'My Business';
+  navLink.classList.add('nav-link');
+  navLink.setAttribute('href', './editCard.html');
+  navLink.innerHTML = 'My Business';
 
-  LiTag.appendChild(aTag);
-  navBarList.appendChild(LiTag);
+  tabElement.appendChild(navLink);
+  navBarList.appendChild(tabElement);
 }
