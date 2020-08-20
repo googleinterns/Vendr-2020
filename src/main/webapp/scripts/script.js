@@ -83,6 +83,37 @@ function parseTime(time){
 }
 
 /**
+ * Function to prove check if business is still opened if it hasn't been updated
+ * @param {Object} saleCard - Salecard object that contains its info
+ * @return {boolean} - If the business opened or not
+ */
+function isOpened(saleCard) {
+  if (saleCard.isTemporarilyClosed) {
+    return false;
+  }
+
+  const businessStartTime = saleCard.startTime;
+  const businessEndTime = saleCard.endTime;
+
+  const startTime = new Date();
+  startTime.setHours(businessStartTime.hour, businessStartTime.minute, businessStartTime.second);
+
+  const endTime = new Date();
+  endTime.setHours(businessEndTime.hour, businessEndTime.minute, businessEndTime.second);
+
+  const currentTime = new Date();
+  currentTime.setHours(currentTime.getHours(), currentTime.getMinutes(), currentTime.getSeconds());
+
+  /**
+   * If startTime > endTime, currentTime between (startTime, 23:59] or [00:00, endTime)
+   * else, currentTime between (startTime, endTime)
+   */
+  return (startTime > endTime) 
+    ? (startTime <= currentTime || currentTime <= endTime)
+    : (startTime <= currentTime && currentTime <= endTime);
+}
+
+/**
  * Function that inserts vendor's info given an HTML container
  * @param {Element} container - HTML container
  * @param {Element} template - template HTML element.
@@ -93,6 +124,15 @@ function insertVendorInfo(container, template, vendor, isModal) {
   let salecard = vendor.saleCard;
   let prefix;
   prefix = (isModal) ? 'modal' : 'card';
+
+  if (!isModal && !isOpened(salecard)) {
+    const businessPictureContainer =
+      template.getElementById('business-picture-container');
+    const closedHeader = template.getElementById('closed-title');
+
+    businessPictureContainer.classList.add('blur-picture');
+    closedHeader.classList.remove('d-none');
+  }
   
   template.getElementById(`${prefix}-business-picture`).src
       = `/serve-blob?blobKey=${vendor.saleCard.picture.blobKey.blobKey}`;

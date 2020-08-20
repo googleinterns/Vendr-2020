@@ -100,6 +100,7 @@ function addSaleCardButtons(salecard) {
 function createButton(buttonType) {
   const template = document.getElementById('button-template');
   const button = template.content.querySelector('button').cloneNode(true);
+
   switch (buttonType.toLowerCase()) {
     case 'open':
       button.classList.add('btn-primary');

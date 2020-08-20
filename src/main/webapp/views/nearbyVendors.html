@@ -122,8 +122,18 @@
   <div id="mySalecard" class="card-vendorCard row p-3" onmouseover="highlightMarker(this)" onmouseout="unhighlightMarker(this)">
     <div class="col-lg-6">
       <div class="row m-1">
-        <img id="card-business-picture" src="images/placeholderImage.png" class="card-img-top"
-          alt="images/placeholderImage.png">
+        <div>
+          <div id="business-picture-container">
+            <img 
+              id="card-business-picture" src="images/placeholderImage.png" 
+              class="card-img-top mt-2"
+              alt="Business Picture Placeholder"
+            >
+          </div>
+          <div id="closed-title" class="d-none">
+            <h1>Closed</h1>
+          </div>
+        </div>
       </div>
       <div class="row">
         <div class="col-lg-7">

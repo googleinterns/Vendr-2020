@@ -17,17 +17,41 @@
  */
 
 $(() => {
-  // After the navbar finishes loading, set the active tab
-  $('#navbar_container').load('common/navbar.html', setActiveTab); 
+  // After the navbar finishes loading, handle user's login status
+  $('#navbar_container').load('common/navbar.html', handleLogIn); 
 });
 
-const setActiveTab = () => {
+const handleLogIn = () => {
+  const fileName = getActiveTab();
+
+  getLogStatus(fileName);
+};
+
+function getActiveTab() {
   const windowPath = window.location.pathname;
   const loadedFile = windowPath.split('/').pop();
   const fileName = loadedFile.split('.');
 
-  const activeTabElement = document.getElementById(`${fileName[0]}_tab`);
-  activeTabElement.classList.add('active');
+  return fileName[0];
+}
 
-  getLogStatus(fileName[0]);
-};
+function setActiveTab(fileName) {
+  const activeTabElement = document.getElementById(`${fileName}_tab`);
+  activeTabElement.classList.add('active');
+}
+
+function insertEditCardTab() {
+  const navBarList = document.getElementById('navbar-list');
+  const tabElement = document.createElement('li');
+  const navLink = document.createElement('a');
+
+  tabElement.classList.add('nav-item');
+  tabElement.setAttribute('id','editCard_tab');
+
+  navLink.classList.add('nav-link');
+  navLink.setAttribute('href', './editCard.html');
+  navLink.innerHTML = 'My Business';
+
+  tabElement.appendChild(navLink);
+  navBarList.appendChild(tabElement);
+}

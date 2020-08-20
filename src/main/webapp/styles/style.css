@@ -5,28 +5,55 @@
   height: 600px;
   margin: auto;
   width: 75%;
- }
+}
 
 .tutorial-placeholders {
   font-size: 5vw;
   text-align: center;
 }
 
- #card-map {
+#log-button {
+  background-color: rgb(108, 117, 125);
+  color: white;
+}
+
+#log-button:hover {
+  background-color: white;
+  color: rgb(108, 117, 125);
+}
+
+#card-map {
   height: 700px;
   margin: auto;
- }
+}
 
- #edit-card-map {
+#edit-card-map {
   height: 200px;
   margin: auto;
- }
+}
 
- .margin-navbar {
-   margin-top: 6% !important;
- }
+#closed-title {
+  color: rgba(210, 20, 20, 1);
+  font-weight: bold;
+  left: 50%;
+  padding: 20px;
+  position: absolute;
+  text-align: center;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  transform: translate(-50%, -150%);
+  width: 80%;
+  z-index: 2;
+}
 
- #salecards-container {
-   max-height: 700px !important;
-   overflow-y: scroll;
- }
+.blur-picture {
+  filter: blur(4px) grayscale(100%);
+}
+
+.margin-navbar {
+  margin-top: 6% !important;
+}
+
+#salecards-container {
+  max-height: 700px !important;
+  overflow-y: scroll;
+}
