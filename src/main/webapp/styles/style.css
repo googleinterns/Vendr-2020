@@ -11,7 +11,7 @@
   font-size: 3vw;
 }
 
-#log-button {
+.log-button-color {
   background-color: rgb(108, 117, 125);
   color: white;
 }
