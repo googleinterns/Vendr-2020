@@ -32,6 +32,7 @@ import com.google.sps.data.Vendor;
 import com.google.sps.utility.GeoHash;
 import java.io.IOException;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,19 +61,23 @@ public class GetNearbyVendorsServlet extends HttpServlet {
       longitude = Float.parseFloat(HttpServletUtils.getParameter(request, "lng", "360"));
       clientLocation = new GeoPt(latitude, longitude);
       geoHashesToQuery = GeoHash.getHashesToQuery(latitude, longitude, distance);
+    } catch (DateTimeParseException e) {
+      System.err.println("Bad format to parse: " + e);
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+      return;
     } catch (NumberFormatException e) {
-      System.out.println("The string is not a parsable float: " + e);
+      System.err.println("The string is not a parsable float: " + e);
       response.sendError(HttpServletResponse.SC_BAD_REQUEST);
       return;
     } catch (IllegalArgumentException e) {
-      System.out.println("Latitude and/or longitude outside legal range: " + e);
+      System.err.println("Latitude and/or longitude outside legal range: " + e);
       response.sendError(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
 
     // Check values exist and are in the range
     if (geoHashesToQuery.isEmpty() || distance > COMMONS.MAX_DISTANCE_CLIENT || distance < COMMONS.MIN_DISTANCE) {
-      System.out.println("The values do not exist and/or are outside the range.");
+      System.err.println("The values do not exist and/or are outside the range.");
       response.sendError(HttpServletResponse.SC_BAD_REQUEST);
       return;
     }
