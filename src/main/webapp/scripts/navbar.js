@@ -37,8 +37,8 @@ function getActiveTab() {
 
 function setActiveTab(fileName) {
   const activeTabElement = document.getElementById(`${fileName}_tab`);
-  // If its Edit Card then return
-  if (activeTabElement === null) {
+  // If its View Card then return
+  if (!activeTabElement) {
     return;
   }
   activeTabElement.classList.add('active');
