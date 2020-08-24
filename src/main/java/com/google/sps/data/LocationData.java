@@ -16,6 +16,7 @@ package com.google.sps.data;
 
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.GeoPt;
+import java.util.Objects;
 
 /** A class for the location information of a business. */
 public final class LocationData {
@@ -40,6 +41,22 @@ public final class LocationData {
     this.salePoint = (GeoPt) embeddedLocation.getProperty("salePoint");
     this.geoHash = (String) embeddedLocation.getProperty("geoHash");
     this.radius = ((Double) embeddedLocation.getProperty("radius")).floatValue();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) return true;
+    if (!(obj instanceof LocationData)) {
+      return false;
+    }
+    LocationData location = (LocationData) obj;
+    return id == location.id && Objects.equals(salePoint, location.salePoint) && 
+        Objects.equals(geoHash, location.geoHash) && radius == location.radius;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, salePoint, geoHash, radius);
   }
 
   public long getId() {
