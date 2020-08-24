@@ -137,6 +137,11 @@ function setVendorInformationInModal(vendorInformation) {
   registerButton.innerHTML = 'Update Account'
 
   if (vendorInformation.profilePic) {
+    /** 
+    * ('business-picture') is important to allow the functionality of
+    * setUploadedImage() in both the registration modal and 
+    * the EditCard.html view
+    */
     const profilePic = document.getElementById('business-picture');
     const altText = document.getElementById('altText');
     const profilePictureAltText = vendorInformation.profilePic.altText;
