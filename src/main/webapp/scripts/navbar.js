@@ -37,6 +37,13 @@ function getActiveTab() {
 
 function setActiveTab(fileName) {
   const activeTabElement = document.getElementById(`${fileName}_tab`);
+   
+  // The only view thaht is not included on the navbar is ViewCard
+  // which opens when a more info button on a SaleCard is clicked
+  // if the tab is not found then don't activate in the navbar
+  if (!activeTabElement) {
+    return;
+  }
   activeTabElement.classList.add('active');
 }
 
