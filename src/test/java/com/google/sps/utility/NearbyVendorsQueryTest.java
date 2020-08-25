@@ -85,7 +85,7 @@ public final class NearbyVendorsQueryTest {
   private static final SaleCard SCARD_500M_DLV_CLOSED =
       createSaleCard(8, "H", true, true, TIME_0800, TIME_1600, LOC_500_M_FROM_NL);
   private static final SaleCard SCARD_500M_NIGHT_TIME =
-      createSaleCard(8, "H", false, false, TIME_1600, TIME_0800, LOC_500_M_FROM_NL);
+      createSaleCard(9, "I", false, false, TIME_1600, TIME_0800, LOC_500_M_FROM_NL);
 
   // Vendors
   private static final Vendor VENDOR_50M = new Vendor("1", "Vendor", "A", null, null, null, SCARD_50M);
