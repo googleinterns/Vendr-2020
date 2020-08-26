@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.google.sps.utility;
+package com.google.sps.servlets;
 
+import static com.google.appengine.api.datastore.FetchOptions.Builder.withLimit;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import static com.google.appengine.api.datastore.FetchOptions.Builder.withLimit;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -28,22 +27,18 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.users.dev.LocalUserService;
-
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.tools.development.testing.LocalUserServiceTestConfig;
-
+import com.google.gson.Gson;
 import com.google.sps.data.AuthStatus;
 import com.google.sps.data.Vendor;
 import com.google.sps.servlets.AuthServlet;
-
-import com.google.gson.Gson;
-
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.junit.Assert;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -55,75 +50,89 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class UserAuthTest {
+  // AuthStatus Expected Values
+  private static final AuthStatus USER_NOT_LOGGED_IN = 
+    new AuthStatus("/_ah/login?continue\u003d%2F", false, false);
+  private static final AuthStatus USER_NOT_REGISTERED = 
+    new AuthStatus("/_ah/logout?continue\u003d%2F", true, false);
+  private static final AuthStatus USER_REGISTERED = 
+    new AuthStatus("/_ah/logout?continue\u003d%2F", true, true);
 
-  // private static final String REDIRECTION_URL = "/";
+  // JSON of AuthStatus expected Values
+  private static final String CONTENT_JSON = "application/json;";
+  private String AUTH_JSON_USER_NR = new Gson().toJson(USER_NOT_REGISTERED);
+  private String AUTH_JSON_USER_R = new Gson().toJson(USER_REGISTERED);
+  private String AUTH_JSON_USER_NL = new Gson().toJson(USER_NOT_LOGGED_IN);
 
-  // private static final AuthStatus USER_NOT_REGISTERED = 
-  //     new AuthStatus("/_ah/login?continue\u003d%2F", false, false);
-
-  // private static final AuthStatus USER_REGISTERED = 
-  //     new AuthStatus("/_ah/login?continue\u003d%2F", false, false);
-
-  // // Response expected values
-  // private static final String CONTENT_JSON = "application/json;";
-  // private String AUTH_JSON_USER_NR = new Gson().toJson(USER_NOT_REGISTERED);
-  //  private String AUTH_JSON_USER_R = new Gson().toJson(USER_NOT_REGISTERED);
-
+  // Mock Vendors to Verify
   private static final Vendor VENDOR_VERIFIED = new Vendor("1", "Vendor", "A", null, "8118022379", null, null);
   private static final Vendor VENDOR_NOT_VERIFIED = new Vendor("2", "Vendor", "B", null, null, null, null);
 
-  private AuthServlet authServlet = new AuthServlet();
+  private static AuthServlet authServlet = new AuthServlet();
 
-  // private static HttpServletRequest mockedRequest;
-  // private static HttpServletResponse mockedResponse;
+  private static HttpServletRequest mockedRequest;
+  private static HttpServletResponse mockedResponse;
 
-  private static final LocalServiceTestHelper datastoreHelper =
-      new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+  private LocalServiceTestHelper helper =
+      new LocalServiceTestHelper(
+          new LocalDatastoreServiceTestConfig(),
+          new LocalUserServiceTestConfig())
+          .setEnvEmail("test@gmail.com")
+          .setEnvAuthDomain("gmail.com")
+          .setEnvAttributes(new HashMap<String, Object>(){{
+            put("com.google.appengine.api.users.UserService.user_id_key", "1");
+          }});
 
-  // private static final LocalServiceTestHelper authHelper =
-  //     new LocalServiceTestHelper(new LocalUserServiceTestConfig());
-
-  @BeforeClass
-  public static void setUpDatastore() {
-    datastoreHelper.setUp();
-    fillDatastore();
-  }
-
-  @AfterClass
-  public static void tearDownDatastore() {
-    // authHelper.tearDown();
-    datastoreHelper.tearDown();
+  @After
+  public void tearDownAuth() {
+    helper.tearDown();
   }
 
   @Before
   public void setUp() {
-    // authHelper.setUp();
-    // mockedRequest = mock(HttpServletRequest.class);
-    // mockedResponse = mock(HttpServletResponse.class);
+    helper.setUp();
+    fillDatastore();
+    mockedRequest = mock(HttpServletRequest.class);
+    mockedResponse = mock(HttpServletResponse.class);
   }
 
-  // @Test
-  // public void userIsNotLoggedIn() throws IOException {
-  //   authHelper.setEnvIsLoggedIn(false);
+  @Test
+  public void userIsNotLoggedIn() throws IOException {
+    helper.setEnvIsLoggedIn(false);
 
-  //   PrintWriter mockedWriter = mock(PrintWriter.class);
-  //   when(mockedResponse.getWriter()).thenReturn(mockedWriter);
-  //   authServlet.doGet(mockedRequest, mockedResponse);
-  //   verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_NR);
-  // }
+    PrintWriter mockedWriter = mock(PrintWriter.class);
+    when(mockedResponse.getWriter()).thenReturn(mockedWriter);
+    authServlet.doGet(mockedRequest, mockedResponse);
+    verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_NL);
+  }
 
-  //  @Test
-  // public void userIsLoggedIn() throws IOException {
-  //   authHelper
-  //     .setEnvIsLoggedIn(true)
-  //     .setEnvEmail("ricardchr@google.com")
-  //     .setEnvAppId("1");
+  @Test
+  public void registredUser() throws IOException {
+    helper.setEnvIsLoggedIn(true);
 
-  //   PrintWriter mockedWriter = mock(PrintWriter.class);
-  //   when(mockedResponse.getWriter()).thenReturn(mockedWriter);
-  //   authServlet.doGet(mockedRequest, mockedResponse);
-  //   verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_R);
-  // }
+    PrintWriter mockedWriter = mock(PrintWriter.class);
+    when(mockedResponse.getWriter()).thenReturn(mockedWriter);
+    authServlet.doGet(mockedRequest, mockedResponse);
+    verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_R);
+  }
+
+  @Test
+  public void notRegistredUser() throws IOException {
+    helper = new LocalServiceTestHelper(
+        new LocalDatastoreServiceTestConfig(),
+        new LocalUserServiceTestConfig())
+        .setEnvIsLoggedIn(true)
+        .setEnvEmail("test@gmail.com")
+        .setEnvAuthDomain("gmail.com")
+        .setEnvAttributes(new HashMap<String, Object>(){{
+          put("com.google.appengine.api.users.UserService.user_id_key", "2");
+        }}).setUp();
+
+    PrintWriter mockedWriter = mock(PrintWriter.class);
+    when(mockedResponse.getWriter()).thenReturn(mockedWriter);
+    authServlet.doGet(mockedRequest, mockedResponse);
+    verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_NR);
+  }
 
   @Test
   public void userDoNotExist() throws IOException{
@@ -139,7 +148,7 @@ public final class UserAuthTest {
     Assert.assertEquals(expected, actual);
   }
 
-   private static void fillDatastore() {
+  private static void fillDatastore() {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     datastore.put(createEntityFromVendor(VENDOR_VERIFIED));
     datastore.put(createEntityFromVendor(VENDOR_NOT_VERIFIED));
@@ -156,9 +165,9 @@ public final class UserAuthTest {
     return vendorEntity;
   }
 
-  // private void verifyGoodResponse(
-  //     HttpServletResponse mockedResponse, PrintWriter mockedWriter, String AuthJson) {
-  //   verify(mockedResponse).setContentType(CONTENT_JSON);
-  //   verify(mockedWriter).println(AuthJson);
-  // }
+  private void verifyGoodResponse(
+      HttpServletResponse mockedResponse, PrintWriter mockedWriter, String AuthJson) {
+    verify(mockedResponse).setContentType(CONTENT_JSON);
+    verify(mockedWriter).println(AuthJson);
+  }
 }
