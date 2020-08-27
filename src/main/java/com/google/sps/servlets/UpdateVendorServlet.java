@@ -132,14 +132,4 @@ public class UpdateVendorServlet extends HttpServlet {
       !HttpServletUtils.hasOnlyNumbers(phoneNumber)
     );
   }
-
-  public Vendor getVendorEntity(DatastoreService datastore, String vendorId, Key vendorKey) {
-    Entity vendorEntity = HttpServletUtils.getVendorEntity(vendorId);
-    if (vendorEntity == null) {
-      vendorEntity = new Entity(vendorKey);
-      datastore.put(vendorEntity);      
-    }
-
-    return new Vendor(vendorEntity);
-  }
 }
