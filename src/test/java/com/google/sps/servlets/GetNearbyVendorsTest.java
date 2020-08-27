@@ -136,9 +136,7 @@ public final class GetNearbyVendorsTest {
   @Test
   public void emptyParamTime() throws IOException {
     when(mockedRequest.getParameter(PARAM_TIME)).thenReturn(EMPTY_STRING);
-
     servlet.doPost(mockedRequest, mockedResponse);
-
     verifyBadRequest(mockedResponse);
   }
 
@@ -158,63 +156,49 @@ public final class GetNearbyVendorsTest {
   public void emptyParamLatLng() throws IOException {
     when(mockedRequest.getParameter(PARAM_LATITUDE)).thenReturn(EMPTY_STRING);
     when(mockedRequest.getParameter(PARAM_LONGITUDE)).thenReturn(EMPTY_STRING);
-
     servlet.doPost(mockedRequest, mockedResponse);
-
     verifyBadRequest(mockedResponse);
   }
 
   @Test
   public void badParamTime() throws IOException {
     when(mockedRequest.getParameter(PARAM_TIME)).thenReturn(TIME_BAD_FORMAT);
-
     servlet.doPost(mockedRequest, mockedResponse);
-
     verifyBadRequest(mockedResponse);
   }
 
   @Test
   public void badParamDistance() throws IOException {
     when(mockedRequest.getParameter(PARAM_DISTANCE)).thenReturn(DISTANCE_BAD_FORMAT);
-
     servlet.doPost(mockedRequest, mockedResponse);
-
     verifyBadRequest(mockedResponse);
   }
 
   @Test
   public void badParamLatitude() throws IOException {
     when(mockedRequest.getParameter(PARAM_LATITUDE)).thenReturn(LAT_BAD_VALUE);
-
     servlet.doPost(mockedRequest, mockedResponse);
-
     verifyBadRequest(mockedResponse);
   }
 
   @Test
   public void badParamLongitude() throws IOException {
     when(mockedRequest.getParameter(PARAM_LONGITUDE)).thenReturn(LNG_BAD_VALUE);
-
     servlet.doPost(mockedRequest, mockedResponse);
-
     verifyBadRequest(mockedResponse);
   }  
 
   @Test
   public void lessThanMinDistance() throws IOException {
     when(mockedRequest.getParameter(PARAM_DISTANCE)).thenReturn(DISTANCE_LESS_THAN_MIN);
-
     servlet.doPost(mockedRequest, mockedResponse);
-
     verifyBadRequest(mockedResponse);
   }
 
   @Test
   public void moreThanMaxDistance() throws IOException {
     when(mockedRequest.getParameter(PARAM_DISTANCE)).thenReturn(DISTANCE_MORE_THAN_MAX);
-
     servlet.doPost(mockedRequest, mockedResponse);
-
     verifyBadRequest(mockedResponse);
   }
 
