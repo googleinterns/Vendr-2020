@@ -65,8 +65,8 @@ public class UpdateVendorServlet extends HttpServlet {
     }
 
     // Check values are not empty and valid
-    if (!HttpServletUtils.hasOnlyLetters(firstName) || !HttpServletUtils.hasOnlyLetters(lastName) || 
-        !HttpServletUtils.hasOnlyNumbers(phoneNumber)) {
+    if (badInputs(firstName, lastName, phoneNumber)) {
+      System.out.println("bad Inputs");
       // Delete from blobstore if the uploaded file was a new one
       if (imageBlobKey != null && !currentBlobKey.equals(imageBlobKey.toString())) {
         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
@@ -123,5 +123,23 @@ public class UpdateVendorServlet extends HttpServlet {
     datastore.put(vendorEntity);
       
     response.sendRedirect("/");
+  }
+
+  public boolean badInputs(String firstName, String lastName, String phoneNumber) {
+    return (
+      !HttpServletUtils.hasOnlyLetters(firstName) || 
+      !HttpServletUtils.hasOnlyLetters(lastName) || 
+      !HttpServletUtils.hasOnlyNumbers(phoneNumber)
+    );
+  }
+
+  public Vendor getVendorEntity(DatastoreService datastore, String vendorId, Key vendorKey) {
+    Entity vendorEntity = HttpServletUtils.getVendorEntity(vendorId);
+    if (vendorEntity == null) {
+      vendorEntity = new Entity(vendorKey);
+      datastore.put(vendorEntity);      
+    }
+
+    return new Vendor(vendorEntity);
   }
 }
