@@ -60,15 +60,15 @@ public final class UserAuthTest {
 
   // JSON of AuthStatus expected Values
   private static final String CONTENT_JSON = "application/json;";
-  private String AUTH_JSON_USER_NR = new Gson().toJson(USER_NOT_REGISTERED);
-  private String AUTH_JSON_USER_R = new Gson().toJson(USER_REGISTERED);
-  private String AUTH_JSON_USER_NL = new Gson().toJson(USER_NOT_LOGGED_IN);
+  private static final String AUTH_JSON_USER_NR = new Gson().toJson(USER_NOT_REGISTERED);
+  private static final String AUTH_JSON_USER_R = new Gson().toJson(USER_REGISTERED);
+  private static final String AUTH_JSON_USER_NL = new Gson().toJson(USER_NOT_LOGGED_IN);
 
   // Mock Vendors to Verify
   private static final Vendor VENDOR_VERIFIED = new Vendor("1", "Vendor", "A", null, "8118022379", null, null);
   private static final Vendor VENDOR_NOT_VERIFIED = new Vendor("2", "Vendor", "B", null, null, null, null);
 
-  private static AuthServlet authServlet = new AuthServlet();
+  private static final AuthServlet authServlet = new AuthServlet();
 
   private static HttpServletRequest mockedRequest;
   private static HttpServletResponse mockedResponse;

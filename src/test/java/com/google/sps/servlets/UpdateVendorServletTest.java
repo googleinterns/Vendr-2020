@@ -79,7 +79,7 @@ public final class UpdateVendorServletTest {
   private static final String BAD_FIRST_NAME = "R$icardo";
   private static final String BAD_LAST_NAME = "Chap'a";
   private static final String BAD_PHONE_NUMBER = "8118 022347";
-  
+
   private static HttpServletRequest mockedRequest;
   private static HttpServletResponse mockedResponse;
 
@@ -110,7 +110,7 @@ public final class UpdateVendorServletTest {
     helper.tearDown();
   }
 
-  // TODO Find a way to mock blobstore service in a proper way
+  // TODO Find a way to mock blobstore service and add its Tests
   // Actual: Without try block gives the following error
   // java.lang.IllegalStateException: Must be called from a blob upload callback request. 
   @Test
