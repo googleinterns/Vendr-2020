@@ -16,10 +16,10 @@ package com.google.sps.data;
 
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.datastore.Entity;
+import java.util.Objects;
 
 /** A vendor. */
 public final class Vendor {
-
   private final String id;
   private String firstName;
   private String lastName;
@@ -102,5 +102,23 @@ public final class Vendor {
 
   public void setSaleCard(SaleCard saleCard) {
     this.saleCard = saleCard;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) return true;
+    if (!(obj instanceof Vendor)) {
+      return false;
+    }
+    Vendor vendor = (Vendor) obj;
+    return Objects.equals(id, vendor.id) && Objects.equals(firstName, vendor.firstName) &&
+        Objects.equals(lastName, vendor.lastName) && Objects.equals(email, vendor.email) &&
+        Objects.equals(phoneNumber, vendor.phoneNumber) && Objects.equals(profilePic, vendor.profilePic) &&
+        Objects.equals(saleCard, vendor.saleCard);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, firstName, lastName, email, phoneNumber, profilePic, saleCard);
   }
 }

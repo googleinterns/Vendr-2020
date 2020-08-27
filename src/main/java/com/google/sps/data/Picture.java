@@ -16,6 +16,7 @@ package com.google.sps.data;
 
 import com.google.appengine.api.datastore.EmbeddedEntity;
 import com.google.appengine.api.blobstore.BlobKey;
+import java.util.Objects;
 
 /** A picture. */
 public final class Picture {
@@ -57,5 +58,20 @@ public final class Picture {
 
   public void setAltText(String altText) {
     this.altText = altText;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) return true;
+    if (!(obj instanceof Picture)) {
+      return false;
+    }
+    Picture picture = (Picture) obj;
+    return id == picture.id && Objects.equals(blobKey, picture.blobKey) && Objects.equals(altText, picture.altText);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, blobKey, altText);
   }
 }
