@@ -79,24 +79,28 @@ public final class GeoHashTest {
     Assert.assertEquals(GEOHASH_MAX_PRECISION, geoHash.determinePrecision(DISTANCE_MIN));
   }
 
+  // Test to encode a location given a latitude and longitude.
   @Test
   public void encodeInitialPlace() {
     Assert.assertEquals(GEOHASH_PLACE_INITIAL,
             geoHash.encodeVendor(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude()));
   }
 
+  // Test to encode the farthest place than can be encoded by this algorithm.
   @Test
   public void encodeFarthestPlace() {
     Assert.assertEquals(GEOHASH_PLACE_5000KM,
             geoHash.encodeVendor(PLACE_5000KM_FROM_INITIAL.getLatitude(), PLACE_5000KM_FROM_INITIAL.getLongitude()));
   }
 
+  // Test to encode the closest place than can be encoded by this algorithm.
   @Test
   public void encodeNormal() {
     Assert.assertEquals(GEOHASH_PLACE_1KM,
             geoHash.encodeVendor(PLACE_1KM_FROM_INITIAL.getLatitude(), PLACE_1KM_FROM_INITIAL.getLongitude()));
   }
 
+  // Test to retrieve the expected list of geohashes with a precision of 1KM.
   @Test
   public void getGeohashesToQueryPrecisionSix() {
     Assert.assertThat(GEOHASH_INITIAL_PLACE_LIST,
@@ -106,6 +110,7 @@ public final class GeoHashTest {
             ));
   }
 
+  // Test to retrieve the expected list of geohashes with the minimum precision (1).
   @Test
   public void getGeohashesToQueryPrecisionMin() {
     Assert.assertThat(GEOHASH_MIN_PRECISION_LIST,
@@ -115,6 +120,7 @@ public final class GeoHashTest {
             ));
   }
 
+  // Test to retrieve the expected list of geohashes with the maximum precision (9).
   @Test
   public void getGeohashesToQueryPrecisionMax() {
     Assert.assertThat(GEOHASH_MAX_PRECISION_LIST,
