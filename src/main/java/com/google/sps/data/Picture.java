@@ -40,21 +40,6 @@ public final class Picture {
     this.altText = (String) embeddedPic.getProperty("altText");
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) return true;
-    if (!(obj instanceof Picture)) {
-      return false;
-    }
-    Picture picture = (Picture) obj;
-    return id == picture.id && Objects.equals(blobKey, picture.blobKey) && Objects.equals(altText, picture.altText);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, blobKey, altText);
-  }
-
   public long getId() {
     return id;
   }
@@ -73,5 +58,20 @@ public final class Picture {
 
   public void setAltText(String altText) {
     this.altText = altText;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) return true;
+    if (!(obj instanceof Picture)) {
+      return false;
+    }
+    Picture picture = (Picture) obj;
+    return id == picture.id && Objects.equals(blobKey, picture.blobKey) && Objects.equals(altText, picture.altText);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, blobKey, altText);
   }
 }
