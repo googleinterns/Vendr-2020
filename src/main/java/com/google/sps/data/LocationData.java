@@ -43,22 +43,6 @@ public final class LocationData {
     this.radius = ((Double) embeddedLocation.getProperty("radius")).floatValue();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj == this) return true;
-    if (!(obj instanceof LocationData)) {
-      return false;
-    }
-    LocationData location = (LocationData) obj;
-    return id == location.id && Objects.equals(salePoint, location.salePoint) && 
-        Objects.equals(geoHash, location.geoHash) && radius == location.radius;
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, salePoint, geoHash, radius);
-  }
-
   public long getId() {
     return id;
   }
@@ -85,5 +69,21 @@ public final class LocationData {
 
   public void setRadius(float radius) {
     this.radius = radius;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == this) return true;
+    if (!(obj instanceof LocationData)) {
+      return false;
+    }
+    LocationData location = (LocationData) obj;
+    return id == location.id && Objects.equals(salePoint, location.salePoint) && 
+        Objects.equals(geoHash, location.geoHash) && radius == location.radius;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, salePoint, geoHash, radius);
   }
 }
