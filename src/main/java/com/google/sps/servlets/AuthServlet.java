@@ -59,7 +59,7 @@ public class AuthServlet extends HttpServlet {
       authStatus.setLoggedInStatus(false);
       authStatus.setRegistrationStatus(false);
     }
-
+    
     response.getWriter().println(new Gson().toJson(authStatus));
   }
 
