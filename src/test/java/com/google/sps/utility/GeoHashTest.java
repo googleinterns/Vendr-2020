@@ -14,11 +14,10 @@
 
 package com.google.sps.utility;
 
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import java.util.Arrays;
 import java.util.List;
-
 import com.google.appengine.api.datastore.GeoPt;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -105,8 +104,7 @@ public final class GeoHashTest {
   public void getGeohashesToQueryPrecisionSix() {
     Assert.assertThat(GEOHASH_INITIAL_PLACE_LIST,
             containsInAnyOrder(
-                    geoHash.getHashesToQuery(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude(), DISTANCE_1KM)
-                            .toArray()
+                    geoHash.getHashesToQuery(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude(), DISTANCE_1KM).toArray()
             ));
   }
 
@@ -115,8 +113,7 @@ public final class GeoHashTest {
   public void getGeohashesToQueryPrecisionMin() {
     Assert.assertThat(GEOHASH_MIN_PRECISION_LIST,
             containsInAnyOrder(
-                    geoHash.getHashesToQuery(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude(), DISTANCE_MAX)
-                            .toArray()
+                    geoHash.getHashesToQuery(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude(), DISTANCE_MAX).toArray()
             ));
   }
 
@@ -125,8 +122,7 @@ public final class GeoHashTest {
   public void getGeohashesToQueryPrecisionMax() {
     Assert.assertThat(GEOHASH_MAX_PRECISION_LIST,
             containsInAnyOrder(
-                    geoHash.getHashesToQuery(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude(), DISTANCE_MIN)
-                            .toArray()
+                    geoHash.getHashesToQuery(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude(), DISTANCE_MIN).toArray()
             ));
   }
 }
