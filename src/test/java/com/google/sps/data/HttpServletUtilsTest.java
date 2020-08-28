@@ -43,16 +43,16 @@ public final class HttpServletUtilsTest {
     private static final LocalTime TIME_0800 = LocalTime.parse("08:00");
 
     // Location Data values.
-    private static final LocationData LOC_50_M_FROM_NL = createLocation(1, 0.0003179f);
+    private static final LocationData LOC_50_M_FROM_INITIAL_PLACE = createLocation(1, 0.0003179f);
 
     // SaleCard values.
     private static final SaleCard SCARD_50M =
-            createSaleCard(1, "A", false, false, TIME_0000, TIME_0800, LOC_50_M_FROM_NL);
+            createSaleCard(1, "A", false, false, TIME_0000, TIME_0800, LOC_50_M_FROM_INITIAL_PLACE);
 
     // Vendor values.
-    private static final String VENDOR_ID = "1";
-    private static final String VENDOR_WRONG_ID = "2";
-    private static final Vendor VENDOR_50M = new Vendor(VENDOR_ID, "Vendor", "A", null, null, null, SCARD_50M);
+    private static final String REGISTERED_VENDOR_ID = "1";
+    private static final String UNREGISTERED_VENDOR_ID = "2";
+    private static final Vendor VENDOR_50M = new Vendor(REGISTERED_VENDOR_ID, "Vendor", "A", null, null, null, SCARD_50M);
 
     // Mock datastore service.
     private static final LocalServiceTestHelper datastoreHelper =
@@ -92,7 +92,6 @@ public final class HttpServletUtilsTest {
     public void getParameterFromRequestNullParameter() {
         // Override value and set it to null.
         when(mockedRequest.getParameter(PARAM_LATITUDE)).thenReturn(null);
-
         Assert.assertEquals(DEFAULT_PARAM_LATITUDE,
                 httpServletUtils.getParameter(mockedRequest, PARAM_LATITUDE, DEFAULT_PARAM_LATITUDE));
     }
@@ -151,13 +150,13 @@ public final class HttpServletUtilsTest {
     @Test
     public void retrieveVendorFromDatastore() {
         Entity vendorExpected = createEntityFromVendor(VENDOR_50M);
-        Assert.assertEquals(vendorExpected, httpServletUtils.getVendorEntity(VENDOR_ID));
+        Assert.assertEquals(vendorExpected, httpServletUtils.getVendorEntity(REGISTERED_VENDOR_ID));
     }
 
     // Retrieve null value if vendor does not exists on datastore.
     @Test
     public void retrieveNullVendorFromDatastore() {
-        Assert.assertEquals(null, httpServletUtils.getVendorEntity(VENDOR_WRONG_ID));
+        Assert.assertEquals(null, httpServletUtils.getVendorEntity(UNREGISTERED_VENDOR_ID));
     }
 
     // Compute Geo Distance given two GeoPoints with 1 meter of difference allowed.
