@@ -65,7 +65,7 @@ public class UpdateVendorServlet extends HttpServlet {
     }
 
     // Check values are not empty and valid
-    if (badInputs(firstName, lastName, phoneNumber)) {
+    if (invalidInputs(firstName, lastName, phoneNumber)) {
       System.out.println("bad Inputs");
       // Delete from blobstore if the uploaded file was a new one
       if (imageBlobKey != null && !currentBlobKey.equals(imageBlobKey.toString())) {
@@ -125,7 +125,7 @@ public class UpdateVendorServlet extends HttpServlet {
     response.sendRedirect("/");
   }
 
-  public boolean badInputs(String firstName, String lastName, String phoneNumber) {
+  public boolean invalidInputs(String firstName, String lastName, String phoneNumber) {
     return (
       !HttpServletUtils.hasOnlyLetters(firstName) || 
       !HttpServletUtils.hasOnlyLetters(lastName) || 

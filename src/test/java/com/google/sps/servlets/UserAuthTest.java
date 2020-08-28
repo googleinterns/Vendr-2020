@@ -50,23 +50,29 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class UserAuthTest {
+  
+  private static final String URL_LOGIN = "/_ah/login?continue\u003d%2F";
+  private static final String URL_LOGOUT = "/_ah/logout?continue\u003d%2F";
+
   // AuthStatus Expected Values
   private static final AuthStatus USER_NOT_LOGGED_IN = 
-    new AuthStatus("/_ah/login?continue\u003d%2F", false, false);
+    new AuthStatus(URL_LOGIN, false, false);
   private static final AuthStatus USER_NOT_REGISTERED = 
-    new AuthStatus("/_ah/logout?continue\u003d%2F", true, false);
+    new AuthStatus(URL_LOGOUT, true, false);
   private static final AuthStatus USER_REGISTERED = 
-    new AuthStatus("/_ah/logout?continue\u003d%2F", true, true);
+    new AuthStatus(URL_LOGOUT, true, true);
 
   // JSON of AuthStatus expected Values
   private static final String CONTENT_JSON = "application/json;";
-  private static final String AUTH_JSON_USER_NR = new Gson().toJson(USER_NOT_REGISTERED);
-  private static final String AUTH_JSON_USER_R = new Gson().toJson(USER_REGISTERED);
-  private static final String AUTH_JSON_USER_NL = new Gson().toJson(USER_NOT_LOGGED_IN);
+  private static final String AUTH_JSON_USER_NOT_REGISTERED = new Gson().toJson(USER_NOT_REGISTERED);
+  private static final String AUTH_JSON_USER_REGISTERED = new Gson().toJson(USER_REGISTERED);
+  private static final String AUTH_JSON_USER_NOT_LOGGED_IN = new Gson().toJson(USER_NOT_LOGGED_IN);
 
   // Mock Vendors to Verify
-  private static final Vendor VENDOR_VERIFIED = new Vendor("1", "Vendor", "A", null, "8118022379", null, null);
-  private static final Vendor VENDOR_NOT_VERIFIED = new Vendor("2", "Vendor", "B", null, null, null, null);
+  private static final Vendor VENDOR_VERIFIED = 
+    new Vendor("1", "Vendor", "A", null, "8118022379", null, null);
+  private static final Vendor VENDOR_NOT_VERIFIED = 
+    new Vendor("2", "Vendor", "B", null, null, null, null);
 
   private static final AuthServlet authServlet = new AuthServlet();
 
@@ -103,7 +109,7 @@ public final class UserAuthTest {
     PrintWriter mockedWriter = mock(PrintWriter.class);
     when(mockedResponse.getWriter()).thenReturn(mockedWriter);
     authServlet.doGet(mockedRequest, mockedResponse);
-    verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_NL);
+    verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_NOT_LOGGED_IN);
   }
 
   @Test
@@ -113,7 +119,7 @@ public final class UserAuthTest {
     PrintWriter mockedWriter = mock(PrintWriter.class);
     when(mockedResponse.getWriter()).thenReturn(mockedWriter);
     authServlet.doGet(mockedRequest, mockedResponse);
-    verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_R);
+    verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_REGISTERED);
   }
 
   @Test
@@ -131,11 +137,11 @@ public final class UserAuthTest {
     PrintWriter mockedWriter = mock(PrintWriter.class);
     when(mockedResponse.getWriter()).thenReturn(mockedWriter);
     authServlet.doGet(mockedRequest, mockedResponse);
-    verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_NR);
+    verifyGoodResponse(mockedResponse, mockedWriter, AUTH_JSON_USER_NOT_REGISTERED);
   }
 
   @Test
-  public void userDoNotExist() throws IOException{
+  public void userDoesNotExist() throws IOException{
     final boolean expected = false;
     final boolean actual = authServlet.isUserRegistered(VENDOR_NOT_VERIFIED.getId());
     Assert.assertEquals(expected, actual);

@@ -110,18 +110,16 @@ public final class UpdateVendorServletTest {
     helper.tearDown();
   }
 
-  // TODO Find a way to mock blobstore service and add its Tests
-  // Actual: Without try block gives the following error
-  // java.lang.IllegalStateException: Must be called from a blob upload callback request. 
   @Test
   public void hasBadParameters() throws IOException {
     try {
-    helper.setEnvIsLoggedIn(true);
-    when(mockedRequest.getParameter(PARAM_FIRST_NAME)).thenReturn(BAD_FIRST_NAME);
-
-    updateVendorServlet.doPost(mockedRequest, mockedResponse);
-
-    verifyBadRequest(mockedResponse);
+      // TODO Find a way to mock blobstore service and add its Tests
+      // Actual: Without try block gives the following error
+      // java.lang.IllegalStateException: Must be called from a blob upload callback request. 
+      helper.setEnvIsLoggedIn(true);
+      when(mockedRequest.getParameter(PARAM_FIRST_NAME)).thenReturn(BAD_FIRST_NAME);
+      updateVendorServlet.doPost(mockedRequest, mockedResponse);
+      verifyBadRequest(mockedResponse);
     } catch (IllegalStateException e) {
       System.out.println(e);
     }
@@ -137,26 +135,23 @@ public final class UpdateVendorServletTest {
 
   @Test
   public void allBadParameters() throws IOException {
-    final boolean expected = true;
-    final boolean actual = 
-        updateVendorServlet.badInputs(BAD_FIRST_NAME, BAD_LAST_NAME, BAD_PHONE_NUMBER);
-    Assert.assertEquals(expected, actual);
+    final boolean hasBadParameters = 
+        updateVendorServlet.invalidInputs(BAD_FIRST_NAME, BAD_LAST_NAME, BAD_PHONE_NUMBER);
+    Assert.assertTrue(hasBadParameters);
   }
 
   @Test
   public void allGoodParameters() throws IOException {
-    final boolean expected = false;
-    final boolean actual = 
-        updateVendorServlet.badInputs(FIRST_NAME, LAST_NAME, PHONE_NUMBER);
-    Assert.assertEquals(expected, actual);
+    final boolean hasBadParameters = 
+        updateVendorServlet.invalidInputs(FIRST_NAME, LAST_NAME, PHONE_NUMBER);
+    Assert.assertFalse(hasBadParameters);
   }
 
   @Test
   public void singleBadParameter() throws IOException {
-    final boolean expected = true;
-    final boolean actual = 
-        updateVendorServlet.badInputs(FIRST_NAME, BAD_LAST_NAME, PHONE_NUMBER);
-    Assert.assertEquals(expected, actual);
+    final boolean hasBadParameters = 
+        updateVendorServlet.invalidInputs(FIRST_NAME, BAD_LAST_NAME, PHONE_NUMBER);
+      Assert.assertTrue(hasBadParameters);
   }
 
   private void verifyBadRequest(HttpServletResponse mockedResponse) throws IOException {
