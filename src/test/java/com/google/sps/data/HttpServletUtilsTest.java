@@ -114,37 +114,37 @@ public final class HttpServletUtilsTest {
     // Verify that the given String only contain letters
     @Test
     public void hasOnlyLetters() {
-        Assert.assertEquals(true, httpServletUtils.hasOnlyLetters(STRING_ONLY_LETTERS));
+        Assert.assertTrue(httpServletUtils.hasOnlyLetters(STRING_ONLY_LETTERS));
     }
 
     // Verify that given a String with spaces, the method returns false.
     @Test
     public void stringWithSpaces() {
-        Assert.assertEquals(false, httpServletUtils.hasOnlyLetters(STRING_WITH_SPACE));
+        Assert.assertFalse(httpServletUtils.hasOnlyLetters(STRING_WITH_SPACE));
     }
 
     // Verify that given a String with special characters, the method returns false.
     @Test
     public void stringWithSpecialCharacters() {
-        Assert.assertEquals(false, httpServletUtils.hasOnlyLetters(STRING_WITH_SPECIAL_CHARACTERS));
+        Assert.assertFalse(httpServletUtils.hasOnlyLetters(STRING_WITH_SPECIAL_CHARACTERS));
     }
 
     // Verify that given an empty String, the method returns false.
     @Test
     public void emptyString() {
-        Assert.assertEquals(false, httpServletUtils.hasOnlyLetters(STRING_EMPTY));
+        Assert.assertFalse(httpServletUtils.hasOnlyLetters(STRING_EMPTY));
     }
 
     // Verify that given a null String, the method returns false.
     @Test
     public void nullString() {
-        Assert.assertEquals(false, httpServletUtils.hasOnlyLetters(STRING_NULL));
+        Assert.assertFalse(httpServletUtils.hasOnlyLetters(STRING_NULL));
     }
 
     // Verify if a String only contains numbers.
     @Test
     public void hasOnlyNumbers() {
-        Assert.assertEquals(true, httpServletUtils.hasOnlyNumbers(STRING_ONLY_NUMBERS));
+        Assert.assertTrue(httpServletUtils.hasOnlyNumbers(STRING_ONLY_NUMBERS));
     }
 
     // Retrieve the correct vendor from datastore.
