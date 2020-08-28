@@ -14,8 +14,10 @@
 
 package com.google.sps.utility;
 
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import java.util.Arrays;
 import java.util.List;
+import com.google.appengine.api.datastore.GeoPt;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,53 +25,104 @@ import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 public final class GeoHashTest {
+  // Distances
+  private final int DISTANCE_1KM = 1000;
+  private final int DISTANCE_MAX = 5000 * 1000;
+  private final int DISTANCE_MIN = 0;
+
+  // Geohash precision
+  private final int GEOHASH_MAX_PRECISION = 9;
+  private final int GEOHASH_MIN_PRECISION = 1;
+  private final int GEOHASH_PRECISION_1KM = 6;
+
+  // Mock Places
+  private final GeoPt PLACE_INITIAL = new GeoPt(0, 0);
+  private final GeoPt PLACE_0M_FROM_INITIAL = new GeoPt(0, 0);
+  private final GeoPt PLACE_50M_FROM_INITIAL = new GeoPt(0, 0.00055556f);
+  private final GeoPt PLACE_1KM_FROM_INITIAL = new GeoPt(0.00083333f, 0.00888889f);
+  private final GeoPt PLACE_20KM_FROM_INITIAL = new GeoPt(0.00888889f, 0.17888889f);
+  private final GeoPt PLACE_5000KM_FROM_INITIAL = new GeoPt(4.25138889f, 44.80750000f);
+
+  // Expected Geohash results
+  private final String GEOHASH_PLACE_INITIAL = "s00000000";
+  private final String GEOHASH_PLACE_50M = "s0000002h";
+  private final String GEOHASH_PLACE_1KM = "s00000nkz";
+  private final String GEOHASH_PLACE_20KM = "s000h1d7b";
+  private final String GEOHASH_PLACE_5000KM = "sbzb5tgy4";
+
+  // Geohash to query results
+  private final List<String> GEOHASH_INITIAL_PLACE_LIST = Arrays.asList("s00001", "s00003", "s00002",
+          "kpbpbr", "kpbpbp", "7zzzzz", "ebpbpb", "ebpbpc", "s00000");
+  private final List<String> GEOHASH_MIN_PRECISION_LIST = Arrays.asList("u", "v", "t", "m", "k", "7", "e", "g", "s");
+  private final List<String> GEOHASH_MAX_PRECISION_LIST = Arrays.asList("s00000002", "s00000003", "s00000001",
+          "kpbpbpbpc", "kpbpbpbpb", "7zzzzzzzz", "ebpbpbpbp", "ebpbpbpbr", "s00000000");
+
+  // Instance of the GeoHash class.
   private GeoHash geoHash = new GeoHash();
+
+  // Test of precision calculation for 1KM.
   @Test
   public void determinePrecisionNormal() {
-    int distance = 1000;
-    int expected = 6; // Precision of the geoHash for 1000m
-    int actual = geoHash.determinePrecision(distance);
-
-    Assert.assertEquals(expected, actual);
+    Assert.assertEquals(GEOHASH_PRECISION_1KM, geoHash.determinePrecision(DISTANCE_1KM));
   }
 
+  // Test of precision calculation for 5000KM.
   @Test
   public void determinePrecisionMax() {
-    int distance = 5000000;
-    int expected = 1; // Precision of the geoHash for 5000km
-    int actual = geoHash.determinePrecision(distance);
-
-    Assert.assertEquals(expected, actual);
+    Assert.assertEquals(GEOHASH_MIN_PRECISION, geoHash.determinePrecision(DISTANCE_MAX));
   }
 
+  // Test of precision calculation for 0M.
   @Test
   public void determinePrecisionMin() {
-    int distance = 0;
-    int expected = 9; // Precision of the geoHash for 5000km
-    int actual = geoHash.determinePrecision(distance);
-
-    Assert.assertEquals(expected, actual);
+    Assert.assertEquals(GEOHASH_MAX_PRECISION, geoHash.determinePrecision(DISTANCE_MIN));
   }
 
+  // Test to encode a location given a latitude and longitude.
   @Test
-  public void encode() {
-    double lat = 25.650413;
-    double lng = -100.289855;
-    String expected = "9u89vve0m";
-    String actual = geoHash.encodeVendor(lat, lng);
-
-    Assert.assertEquals(expected, actual);
+  public void encodeInitialPlace() {
+    Assert.assertEquals(GEOHASH_PLACE_INITIAL,
+            geoHash.encodeVendor(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude()));
   }
 
+  // Test to encode the farthest place than can be encoded by this algorithm.
   @Test
-  public void getHashesToQuery() {
-    double lat = 25.650413;
-    double lng = -100.289855;
-    int distance = 1000;
-    List<String> expected = Arrays.asList("9u89vy", "9u89yn", "9u89yj", "9u89yh",
-            "9u89vu", "9u89vs", "9u89vt", "9u89vw", "9u89vv");
-    List<String> actual = geoHash.getHashesToQuery(lat, lng, distance);
+  public void encodeFarthestPlace() {
+    Assert.assertEquals(GEOHASH_PLACE_5000KM,
+            geoHash.encodeVendor(PLACE_5000KM_FROM_INITIAL.getLatitude(), PLACE_5000KM_FROM_INITIAL.getLongitude()));
+  }
 
-    Assert.assertEquals(expected, actual);
+  // Test to encode the closest place than can be encoded by this algorithm.
+  @Test
+  public void encodeNormal() {
+    Assert.assertEquals(GEOHASH_PLACE_1KM,
+            geoHash.encodeVendor(PLACE_1KM_FROM_INITIAL.getLatitude(), PLACE_1KM_FROM_INITIAL.getLongitude()));
+  }
+
+  // Test to retrieve the expected list of geohashes with a precision of 1KM.
+  @Test
+  public void getGeohashesToQueryPrecisionSix() {
+    Assert.assertThat(GEOHASH_INITIAL_PLACE_LIST,
+            containsInAnyOrder(
+                    geoHash.getHashesToQuery(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude(), DISTANCE_1KM).toArray()
+            ));
+  }
+
+  // Test to retrieve the expected list of geohashes with the minimum precision (1).
+  @Test
+  public void getGeohashesToQueryPrecisionMin() {
+    Assert.assertThat(GEOHASH_MIN_PRECISION_LIST,
+            containsInAnyOrder(
+                    geoHash.getHashesToQuery(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude(), DISTANCE_MAX).toArray()
+            ));
+  }
+
+  // Test to retrieve the expected list of geohashes with the maximum precision (9).
+  @Test
+  public void getGeohashesToQueryPrecisionMax() {
+    Assert.assertThat(GEOHASH_MAX_PRECISION_LIST,
+            containsInAnyOrder(
+                    geoHash.getHashesToQuery(PLACE_INITIAL.getLatitude(), PLACE_INITIAL.getLongitude(), DISTANCE_MIN).toArray()
+            ));
   }
 }
