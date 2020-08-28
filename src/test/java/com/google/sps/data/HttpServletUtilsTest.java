@@ -2,13 +2,16 @@ package com.google.sps.data;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
 import java.time.LocalTime;
+
 import static com.google.sps.utility.NearbyVendorsQueryTest.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -163,20 +166,14 @@ public final class HttpServletUtilsTest {
     @Test
     public void computeGeoDistanceMeterDelta() {
         Assert.assertEquals(50f,
-                httpServletUtils.computeGeoDistance(
-                        PLACE_INITIAL, VENDOR_50M.getSaleCard().getLocation().getSalePoint()),
-                1f // Delta
-        );
+                httpServletUtils.computeGeoDistance(PLACE_INITIAL, VENDOR_50M.getSaleCard().getLocation().getSalePoint()), 1f);
     }
 
     // Compute Geo Distance given two GeoPoints with 1 meter of difference allowed.
     @Test
     public void computeGeoDistanceCentimetersDelta() {
         Assert.assertEquals(50f,
-                httpServletUtils.computeGeoDistance(
-                        PLACE_INITIAL, VENDOR_50M.getSaleCard().getLocation().getSalePoint()),
-                0.01f // Delta
-        );
+                httpServletUtils.computeGeoDistance(PLACE_INITIAL, VENDOR_50M.getSaleCard().getLocation().getSalePoint()), 0.01f);
     }
 
     // Create embedded entities correctly.
