@@ -247,7 +247,7 @@ public final class NearbyVendorsQueryTest {
     datastore.put(createEntityFromVendor(VENDOR_NIGHT_TIME));
   }
 
-  private static Entity createEntityFromVendor(Vendor vendor) {
+  public static Entity createEntityFromVendor(Vendor vendor) {
     SaleCard salecard = vendor.getSaleCard();
     LocationData location = salecard.getLocation();
 
@@ -276,11 +276,11 @@ public final class NearbyVendorsQueryTest {
     return vendorEntity;
   }
 
-  private static LocationData createLocation(long id, float latLng) {
+  public static LocationData createLocation(long id, float latLng) {
     return new LocationData(id, new GeoPt(latLng, latLng), GeoHash.encodeVendor(latLng, latLng), 0f);
   }
 
-  private static SaleCard createSaleCard(long id, String name, boolean delivery, boolean closed,
+  public static SaleCard createSaleCard(long id, String name, boolean delivery, boolean closed,
       LocalTime start, LocalTime end, LocationData location) {
     SaleCard salecard = new SaleCard(id, name, "xyz", delivery, closed, start, end, location, null);
     salecard.setDistanceFromClient(computeGeoDistance(GEO_PT_NL, location.getSalePoint())); 

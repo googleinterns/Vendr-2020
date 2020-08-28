@@ -102,6 +102,7 @@ public final class HttpServletUtils {
    * @return a boolean indicating if the string contains only Unicode letters and at least one
    */
   public static boolean hasOnlyLetters(String string) {
+    if (string == null) return false;
     Pattern validCharacters = Pattern.compile("\\p{L}+");
     Matcher validInputChecker = validCharacters.matcher(string);
 
@@ -114,6 +115,7 @@ public final class HttpServletUtils {
    * @return a boolean indicating if the string contains only numbers and at least one
    */
   public static boolean hasOnlyNumbers(String string) {
+    if (string == null) return false;
     Pattern validCharacters = Pattern.compile("[0-9]+");
     Matcher validInputChecker = validCharacters.matcher(string);
 
