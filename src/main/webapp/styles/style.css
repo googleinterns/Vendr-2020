@@ -7,12 +7,11 @@
   width: 75%;
 }
 
-.tutorial-placeholders {
-  font-size: 5vw;
-  text-align: center;
+.tutorial-title {
+  font-size: 3vw;
 }
 
-#log-button {
+.log-button-color {
   background-color: rgb(108, 117, 125);
   color: white;
 }

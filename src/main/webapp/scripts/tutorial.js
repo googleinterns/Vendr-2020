@@ -22,5 +22,7 @@ function handleTutorialContent(vendorIsLogged) {
 
 /** @param {string} tutorialFile */
 function setTutorialInDOM(tutorialFile) {
-  $('#tutorial-content').load(`tutorials/${tutorialFile}.html`);
+  $('#tutorial-content').load(`tutorials/${tutorialFile}.html`, () => {
+    $('#carousel-indicators').load(`tutorials/${tutorialFile}_indicators.html`);
+  });
 }

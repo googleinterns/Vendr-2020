@@ -50,16 +50,29 @@ async function showRegistrationForm(isRegistered) {
     setIconClickEvent();
     if (isRegistered) {
       getUserInformation();
-    }
+    } 
+
+    $('#modal-close-button').on('click', () => {
+      handleRegistrationClose(isRegistered);
+    });
+  
     $('#registrationModal').modal('show');
   });
 }
 
-/** Handles registration modal close request*/
-function handleRegistrationClose() {
-  const message = 'Return to Home?';
-  if (confirm(message)) {
-    $('#log-button span').trigger('click');
+/** 
+* Handles registration modal close request
+* @param {boolean} isRegistered
+*/
+function handleRegistrationClose(isRegistered) {
+  if (isRegistered) {
+    $('#registrationModal').modal('hide');
+  } else {
+    const message = 'Return to Home?';
+
+    if (confirm(message)) {
+      $('#log-button span').trigger('click');
+    }
   }
 }
 
@@ -98,11 +111,11 @@ function setUploadedImage() {
     if (this.files && this.files[0]) {
       const reader = new FileReader();
       reader.onload = function (e) {
-        $('#profile-picture').attr('src', e.target.result);
+        $('#business-picture').attr('src', e.target.result);
       }
       reader.readAsDataURL(this.files[0]);
     } else {
-      $('#profile-picture').attr('src', 'images/placeholderImage.png');
+      $('#business-picture').attr('src', 'images/placeholderImage.png');
     }
   });
 }
@@ -124,7 +137,11 @@ function setVendorInformationInModal(vendorInformation) {
   registerButton.innerHTML = 'Update Account'
 
   if (vendorInformation.profilePic) {
-    const profilePic = document.getElementById('profile-picture');
+     
+    // ('business-picture') is important to allow the functionality of
+    // setUploadedImage() in both the registration modal and 
+    // the EditCard.html view
+    const profilePic = document.getElementById('business-picture');
     const altText = document.getElementById('altText');
     const profilePictureAltText = vendorInformation.profilePic.altText;
 
